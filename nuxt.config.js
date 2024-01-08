@@ -3,6 +3,7 @@ export default {
   /*
   ** Headers of the page
   */
+  targer: 'static',
   head: {
     title: process.env.npm_package_name || '',
     meta: [
@@ -43,7 +44,7 @@ export default {
   modules: [
     // Doc: https://bootstrap-vue.js.org
     'bootstrap-vue/nuxt',
-    
+
   ],
   /*
   ** Build configuration
@@ -52,8 +53,8 @@ export default {
     /*
     ** You can extend webpack config here
     */
-    extend (config, ctx) {
+    extend(config, ctx) {
     }
   }
- 
+
 }

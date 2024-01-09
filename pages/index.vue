@@ -107,20 +107,22 @@ export default {
       tableOverlay: false,
       listData: [],
       tableField: [
-        { key: "ten", label: "Tên" },
-        { key: "maso", label: "Mã số" },
+        { key: "customer_name", label: "Tên" },
+        { key: "invoice_number", label: "Mã số" },
         {
-          key: "ngaycam",
+          key: "invoice_date_create",
           label: "Ngày cầm",
           formatter: (value) => {
             //yyyy/mm/dd
+            console.log(value)
             let date = value.split("-");
             let newDate = new Date(date[0], date[1] - 1, date[1]);
-            return newDate;
+            let newDateStr=`${date[2]}/${date[1]}/${date[0]}`
+            return newDateStr;
           },
         },
         {
-          key: "sotien",
+          key: "invoice_money",
           label: "Số tiền",
           formatter: (value) => {
             return this.formatN(value);
@@ -192,21 +194,20 @@ export default {
       this.tableOverlay = true;
       try {
         let query = this.$supabase
-          .from("dothe")
-          .select("id,ten,maso,ngaycam,sotien")
+          .from("invoice")
+          .select("id,customer_name,invoice_number,invoice_date_create,invoice_money")
           .limit(100);
-
         if (this.filter_ten && this.filter_ten.length > 1) {
-          query = query.ilike("ten", `%${this.filter_ten}%`);
+          query = query.ilike("customer_name", `%${this.filter_ten}%`);
         }
         if (parseInt(this.filter_sotien_start) > 0) {
           query = query.gte(
-            "sotien",
+            "invoice_money",
             parseInt(this.filter_sotien_start) * 1000
           );
         }
         if (parseInt(this.filter_sotien_end) > 0) {
-          query = query.lte("sotien", parseInt(this.filter_sotien_end) * 1000);
+          query = query.lte("invoice_money", parseInt(this.filter_sotien_end) * 1000);
         }
 
         //ngaystart
@@ -216,7 +217,7 @@ export default {
           this.getNgayCam(this.filter_ngaycam_start).isValid
         ) {
           let ngayStart = this.getNgayCam(this.filter_ngaycam_start);
-          query = query.gte("ngaycam", ngayStart.toInsert);
+          query = query.gte("invoice_date_create", ngayStart.toInsert);
         }
 
         if (
@@ -225,7 +226,7 @@ export default {
           this.getNgayCam(this.filter_ngaycam_end).isValid
         ) {
           let ngayEnd = this.getNgayCam(this.filter_ngaycam_end);
-          query = query.lte("ngaycam", ngayEnd.toInsert);
+          query = query.lte("invoice_date_create", ngayEnd.toInsert);
         }
         let item = await query;
         let result = item.data;
@@ -242,7 +243,7 @@ export default {
       this.tableOverlay = true;
       console.log(id);
       this.$supabase
-        .from("dothe")
+        .from("invoice")
         .delete()
         .eq("id", id)
         .then((data) => {
@@ -262,8 +263,8 @@ export default {
     },
     getData() {
       this.$supabase
-        .from("dothe")
-        .select("id,ten,maso,ngaycam,sotien")
+        .from("invoice")
+        .select("id,customer_name,invoice_number,invoice_date_create,invoice_money")
         .range(0, 20)
         .then((data) => {
           this.listData = data.data;

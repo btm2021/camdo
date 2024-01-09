@@ -144,9 +144,9 @@ export default {
       this.isStatus = true;
       let maso = parseInt(this.form.maso);
       this.$supabase
-        .from("dothe")
-        .select("maso")
-        .eq("maso", maso)
+        .from("invoice")
+        .select("invoice_number")
+        .eq("invoice_number", maso)
         .then((data) => {
           this.isStatus = false;
           if (data.data.length > 0) {
@@ -225,15 +225,15 @@ export default {
       let ngayFinal = this.getNgayCam(this.form.ngaycam);
 
       let objectInser = {
-        ten: this.form.ten,
-        maso: parseInt(this.form.maso),
-        sotien: parseInt(this.form.sotien) * 1000,
-        ngaycam: ngayFinal.toInsert,
-      };
-      console.log(objectInser);
+        invoice_number: parseInt(this.form.maso),
+        invoice_date_create: ngayFinal.toInsert,
+        customer_name:this.form.ten,
+        invoice_money:parseInt(this.form.sotien)*1000,
+     
+      }
       this.isStatus = true;
       this.$supabase
-        .from("dothe")
+        .from("invoice")
         .insert([objectInser])
         .then(() => {
           this.isStatus = false;

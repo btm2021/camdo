@@ -12,7 +12,6 @@ import translate from "translate";
 
 export default async function handler(req, res) {
 
-
     const q = "Hãy tìm kiếm khách hàng có tổng tiền hóa đơn lớn nhất"
 
     const textTrain = await translate(q, { to: "en", from: "vi" })
@@ -68,14 +67,6 @@ SQLQuery:`;
         question: textTrain,
     });
 
-    console.log(
-        result,
-    );
-
-    //let r = await db.run(result);
-    //console.log(r)
-    //nex
-
     const finalResponsePrompt =
         PromptTemplate.fromTemplate(`
 Based on the table schema below, question, sql query, and sql response, write a natural language response.REMEBER always response by vietnamese language:
@@ -103,8 +94,6 @@ SQL Response: {response}
     const finalResponse = await fullChain.invoke({
         question: q,
     });
-
-    console.log(finalResponse);
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     res.json({ name: finalResponse });

@@ -1248,13 +1248,13 @@ export default {
         //chưa chuộc, lấy ra invoice_date_create - now
       }
       let count = this.getCountDate(dateStart, dateEnd);
-      return count;
+      return count + 1;
     },
     getCountDate(dateStart, dateEnd) {
       let _dateStart = this.$moment(dateStart);
       let _dateEnd = this.$moment(dateEnd);
       let count = _dateEnd.diff(_dateStart, "days");
-      return count;
+      return count + 1;
       // =1
     },
     getTotalRow() {

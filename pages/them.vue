@@ -7,69 +7,129 @@
             <b-card class="mt-3 ml-2" header="Mẫu Đồ thế">
               <b-card-body>
                 <b-form @submit.prevent="insertSp()">
-                  <b-form-group
-                    label="Tên khách:"
-                    description="Nhập tên khách trong bọc"
+                  <b-row>
+                    <b-col cols="6">
+                      <b-form-group
+                        label="Tên khách:"
+                        description="Nhập tên khách trong bọc"
+                      >
+                        <b-form-input
+                          v-model="form.ten"
+                          :state="state.ten"
+                          type="text"
+                          autocomplete="off"
+                          required
+                          :formatter="formatterTen"
+                        ></b-form-input>
+                      </b-form-group>
+
+                      <b-form-group
+                        label="Mã số :"
+                        :description="stateMsg.maso"
+                      >
+                        <b-form-input
+                          v-model="form.maso"
+                          :state="state.maso"
+                          type="number"
+                          autocomplete="off"
+                          @change="checkMaSo()"
+                          placeholder=""
+                          required
+                          :formatter="formatterMaso"
+                        ></b-form-input>
+                      </b-form-group>
+                    </b-col>
+                    <b-col cols="6">
+                      <b-form-group
+                        label="Số tiền :"
+                        :description="formatN(form.sotien * 1000)"
+                      >
+                        <b-input-group append=".000">
+                          <b-form-input
+                            v-model="form.sotien"
+                            type="number"
+                            autocomplete="off"
+                            :state="state.sotien"
+                            required
+                            :formatter="formatterSotien"
+                          ></b-form-input>
+                        </b-input-group>
+                      </b-form-group>
+                      <b-form-group
+                        label="Ngày thế:"
+                        :description="stateMsg.ngaycam"
+                      >
+                        <b-form-input
+                          v-model="form.ngaycam"
+                          type="text"
+                          autocomplete="off"
+                          placeholder="Nhập ngày thế theo mẫu ngay/thang/nam"
+                          required
+                          @keyup="formatterNgayCam"
+                          :state="state.ngaycam"
+                        ></b-form-input>
+                      </b-form-group>
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col cols="6">
+                      <b-form-group label="Món đồ :">
+                        <b-form-tags
+                          tag-variant="primary"
+                          v-model="form.tag"
+                        ></b-form-tags>
+                      </b-form-group>
+                      <b-form-group label="Comment :">
+                        <b-form-input
+                          v-model="form.comment"
+                          autocomplete="off"
+                        ></b-form-input>
+                      </b-form-group>
+                      <b-form-group label="Số điện thoại :">
+                        <b-form-input
+                          v-model="form.phone"
+                          autocomplete="off"
+                        ></b-form-input>
+                      </b-form-group>
+                    </b-col>
+                    <b-col cols="6">
+                      <b-form-group label="Loại Lưu :">
+                        <b-form-select
+                          v-model="form.store"
+                          :options="[
+                            'BỊCH KÉO MIỆNG',
+                            'HỘP TRÁI BÍ TO',
+                            'HỘP TRÁI BÍ TRUNG',
+                            'HỘP TRÁI BÍ NHỎ',
+                            'HỘP HỒNG TRONG TO',
+                            'HỘP HỒNG DẸP',
+                            'HỘP NHUNG KIỀNG',
+                            'HỘP NHUNG DẸP',
+                            'HỘP KIỀNG',
+                            'KHÁC',
+                          ]"
+                        ></b-form-select>
+                      </b-form-group>
+
+                      <b-form-group label="Nơi Lưu :">
+                        <b-form-select
+                          v-model="form.store_type"
+                          :options="['KHAY', 'KÉT', 'KHÁC']"
+                        ></b-form-select>
+                      </b-form-group>
+                      <b-form-group label="LOẠI THẾ :">
+                        <b-form-select
+                          v-model="form.cat"
+                          :options="['THẾ MỚI', 'ĐÓNG LÃI', 'KHÁC']"
+                        ></b-form-select>
+                      </b-form-group>
+                    </b-col>
+                  </b-row>
+                  <b-button block type="submit" variant="primary"
+                    >Submit</b-button
                   >
-                    <b-form-input
-                      v-model="form.ten"
-                      :state="state.ten"
-                      type="text"
-                      autocomplete="off"
-                      required
-                      :formatter="formatterTen"
-                    ></b-form-input>
-                  </b-form-group>
-
-                  <b-form-group label="Mã số :" :description="stateMsg.maso">
-                    <b-form-input
-                      v-model="form.maso"
-                      :state="state.maso"
-                      type="number"
-                      autocomplete="off"
-                      @change="checkMaSo()"
-                      placeholder=""
-                      required
-                      :formatter="formatterMaso"
-                    ></b-form-input>
-                  </b-form-group>
-
-                  <b-form-group
-                    label="Số tiền :"
-                    :description="formatN(form.sotien * 1000)"
-                  >
-                    <b-input-group append=".000">
-                      <b-form-input
-                        v-model="form.sotien"
-                        type="number"
-                        autocomplete="off"
-                        :state="state.sotien"
-                        required
-                        :formatter="formatterSotien"
-                      ></b-form-input>
-                    </b-input-group>
-                  </b-form-group>
-
-                  <b-form-group
-                    label="Ngày thế:"
-                    :description="stateMsg.ngaycam"
-                  >
-                    <b-form-input
-                      v-model="form.ngaycam"
-                      type="text"
-                      autocomplete="off"
-                      placeholder="Nhập ngày thế theo mẫu ngay/thang/nam"
-                      required
-                      @keyup="formatterNgayCam"
-                      :state="state.ngaycam"
-                    ></b-form-input>
-                  </b-form-group>
-
-                  <b-button type="submit" variant="primary">Submit</b-button>
-                  <b-button type="reset" variant="danger"
-                    >Reset</b-button
-                  ></b-form
-                >
+                  <b-button block type="reset" variant="danger">Reset</b-button>
+                </b-form>
               </b-card-body>
             </b-card>
             <div></div>
@@ -127,12 +187,20 @@ export default {
         maso: null,
         sotien: null,
         ngaycam: null,
+        phone: "không",
       },
+      
       form: {
         ten: null,
         maso: null,
         sotien: null,
         ngaythe: null,
+        comment: "không",
+        phone: "không",
+        tag: null,
+        store: "BỊCH KÉO MIỆNG",
+        store_type: "KHAY",
+        cat: "THẾ MỚI",
       },
     };
   },
@@ -227,10 +295,17 @@ export default {
       let objectInser = {
         invoice_number: parseInt(this.form.maso),
         invoice_date_create: ngayFinal.toInsert,
-        customer_name:this.form.ten,
-        invoice_money:parseInt(this.form.sotien)*1000,
-     
-      }
+        customer_name: this.form.ten,
+        invoice_money: parseInt(this.form.sotien) * 1000,
+        invoice_comment: this.form.comment,
+        invoice_phone: this.form.phone,
+        invoice_type: "BÌNH THƯỜNG",
+        invoice_status: false,
+        invoice_tag: JSON.stringify(this.form.tag),
+        invoice_store: this.form.store,
+        invoice_store_type: this.form.store_type,
+        invoice_cat: this.form.cat,
+      };
       this.isStatus = true;
       this.$supabase
         .from("invoice")
@@ -248,6 +323,12 @@ export default {
             maso: null,
             ngaycam: null,
             sotien: null,
+            phone: "không",
+            comment: "không",
+            tag: null,
+            store: "BỊCH KÉO MIỆNG",
+            store_type: "KHAY",
+            cat: "THẾ MỚI",
           };
           this.state = {
             ten: null,
@@ -307,6 +388,12 @@ export default {
       maso: null,
       ngaycam: null,
       sotien: null,
+      phone: "không",
+      comment: "không",
+      tag: null,
+      store: "BỊCH KÉO MIỆNG",
+      store_type: "KHAY",
+      cat: "THẾ MỚI",
     };
     this.state = {
       ten: null,

@@ -28,6 +28,8 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    
+    '~/plugins/chart.js'
   ],
   /*
   ** Nuxt.js dev-modules
@@ -36,7 +38,7 @@ export default {
     ['nuxt-supabase', {
       supabaseUrl: 'https://ajsrzteoovahabndebyp.supabase.co',
       supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqc3J6dGVvb3ZhaGFibmRlYnlwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwNDY4NjI1OCwiZXhwIjoyMDIwMjYyMjU4fQ.Q0lBT-HTcMLxLGpKgJ_-vz-prKH43nV9czOtm2HvMzU'
-    }]
+    }],
   ],
   /*
   ** Nuxt.js modules
@@ -44,8 +46,19 @@ export default {
   modules: [
     // Doc: https://bootstrap-vue.js.org
     'bootstrap-vue/nuxt',
-
+    '@nuxtjs/moment'
   ],
+
+  bootstrapVue: {
+    icons: true
+  },
+  moment: {
+    plugins: [
+
+
+    ]
+
+  },
   /*
   ** Build configuration
   */
@@ -53,7 +66,11 @@ export default {
     /*
     ** You can extend webpack config here
     */
-    extend(config, ctx) {
+    extend(config, { isClient }) {
+      if (isClient)
+        config.devtool = 'eval-source-map'
+      else
+        config.devtool = "inline-source-map"
     }
   }
 

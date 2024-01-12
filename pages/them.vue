@@ -5,6 +5,20 @@
         <b-row>
           <b-col cols="6">
             <b-card class="mt-3 ml-2" header="Mẫu Đồ thế">
+              <template #header>
+                <div class="mb-0">
+                  <b-form-checkbox
+                    name="check-button"
+                    v-model="inputMode"
+                    @change="changeInputMode"
+                    switch
+                  >
+                    Chế độ nhập
+                    <b>{{ inputMode ? "Nhập Nhanh" : "Nhập Thường" }}</b>
+                    <span v-if="inputMode">(Tự điền ngày hiện tại)</span>
+                  </b-form-checkbox>
+                </div>
+              </template>
               <b-card-body>
                 <b-form @submit.prevent="insertSp()">
                   <b-row>
@@ -15,6 +29,7 @@
                       >
                         <b-form-input
                           v-model="form.ten"
+                          ref="inputTen"
                           :state="state.ten"
                           type="text"
                           autocomplete="off"
@@ -177,6 +192,7 @@ export default {
   watch: {},
   data() {
     return {
+      inputMode: false,
       isStatus: false,
       listData: [],
       stateMsg: {
@@ -189,7 +205,7 @@ export default {
         ngaycam: null,
         phone: "không",
       },
-      
+
       form: {
         ten: null,
         maso: null,
@@ -205,6 +221,12 @@ export default {
     };
   },
   methods: {
+    changeInputMode(){
+     this.setCurrentDay()
+    },
+    setCurrentDay(){
+      this.form.ngaycam = this.$moment().format('DD/MM/YYYY')
+    },
     formatN(x) {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
@@ -277,6 +299,9 @@ export default {
         }
       }
     },
+    focusTen() {
+      this.$refs.inputTen.focus();
+    },
     insertSp() {
       //check all Valid
       let result = this.getNgayCam(this.form.ngaycam);
@@ -312,6 +337,8 @@ export default {
         .insert([objectInser])
         .then(() => {
           this.isStatus = false;
+          this.focusTen();
+          
           this.$bvToast.toast(`Thêm đồ thế ${this.form.maso} thành công`, {
             title: "Thông báo",
             autoHideDelay: 5000,
@@ -336,6 +363,9 @@ export default {
             ngaycam: null,
             sotien: null,
           };
+          if(this.inputMode){
+            this.setCurrentDay()
+          }
         });
     },
 
@@ -401,6 +431,7 @@ export default {
       ngaycam: null,
       sotien: null,
     };
+    this.focusTen();
   },
 };
 </script>

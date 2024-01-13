@@ -13,6 +13,8 @@
           <b-nav-item href="/check">Check</b-nav-item>
 
           <b-nav-item href="/thongke">Thống kê</b-nav-item>
+
+          <b-nav-item href="/chat">Chat</b-nav-item>
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->

@@ -4,6 +4,7 @@ export default {
   ** Headers of the page
   */
   ssr: false,
+  target:'static',
   head: {
     title: process.env.npm_package_name || '',
     meta: [
@@ -28,7 +29,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    
+
     '~/plugins/chart.js'
   ],
   /*
@@ -46,7 +47,8 @@ export default {
   modules: [
     // Doc: https://bootstrap-vue.js.org
     'bootstrap-vue/nuxt',
-    '@nuxtjs/moment'
+    '@nuxtjs/moment',
+    '@nuxtjs/axios'
   ],
 
   bootstrapVue: {

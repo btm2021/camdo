@@ -4,7 +4,6 @@ export default {
   ** Headers of the page
   */
   ssr: false,
-  target:'static',
   head: {
     title: process.env.npm_package_name || '',
     meta: [

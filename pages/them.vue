@@ -57,7 +57,11 @@
                     <b-col cols="6">
                       <b-form-group
                         label="Số tiền :"
-                        :description="formatN(form.sotien * 1000)"
+                        :description="
+                          stateMsg.sotien
+                            ? stateMsg.sotien
+                            : '' + formatN(form.sotien * 1000)
+                        "
                       >
                         <b-input-group append=".000">
                           <b-form-input
@@ -66,9 +70,12 @@
                             autocomplete="off"
                             :state="state.sotien"
                             required
+                            min="100"
+                            @change="checkSoTien"
                             :formatter="formatterSotien"
                           ></b-form-input>
                         </b-input-group>
+                        <sup></sup>
                       </b-form-group>
                       <b-form-group
                         label="Ngày thế:"
@@ -88,8 +95,15 @@
                   </b-row>
                   <b-row>
                     <b-col cols="6">
-                      <b-form-group label="Món đồ :">
+                      <b-form-group
+                        :description="stateMsg.tag"
+                        label="Món đồ :"
+                      >
                         <b-form-tags
+                          required
+                          remove-on-delete
+                          separator=","
+                          :state="state.tag"
                           tag-variant="primary"
                           v-model="form.tag"
                         ></b-form-tags>
@@ -180,7 +194,26 @@
               </template>
             </b-card>
           </b-col>
-          <b-col cols="3"> </b-col>
+          <b-col cols="3">
+            <b-card class="mt-3" header="Sản phẩm vừa thêm">
+              <div v-if="lastInsert">
+                <div>
+                  Mã : {{ lastInsert.invoice_number }}<br />
+                  Tên : {{ lastInsert.customer_name }}<br />
+                  Tiền : {{ lastInsert.invoice_money }}<br />
+                  Ngày :
+                  {{
+                    $moment(lastInsert.invoice_date_create).format(
+                      "DD/MM/YYYY"
+                    )
+                  }}<br />
+                  <b-button variant="danger" @click="deleteLastItem" block
+                    >Xóa</b-button
+                  >
+                </div>
+              </div>
+            </b-card>
+          </b-col>
         </b-row>
       </b-overlay>
     </div>
@@ -192,18 +225,23 @@ export default {
   watch: {},
   data() {
     return {
+      lastInsert: null,
       inputMode: false,
       isStatus: false,
       listData: [],
       stateMsg: {
         maso: null,
+        tag: null,
+        sotien: null,
       },
       state: {
         ten: null,
+        ngaycam: null,
         maso: null,
         sotien: null,
         ngaycam: null,
         phone: "không",
+        tag: null,
       },
 
       form: {
@@ -213,7 +251,7 @@ export default {
         ngaythe: null,
         comment: "không",
         phone: "không",
-        tag: null,
+        tag: [],
         store: "BỊCH KÉO MIỆNG",
         store_type: "KHAY",
         cat: "THẾ MỚI",
@@ -221,11 +259,11 @@ export default {
     };
   },
   methods: {
-    changeInputMode(){
-     this.setCurrentDay()
+    changeInputMode() {
+      this.setCurrentDay();
     },
-    setCurrentDay(){
-      this.form.ngaycam = this.$moment().format('DD/MM/YYYY')
+    setCurrentDay() {
+      this.form.ngaycam = this.$moment().format("DD/MM/YYYY");
     },
     formatN(x) {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -233,20 +271,50 @@ export default {
     checkMaSo() {
       this.isStatus = true;
       let maso = parseInt(this.form.maso);
-      this.$supabase
-        .from("invoice")
-        .select("invoice_number")
-        .eq("invoice_number", maso)
-        .then((data) => {
-          this.isStatus = false;
-          if (data.data.length > 0) {
-            this.stateMsg.maso = "Mã này đã trùng";
-            this.state.maso = false;
-            this.form.maso = null;
-          } else {
-            this.stateMsg.maso = "Mã số hợp lệ";
-          }
-        });
+      //
+      const regex = /^-?\d+$/g;
+      let valid = regex.test(this.form.maso);
+      let str_maso = this.form.maso || "";
+
+      if (!valid || str_maso.includes(".")) {
+        this.stateMsg.maso = "Mã sai định dạng";
+        this.state.maso = false;
+        this.form.maso = null;
+        this.isStatus = false;
+        console.log("Sai mã số");
+      } else {
+        this.$supabase
+          .from("invoice")
+          .select("invoice_number")
+          .eq("invoice_number", maso)
+          .then((data) => {
+            this.isStatus = false;
+            if (data.data.length > 0) {
+              this.stateMsg.maso = "Mã này đã trùng";
+              this.state.maso = false;
+              this.form.maso = null;
+            } else {
+              this.stateMsg.maso = "Mã số hợp lệ";
+            }
+          });
+      }
+    },
+    checkSoTien() {
+      this.isStatus = true;
+      let sotien = parseInt(this.form.sotien) * 1000;
+      console.log(sotien);
+      //Lon hon 100.000
+      if (sotien <= 100000 || sotien % 100000 === 50000) {
+        this.stateMsg.sotien = "Số tiền sai";
+        this.state.sotien = false;
+        this.form.sotien = null;
+        this.isStatus = false;
+      } else {
+        this.stateMsg.sotien = null;
+        this.state.sotien = true;
+        this.isStatus = false;
+      }
+      this.isStatus = false;
     },
     getNgayCam(ngayhople) {
       try {
@@ -281,7 +349,6 @@ export default {
         return ngayFinal;
       } catch (err) {
         let errMsg = err.toString();
-        console.log("==", errMsg, "==");
         if (
           errMsg == "Error: Ngày khong hop le" ||
           errMsg == "Error: Tháng khong hop le" ||
@@ -302,18 +369,54 @@ export default {
     focusTen() {
       this.$refs.inputTen.focus();
     },
+    deleteLastItem() {
+      this.$supabase
+        .from("invoice")
+        .delete()
+        .eq("id", this.lastInsert.id)
+        .then((data) => {
+          this.lastInsert = null;
+          this.$bvToast.toast(`Xóa sản phẩm vừa thêm`, {
+            title: "Thông báo",
+            autoHideDelay: 1000,
+            appendToast: true,
+            variant: "danger",
+          });
+        });
+    },
+    changeTag() {
+      if (this.form.tag.length == 0) {
+        this.state.tag = false;
+        this.stateMsg.tag = "Vui lòng nhập món đồ";
+      } else {
+        this.state.tag = true;
+        this.stateMsg.tag = "Hợp lệ";
+      }
+    },
     insertSp() {
       //check all Valid
       let result = this.getNgayCam(this.form.ngaycam);
-      if (!result.isValid) {
-        this.form.ngaycam = null;
-        this.stateMsg.ngaycam = "Ngày tháng sai định dạng";
+
+      if (this.form.tag.length == 0 || !this.form.tag) {
+        this.state.tag = false;
+        console.log("tag lỗi");
+        this.stateMsg.tag = "Vui lòng nhập món đồ";
+
         return;
       } else {
-        this.state.ngaycam = true;
-        this.stateMsg.ngaycam = null;
+        this.state.tag = true;
+        this.stateMsg.tag = "Hợp lệ";
       }
 
+      if (parseInt(this.form.sotien) < 100) {
+        this.state.sotien = false;
+        console.log("Số tiền lỗi");
+        this.stateMsg.sotien = "Vui lòng đúng số tiền";
+        return;
+      } else {
+        this.state.sotien = true;
+        this.stateMsg.sotien = "Hợp lệ";
+      }
       //valid
       let ngayFinal = this.getNgayCam(this.form.ngaycam);
 
@@ -326,7 +429,7 @@ export default {
         invoice_phone: this.form.phone,
         invoice_type: "BÌNH THƯỜNG",
         invoice_status: false,
-        invoice_tag: JSON.stringify(this.form.tag),
+        invoice_tag: this.form.tag,
         invoice_store: this.form.store,
         invoice_store_type: this.form.store_type,
         invoice_cat: this.form.cat,
@@ -335,10 +438,13 @@ export default {
       this.$supabase
         .from("invoice")
         .insert([objectInser])
-        .then(() => {
+        .select()
+        .then((data, error) => {
+          console.log(data, error);
+          this.lastInsert = data.data[0];
           this.isStatus = false;
           this.focusTen();
-          
+
           this.$bvToast.toast(`Thêm đồ thế ${this.form.maso} thành công`, {
             title: "Thông báo",
             autoHideDelay: 5000,
@@ -363,8 +469,8 @@ export default {
             ngaycam: null,
             sotien: null,
           };
-          if(this.inputMode){
-            this.setCurrentDay()
+          if (this.inputMode) {
+            this.setCurrentDay();
           }
         });
     },

@@ -1,6 +1,7 @@
 <template>
   <div>
     <b-container class="mt-5">
+      <h3>Check Giấy hàng ngày</h3>
       <b-input-group>
         <b-input
           v-model="inputMaGiay"

@@ -60,7 +60,7 @@
                         :description="
                           stateMsg.sotien
                             ? stateMsg.sotien
-                            : '' + formatN(form.sotien * 1000)
+                            : formatN(form.sotien * 1000)
                         "
                       >
                         <b-input-group append=".000">
@@ -100,6 +100,7 @@
                         label="Món đồ :"
                       >
                         <b-form-tags
+                          ref="bformtag"
                           required
                           remove-on-delete
                           separator=","
@@ -172,21 +173,25 @@
                     height: 100%;
                     color: blue;
                     font-weight: bold;
-                    font-size: x-large;
+                    font-size: large;
                   "
                 >
                   <tr>
-                    <td style="text-align: left">{{ form.ten }}</td>
-                    <td style="text-align: right">{{ form.maso }}</td>
+                    <td style="text-align: left; width: 50%">
+                      Tên :{{ form.ten }}
+                    </td>
+                    <td style="text-align: right; width: 50%">
+                      Mã :{{ form.maso }}
+                    </td>
                   </tr>
 
                   <tr>
-                    <td style="text-align: left">
-                      {{ formatN(form.sotien * 1000) }}
+                    <td style="text-align: left; width: 50%">
+                      Tiền: {{ formatN(form.sotien * 1000) }}
                     </td>
-                    <td style="text-align: right">
+                    <td style="text-align: right; width: 50%">
                       <div v-if="state.ngaycam">
-                        {{ getNgayCam(form.ngaycam).toShort }}
+                        Ngày: {{ getNgayCam(form.ngaycam).toShort }}
                       </div>
                     </td>
                   </tr>
@@ -200,7 +205,7 @@
                 <div>
                   Mã : {{ lastInsert.invoice_number }}<br />
                   Tên : {{ lastInsert.customer_name }}<br />
-                  Tiền : {{ lastInsert.invoice_money }}<br />
+                  Tiền : {{ formatN(lastInsert.invoice_money) }}<br />
                   Ngày :
                   {{
                     $moment(lastInsert.invoice_date_create).format(
@@ -302,9 +307,9 @@ export default {
     checkSoTien() {
       this.isStatus = true;
       let sotien = parseInt(this.form.sotien) * 1000;
-      console.log(sotien);
+
       //Lon hon 100.000
-      if (sotien <= 100000 || sotien % 100000 === 50000) {
+      if (sotien < 100000 || sotien % 100000 != 0) {
         this.stateMsg.sotien = "Số tiền sai";
         this.state.sotien = false;
         this.form.sotien = null;
@@ -395,13 +400,14 @@ export default {
     },
     insertSp() {
       //check all Valid
+
       let result = this.getNgayCam(this.form.ngaycam);
 
       if (this.form.tag.length == 0 || !this.form.tag) {
         this.state.tag = false;
         console.log("tag lỗi");
         this.stateMsg.tag = "Vui lòng nhập món đồ";
-
+        this.$refs.bformtag.focus();
         return;
       } else {
         this.state.tag = true;

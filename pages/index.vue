@@ -386,7 +386,7 @@
             <b-table
               style="min-height: 600px"
               class="my_table align-middle w-auto"
-              hover
+              
               responsive
               :per-page="perPage"
               :current-page="currentPage"
@@ -560,6 +560,7 @@
 export default {
   data() {
     return {
+      channels: null,
       editState: {
         customer_name: true,
         invoice_money: true,
@@ -797,6 +798,7 @@ export default {
     };
   },
   methods: {
+    
     getVariant() {
       let listVariant = [
         { name: "day", variant: "warning" },
@@ -1123,6 +1125,8 @@ export default {
       return isValid;
     },
     checkMaSo() {
+      //check regex
+      const regex = /^[1-9]\d*$/g;
       let maso = parseInt(this.itemEdit.invoice_number);
 
       if (maso != this.itemEdit.invoice_number_beauty) {
@@ -1512,5 +1516,9 @@ body {
 }
 .filter_input {
   margin: 3px;
+}
+.my_table td:hover{
+  cursor:cell;
+  background-color:antiquewhite;
 }
 </style>

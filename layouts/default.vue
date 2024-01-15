@@ -9,13 +9,10 @@
         <b-navbar-nav>
           <b-nav-item href="/">Home</b-nav-item>
           <b-nav-item href="/them">Thêm</b-nav-item>
-
+          <b-nav-item href="/taoma">Tạo mã</b-nav-item>
           <b-nav-item href="/check">Check</b-nav-item>
-
           <b-nav-item href="/thongke">Thống kê</b-nav-item>
-
           <b-nav-item href="/chat">Chat</b-nav-item>
-
           <b-nav-item href="/thanhly">Thanh Lý</b-nav-item>
         </b-navbar-nav>
 

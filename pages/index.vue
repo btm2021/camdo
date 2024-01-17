@@ -386,7 +386,6 @@
             <b-table
               style="min-height: 600px"
               class="my_table align-middle w-auto"
-              
               responsive
               :per-page="perPage"
               :current-page="currentPage"
@@ -798,7 +797,6 @@ export default {
     };
   },
   methods: {
-    
     getVariant() {
       let listVariant = [
         { name: "day", variant: "warning" },
@@ -1517,8 +1515,8 @@ body {
 .filter_input {
   margin: 3px;
 }
-.my_table td:hover{
-  cursor:cell;
-  background-color:antiquewhite;
+.my_table td:hover {
+  cursor: cell;
+  background-color: antiquewhite;
 }
 </style>

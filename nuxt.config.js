@@ -29,7 +29,8 @@ export default {
   */
   plugins: [
 
-    '~/plugins/chart.js'
+    '~/plugins/chart.js',
+    '~/plugins/veevalidator.js'
   ],
   /*
   ** Nuxt.js dev-modules
@@ -47,7 +48,8 @@ export default {
     // Doc: https://bootstrap-vue.js.org
     'bootstrap-vue/nuxt',
     '@nuxtjs/moment',
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+
   ],
 
   bootstrapVue: {
@@ -64,6 +66,8 @@ export default {
   ** Build configuration
   */
   build: {
+    
+    transpile: ["vee-validate/dist/rules"],
     /*
     ** You can extend webpack config here
     */

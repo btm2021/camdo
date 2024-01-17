@@ -39,7 +39,7 @@
         </div>
       </div>
       <b-row>
-        <b-col cols="8" v-if="isChartData">
+        <b-col cols="12" v-if="isChartData">
           <b-card>
             <b-card-body>
               <apexchart
@@ -51,10 +51,55 @@
             </b-card-body>
           </b-card>
         </b-col>
-        <b-col cols="4">
+      </b-row>
+
+      <div v-if="info">
+        <div class="row">
+          <div class="col-12">
+            <div class="tile">
+              <div class="wrapper">
+                <div class="stats">
+                  <div>
+                    <strong>SỐ HÓA ĐƠN NGÀY</strong>
+                    {{ formatN(info.hoadonngay) }}
+                  </div>
+                  <div>
+                    <strong>TỔNG TIỀN NGÀY</strong
+                    >{{ formatN(info.sotienngay) }}
+                  </div>
+                  <div>
+                    <strong>THẾ MỚI/ĐÓNG LÃI</strong>
+                    {{ info.hoadonthemoi }}/{{ info.hoadondonglai }}
+                  </div>
+                </div>
+                <div class="stats">
+                  <div>
+                    <strong>HÓA ĐƠN CHUỘC </strong>
+                    {{ info.hoadonchuoc }}
+                  </div>
+                  <div>
+                    <strong>LÃI CHUỘC</strong>{{ info.tonglaihoadondonchuoc }}
+                  </div>
+                  <div>
+                    <strong>TỔNG TIỀN HÓA ĐƠN LẤY</strong>
+                    {{ formatN(info.tongtienhoadonchuoc) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <b-row>
+        <b-col cols="12" v-if="isChartData">
           <b-card>
             <b-card-body>
-              
+              <apexchart
+                style="width: 100%; height: 300px"
+                type="bar"
+                :options="optionsDaily"
+                :series="seriesDaily"
+              ></apexchart>
             </b-card-body>
           </b-card>
         </b-col>
@@ -68,6 +113,7 @@ export default {
   data() {
     return {
       info: null,
+      dailyChart: null,
       isChartData: null,
       chartData: null,
       xAxis: [],
@@ -80,7 +126,16 @@ export default {
           categories: [],
         },
       },
+      optionsDaily: {
+        chart: {
+          id: "daily-example",
+        },
+        xaxis: {
+          categories: [],
+        },
+      },
       series: [],
+      seriesDaily:[]
     };
   },
   methods: {
@@ -110,9 +165,28 @@ export default {
         this.info = data.body[0];
       });
     },
+    getDailyChart() {
+      this.$supabase
+        .from("monthly_invoice_summary")
+        .select()
+        .then((data) => {
+          let result = data.body;
+          let invoicemonthArray = result.map((item) => item.date);
+          let totalinvoicesArray = result.map((item) => item.total_invoices);
+         
+          this.optionsDaily.xaxis.categories = invoicemonthArray;
+          this.seriesDaily.push({
+            name: "Hóa đơn",
+            data: totalinvoicesArray,
+          });
+
+          this.chartData = data.body;
+        });
+    },
     initAll() {
       this.getChart();
       this.getStat();
+      this.getDailyChart();
     },
   },
   mounted() {

@@ -2,7 +2,7 @@
   <div>
     <div>
       <b-overlay :show="isStatus">
-        <b-row>
+        <b-row no-gutters>
           <b-col cols="6">
             <b-card class="mt-3 ml-2" header="Mẫu Đồ thế">
               <template #header>
@@ -212,58 +212,100 @@
             </b-card>
             <div></div>
           </b-col>
-          <b-col cols="3">
-            <b-card class="mt-3" header="Form Data Result">
-              <template #header>
-                <table
-                  style="
-                    width: 100%;
-                    height: 100%;
-                    color: blue;
-                    font-weight: bold;
-                    font-size: large;
-                  "
-                >
-                  <tr>
-                    <td style="text-align: left; width: 50%">
-                      Tên :{{ form.ten }}
-                    </td>
-                    <td style="text-align: right; width: 50%">
-                      Mã :{{ form.maso }}
-                    </td>
-                  </tr>
+          <b-col cols="6">
+            <b-row no-gutters>
+              <b-col cols="6">
+                <b-card class="mt-3" no-body header="Form Data Result">
+                  <template #header>
+                    <table
+                      style="
+                        width: 100%;
+                        height: 100%;
+                        color: blue;
+                        font-weight: bold;
+                        font-size: large;
+                      "
+                    >
+                      <tr>
+                        <td style="text-align: left; width: 50%">
+                          Tên :{{ form.ten }}
+                        </td>
+                        <td style="text-align: right; width: 50%">
+                          Mã :{{ form.maso }}
+                        </td>
+                      </tr>
 
-                  <tr>
-                    <td style="text-align: left; width: 50%">
-                      Tiền: {{ formatN(form.sotien * 1000) }}
-                    </td>
-                    <td style="text-align: right; width: 50%">
-                      <div>Ngày: {{ formatNgayThang(form.ngaycam) }}</div>
-                    </td>
-                  </tr>
-                </table>
-              </template>
-            </b-card>
-          </b-col>
-          <b-col cols="3">
-            <b-card class="mt-3" header="Sản phẩm vừa thêm">
-              <div v-for="(item, index) in lastInsert" :key="index">
-                <div>
-                  Mã : {{ item.invoice_number }}<br />
-                  Tên : {{ item.customer_name }}<br />
-                  Tiền : {{ formatN(item.invoice_money) }}<br />
-                  Ngày :
-                  {{ $moment(item.invoice_date_create).format("DD/MM/YYYY")
-                  }}<br />
-                  <b-button
-                    variant="danger"
-                    @click="deleteLastItem(item.id)"
-                    block
-                    >Xóa</b-button
+                      <tr>
+                        <td style="text-align: left; width: 50%">
+                          Tiền: {{ formatN(form.sotien * 1000) }}
+                        </td>
+                        <td style="text-align: right; width: 50%">
+                          <div>Ngày: {{ formatNgayThang(form.ngaycam) }}</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </template>
+                </b-card>
+              </b-col>
+              <b-col cols="6">
+                <b-card class="mt-3">
+                  <b-card-body>
+                    <div>
+                      Ngày hiện tại :<b
+                        ><code> {{ $moment().format("DD/MM/YYYY") }}</code></b
+                      >
+                    </div>
+                    <div v-if="lastInsertForInfo">
+                      Hóa đơn cuối cùng vừa nhập
+                      <br />
+                      Tên : {{ lastInsertForInfo.customer_name }}<br />
+                      Mã : {{ lastInsertForInfo.invoice_number }}<br />
+                      Tiền : {{ formatN(lastInsertForInfo.invoice_money)
+                      }}<br />
+                      Ngày :
+                      {{
+                        $moment(lastInsertForInfo.invoice_date_create).format(
+                          "DD/MM/YYYY"
+                        )
+                      }}
+                      <br />
+                    </div>
+                  </b-card-body> </b-card
+              ></b-col>
+              <b-col cols="12">
+                <b-card class="mt-3" header="Sản phẩm vừa thêm">
+                  <b-table
+                    class="text-center"
+                    hover
+                    data-sort-name="id"
+                    data-sort-order="asc"
+                    :items="lastInsert"
+                    :fields="lastInsertField"
+                    show-empty
+                    small
+                    bordered
+                    responsive=""
                   >
-                </div>
-              </div>
-            </b-card>
+                    <template #cell(index)="data">
+                      {{ data.index + 1 }}
+                    </template>
+
+                    <template #cell(tool)="data">
+                      <b-button
+                        variant="danger"
+                        @click="deleteLastItem(data.item.id)"
+                        block
+                        >Xóa</b-button
+                      >
+                    </template>
+
+                    <template #cell(invoice_money)="data">
+                      <div>{{ formatN(data.value) }}</div>
+                    </template>
+                  </b-table>
+                </b-card>
+              </b-col>
+            </b-row>
           </b-col>
         </b-row>
       </b-overlay>
@@ -304,6 +346,15 @@ export default {
   watch: {},
   data() {
     return {
+      lastInsertField: [
+        { key: "index", label: "#" },
+        { key: "customer_name", label: "Tên" },
+        { key: "invoice_number", label: "Mã" },
+        { key: "invoice_money", label: "Tiền" },
+        { key: "invoice_date_create", label: "Ngày" },
+        "tool",
+      ],
+      lastInsertForInfo: null,
       maSoTrung: false,
       lastInsert: [],
       inputMode: false,
@@ -342,6 +393,17 @@ export default {
     //valid
 
     //
+    getLastInput() {
+      this.$supabase
+        .from("invoice")
+        .select()
+        .limit(1)
+        .order("id", { ascending: false })
+        .then((data) => {
+          this.lastInsertForInfo = data.data[0];
+          console.log(this.lastInsertForInfo);
+        });
+    },
     changeInputMode() {
       this.setCurrentDay();
     },
@@ -424,6 +486,10 @@ export default {
         if (data) {
           let ngayFinal = this.$moment(this.form.ngaycam, "DD/MM/YYYY");
 
+          let invoice_tag = [];
+          this.form.tag.map((item) => {
+            invoice_tag.push(String(item).toUpperCase());
+          });
           let objectInser = {
             invoice_number: parseInt(this.form.maso),
             invoice_date_create: ngayFinal.format("YYYY/MM/DD"),
@@ -433,12 +499,13 @@ export default {
             invoice_phone: this.form.phone,
             invoice_type: "BÌNH THƯỜNG",
             invoice_status: false,
-            invoice_tag: this.form.tag,
+            invoice_tag,
             invoice_store: this.form.store,
             invoice_store_type: this.form.store_type,
             invoice_cat: this.form.cat,
           };
           console.log(objectInser);
+
           this.$supabase
             .from("invoice")
             .insert([objectInser])
@@ -523,6 +590,7 @@ export default {
       sotien: null,
     };
     this.focusTen();
+    this.getLastInput();
   },
 };
 </script>

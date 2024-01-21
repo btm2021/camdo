@@ -319,7 +319,7 @@ import { extend, configure } from "vee-validate";
 
 import * as rules from "vee-validate/dist/rules";
 Object.keys(rules).forEach((rule) => {
-  // console.log(rule);
+  console.log(rule);
   extend(rule, rules[rule]);
 });
 
@@ -595,5 +595,5 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 </style>

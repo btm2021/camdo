@@ -29,7 +29,7 @@ export default {
   */
   plugins: [
 
-    '~/plugins/chart.js',
+    '~/plugins/chart.js', '~/plugins/myUtils.js',
     '~/plugins/veevalidator.js'
   ],
   /*
@@ -57,8 +57,7 @@ export default {
   },
   moment: {
     plugins: [
-
-
+      'moment-lunar'
     ]
 
   },
@@ -66,7 +65,7 @@ export default {
   ** Build configuration
   */
   build: {
-    
+
     transpile: ["vee-validate/dist/rules"],
     /*
     ** You can extend webpack config here

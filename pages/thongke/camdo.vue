@@ -135,7 +135,7 @@ export default {
         },
       },
       series: [],
-      seriesDaily:[]
+      seriesDaily: [],
     };
   },
   methods: {
@@ -173,7 +173,7 @@ export default {
           let result = data.body;
           let invoicemonthArray = result.map((item) => item.date);
           let totalinvoicesArray = result.map((item) => item.total_invoices);
-         
+
           this.optionsDaily.xaxis.categories = invoicemonthArray;
           this.seriesDaily.push({
             name: "Hóa đơn",
@@ -195,7 +195,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 /*	Reset & General
 ---------------------------------------------------------------------- */
 * {

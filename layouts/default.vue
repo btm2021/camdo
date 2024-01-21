@@ -1,52 +1,340 @@
 <template>
   <div>
-    <b-navbar toggleable="lg" type="dark" variant="info">
-      <b-navbar-brand href="#">Cầm đồ</b-navbar-brand>
+    <b-modal
+      ref="modal_camdo"
+      id="modal_camdo"
+      title="Cầm đồ - Hóa đơn "
+      hide-footer
+      size="lg"
+      @ok="edit_invoice()"
+      @cancel="itemEdit = null"
+    >
+      <div v-if="itemEdit">
+        <b-row>
+          <b-col cols="4">
+            <b-form-group label="Tên khách:" description="Tên khách">
+              <b-form-input
+                autocomplete="off"
+                style="text-transform: uppercase"
+                :disabled="itemEdit.invoice_status ? true : false"
+                autocapitalize
+                v-model="itemEdit.customer_name"
+                type="text"
+                :placeholder="itemEdit.customer_name"
+              ></b-form-input>
+            </b-form-group>
+            <b-form-group label="Mã số:">
+              <b-form-input
+                autocomplete="off"
+                :disabled="itemEdit.invoice_status ? true : false"
+                autocapitalize
+                v-model="itemEdit.invoice_number"
+                type="text"
+                @change="checkMaSo"
+              ></b-form-input>
+            </b-form-group>
+            <b-form-group
+              id="input-group-3"
+              label="Phân loại:"
+              label-for="input-3"
+            >
+              <b-form-select
+                v-model="itemEdit.invoice_type"
+                :options="['BÌNH THƯỜNG', 'MẤT GIẤY', 'THANH LÝ']"
+                :disabled="itemEdit.invoice_status ? true : false"
+                required
+              ></b-form-select>
+            </b-form-group>
+            <b-form-group
+              id="input-group-3"
+              label="Loại lưu:"
+              label-for="input-3"
+            >
+              <b-form-select
+                v-model="itemEdit.invoice_store"
+                :options="[
+                  'BỊCH KÉO MIỆNG',
+                  'HỘP TRÁI BÍ TO',
+                  'HỘP TRÁI BÍ TRUNG',
+                  'HỘP TRÁI BÍ NHỎ',
+                  'HỘP HỒNG TRONG TO',
+                  'HỘP HỒNG DẸP',
+                  'HỘP NHUNG KIỀNG',
+                  'HỘP NHUNG DẸP',
+                  'HỘP KIỀNG',
+                  'KHÁC',
+                ]"
+                :disabled="itemEdit.invoice_status ? true : false"
+                required
+              ></b-form-select>
+            </b-form-group>
+            <b-form-group
+              id="input-group-3"
+              label="Nơi lưu:"
+              label-for="input-3"
+            >
+              <b-form-select
+                v-model="itemEdit.invoice_store_type"
+                :options="['KHAY', 'KÉT', 'KHÁC']"
+                required
+              ></b-form-select>
+            </b-form-group>
+            <b-form-group label="Comment">
+              <b-form-textarea
+                id="textarea"
+                :disabled="itemEdit.invoice_status ? true : false"
+                v-model="itemEdit.invoice_comment"
+                rows="3"
+                max-rows="6"
+              ></b-form-textarea>
+            </b-form-group>
+          </b-col>
+          <b-col cols="4">
+            <b-form-group
+              label="Số tiền"
+              :description="$formatN(itemEdit.invoice_money)"
+            >
+              <b-form-input
+                autocomplete="off"
+                :disabled="itemEdit.invoice_status ? true : false"
+                autocapitalize
+                v-model="itemEdit.invoice_money"
+                type="number"
+                :placeholder="$formatN(itemEdit.invoice_money)"
+              ></b-form-input>
+            </b-form-group>
+            <b-form-group label="Ngày thế">
+              <b-form-input
+                autocomplete="off"
+                :disabled="itemEdit.invoice_status ? true : false"
+                autocapitalize
+                @change="changeEditDate"
+                v-model="itemEdit.invoice_date_create"
+                type="text"
+              ></b-form-input>
+            </b-form-group>
+            <b-form-group label="Ngày lấy">
+              <b-form-input
+                autocomplete="off"
+                autocapitalize
+                disabled
+                v-model="itemEdit.invoice_date_get_beauty"
+                :disable="true"
+                type="text"
+              ></b-form-input>
+            </b-form-group>
+
+            <b-form-group label="Sdt">
+              <b-form-input
+                type="search"
+                autocomplete="off"
+                v-model="itemEdit.invoice_phone"
+              ></b-form-input>
+            </b-form-group>
+            <b-form-group
+              id="input-group-3"
+              label="Loại thế:"
+              label-for="input-3"
+            >
+              <b-form-select
+                v-model="itemEdit.invoice_cat"
+                :options="['THẾ MỚI', 'ĐÓNG LÃI', 'KHÁC']"
+                :disabled="itemEdit.invoice_status ? true : false"
+                required
+              ></b-form-select>
+            </b-form-group>
+          </b-col>
+          <b-col cols="4">
+            <b-form-group>
+              <b-button
+                @click="edit_invoice()"
+                block
+                variant="primary"
+                :disabled="itemEdit.invoice_status ? true : false"
+                >Chỉnh giấy</b-button
+              >
+              <b-button
+                block
+                variant="success"
+                @click="check_invoice()"
+                :disabled="itemEdit.invoice_status ? true : false"
+                >Chuộc đồ</b-button
+              >
+              <b-button
+                block
+                variant="warning"
+                @click="sell_invoice()"
+                :disabled="itemEdit.invoice_status ? true : false"
+                >Thanh Lý</b-button
+              >
+
+              <b-button
+                block
+                variant="danger"
+                @click="lost_invoice()"
+                :disabled="itemEdit.invoice_status ? true : false"
+                >Mất giấy</b-button
+              >
+              <b-button block variant="danger" @click="delete_invoice()"
+                >Xóa Giấy</b-button
+              >
+            </b-form-group>
+            <b-form-group>
+              <template #label>
+                <h5 class="text-center">Thông tin</h5>
+              </template>
+              <b-icon
+                icon="check-square-fill"
+                :variant="itemEdit.invoice_status ? 'primary' : 'success'"
+              ></b-icon>
+              {{ itemEdit.invoice_status ? "Đã chuộc" : "Chưa chuộc" }}
+            </b-form-group>
+            <b-form-group>
+              <table style="width: 100%">
+                <tr>
+                  <td class="text-left">Ngày thế</td>
+                  <td class="text-right">
+                    {{ $getCountDateComponent(itemEdit) }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-left">Tiền Vốn</td>
+                  <td class="text-right">
+                    {{ $formatN(itemEdit.invoice_money) }}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-left">Tiền Lãi</td>
+                  <td class="text-right">
+                    {{
+                      $formatN(
+                        parseInt(
+                          (
+                            ($getCountDateComponent(itemEdit) *
+                              itemEdit.invoice_money *
+                              profitPercent) /
+                            3 /
+                            1000 /
+                            1000
+                          ).toFixed(0)
+                        ) * 1000
+                      )
+                    }}
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <hr />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-left">Tổng tiền :</td>
+                  <td class="text-right">
+                    {{ $formatN($getTongTien(itemEdit)) }}
+                  </td>
+                </tr>
+              </table>
+            </b-form-group>
+          </b-col>
+        </b-row>
+      </div>
+    </b-modal>
+    <b-modal id="modal_sanpham">
+      <h1>san pham</h1>
+    </b-modal>
+    <b-modal id="modal_input" hide-header hide-footer hide-header-close>
+      <b-input
+        v-model="modal_input"
+        autofocus
+        @change="checkInput"
+        size="lg"
+        class="text-center"
+        style="font-size: 50px; font-weight: bold"
+      ></b-input>
+    </b-modal>
+    <b-navbar toggleable="lg" type="dark" variant="primary">
+      <b-navbar-brand to="/">BPJ</b-navbar-brand>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
-          <b-nav-item href="/">Home</b-nav-item>
-          <b-nav-item href="/them">Thêm</b-nav-item>
-          <b-nav-item href="/taoma">Tạo mã</b-nav-item>
-          <b-nav-item href="/check">Check</b-nav-item>
-          <b-nav-item href="/thongke">Thống kê</b-nav-item>
-          <b-nav-item href="/chat">Chat</b-nav-item>
-          <b-nav-item href="/thanhly">Thanh Lý</b-nav-item>
+          <b-nav-item-dropdown text="Cầm Đồ">
+            <b-dropdown-group id="dropdown-group-1">
+              <b-dropdown-item to="/camdo/">
+                Danh sách hóa đơn
+              </b-dropdown-item>
+              <b-dropdown-item to="/camdo/them"
+                >Thêm hóa đơn thế</b-dropdown-item
+              >
+              <b-dropdown-item to="/camdo/chuocdo">Rút giấy</b-dropdown-item>
+              <b-dropdown-item to="/camdo/thanhly"> Thanh lý</b-dropdown-item>
+            </b-dropdown-group>
+          </b-nav-item-dropdown>
         </b-navbar-nav>
 
+        <b-navbar-nav>
+          <b-nav-item-dropdown text="Sản phẩm">
+            <b-dropdown-group id="dropdown-group-1" header="Sản phẩm">
+              <b-dropdown-item to="/sanpham/"
+                >Danh sách sản phẩm</b-dropdown-item
+              >
+              <b-dropdown-item to="/sanpham/them"
+                >Thêm sản phẩm</b-dropdown-item
+              >
+            </b-dropdown-group>
+            <b-dropdown-group id="dropdown-group-2" header="Bảng giá">
+              <b-dropdown-item to="/">Bảng Giá</b-dropdown-item>
+            </b-dropdown-group>
+          </b-nav-item-dropdown>
+        </b-navbar-nav>
+
+        <b-navbar-nav>
+          <b-nav-item-dropdown text="Công cụ">
+            <b-dropdown-group
+              id="dropdown-group-1"
+              header="Sản phẩm"
+              style="width: 300px"
+            >
+              <b-dropdown-item-button>Bảng giá</b-dropdown-item-button>
+              <b-dropdown-item-button>Đặt đồ</b-dropdown-item-button>
+              <b-dropdown-item-button>Tiền công thợ</b-dropdown-item-button>
+              <b-dropdown-item-button>Chế vàng</b-dropdown-item-button>
+              <b-dropdown-item-button>Kiểm tiền</b-dropdown-item-button>
+              <b-dropdown-item-button>Thông tin tiệm</b-dropdown-item-button>
+              <b-dropdown-item-button>Sổ đánh bóng</b-dropdown-item-button>
+            </b-dropdown-group>
+          </b-nav-item-dropdown>
+        </b-navbar-nav>
+
+        <b-navbar-nav>
+          <b-nav-item-dropdown text="Thống kê">
+            <b-dropdown-group
+              id="dropdown-group-1"
+              header="Sản phẩm"
+              style="width: 300px"
+            >
+              <b-dropdown-item-button>Sản phẩm</b-dropdown-item-button>
+              <b-dropdown-item to="/thongke/camdo">Cầm đồ</b-dropdown-item>
+            </b-dropdown-group>
+          </b-nav-item-dropdown>
+        </b-navbar-nav>
+        <b-navbar-nav>
+          <b-nav-item to="/chat">Chat</b-nav-item>
+        </b-navbar-nav>
         <!-- Right aligned nav items -->
+        <b-navbar-nav class="ml-auto">
+          <b-nav-form>
+            <b-form-input
+              size="sm"
+              class="mr-sm-2"
+              placeholder="Search"
+            ></b-form-input>
+          </b-nav-form>
+        </b-navbar-nav>
       </b-collapse>
     </b-navbar>
     <nuxt />
-<!-- 
-    <button class="open-button" @click="openForm()">Chat</button>
-
-    <div  class="chat-popup" id="myForm">
-      <form action="#" class="form-container">
-        <h1>Chat</h1>
-
-        <label for="msg"><b>Message</b></label>
-        <textarea
-          v-model="question"
-          placeholder="Type message.."
-          name="msg"
-          required
-        ></textarea>
-        <textarea
-          placeholder="AI đang trả lời.."
-          name="msg"
-          v-model="answer"
-          required
-        ></textarea>
-
-        <button type="button" class="btn" @click="sendQuestion()">Send</button>
-        <button type="button" class="btn cancel" @click="closeForm()">
-          Close
-        </button>
-      </form>
-    </div> -->
   </div>
 </template>
 <script>
@@ -54,144 +342,50 @@ export default {
   data() {
     return {
       question: "",
-      answer:""
+      answer: "",
+      modal_input: null,
+      type: null,
+      itemEdit: null,
     };
   },
   methods: {
-    sendQuestion() {},
-    openForm() {
-      document.getElementById("myForm").style.display = "block";
+    checkInput() {
+      this.$bvModal.hide("modal_input");
+      if (this.type === "@") {
+        this.checkCamDo();
+      }
+      if (this.type === "#") {
+        this.checkSanPham();
+      }
+      this.type = null;
+      this.modal_input = null;
     },
-    closeForm() {
-      document.getElementById("myForm").style.display = "none";
+    checkCamDo() {
+      let hoadon = this.modal_input;
+      this.$supabase
+        .from("invoice")
+        .select()
+        .eq("invoice_number", hoadon)
+        .then((data) => {
+          this.itemEdit = data.data[0];
+          //console.log(this.itemEdit);
+          this.$bvModal.show("modal_camdo");
+        });
     },
+    checkSanPham() {
+      this.$bvModal.show("modal_sanpham");
+    },
+    getCamDo() {},
+  },
+  mounted() {
+    window.addEventListener("keyup", (e) => {
+      if (e.key === "@" || e.key === "#") {
+        this.type = e.key;
+        this.$bvModal.show("modal_input");
+      }
+    });
   },
 };
 </script>
-
 <style>
-html {
-  font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 16px;
-  word-spacing: 1px;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  box-sizing: border-box;
-}
-
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
-  margin: 0;
-}
-
-.button--green {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #3b8070;
-  color: #3b8070;
-  text-decoration: none;
-  padding: 10px 30px;
-}
-
-.button--green:hover {
-  color: #fff;
-  background-color: #3b8070;
-}
-
-.button--grey {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #35495e;
-  color: #35495e;
-  text-decoration: none;
-  padding: 10px 30px;
-  margin-left: 15px;
-}
-
-.button--grey:hover {
-  color: #fff;
-  background-color: #35495e;
-}
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-* {
-  box-sizing: border-box;
-}
-
-/* Button used to open the chat form - fixed at the bottom of the page */
-.open-button {
-  background-color: #555;
-  color: white;
-  padding: 16px 20px;
-  border: none;
-  cursor: pointer;
-  opacity: 0.8;
-  position: fixed;
-  bottom: 23px;
-  right: 28px;
-  width: 280px;
-}
-
-/* The popup chat - hidden by default */
-.chat-popup {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  right: 15px;
-  border: 3px solid #f1f1f1;
-  z-index: 9;
-}
-
-/* Add styles to the form container */
-.form-container {
-  max-width: 300px;
-  padding: 10px;
-  background-color: white;
-}
-
-/* Full-width textarea */
-.form-container textarea {
-  width: 100%;
-  padding: 15px;
-  margin: 5px 0 22px 0;
-  border: none;
-  background: #f1f1f1;
-  resize: none;
-  min-height: 200px;
-}
-
-/* When the textarea gets focus, do something */
-.form-container textarea:focus {
-  background-color: #ddd;
-  outline: none;
-}
-
-/* Set a style for the submit/send button */
-.form-container .btn {
-  background-color: #04aa6d;
-  color: white;
-  padding: 16px 20px;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  margin-bottom: 10px;
-  opacity: 0.8;
-}
-
-/* Add a red background color to the cancel button */
-.form-container .cancel {
-  background-color: red;
-}
-
-/* Add some hover effects to buttons */
-.form-container .btn:hover,
-.open-button:hover {
-  opacity: 1;
-}
 </style>

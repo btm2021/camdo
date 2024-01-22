@@ -2938,32 +2938,6 @@ acorn@^8.0.4, acorn@^8.10.0, acorn@^8.11.2, acorn@^8.11.3, acorn@^8.6.0, acorn@^
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.11.3.tgz#71e0b14e13a4ec160724b38fb7b0f233b1b81d7a"
   integrity sha512-Y9rRfJG5jcKOE0CLisYbojUjIrIEE7AGMzA/Sm4BslANhbS+cDMpgBdcPT91oJ7OuJ9hYJBx59RjbhxVnrF8Xg==
 
-ag-grid-community@~31.0.2:
-  version "31.0.2"
-  resolved "https://registry.yarnpkg.com/ag-grid-community/-/ag-grid-community-31.0.2.tgz#8421c4e23e29205628281c1258808e83dccdada2"
-  integrity sha512-gxUdHeAZUV2TDHqnDax5QSQgUxIvJ1zaFxUuPzcfiiPwbN6btz6kxg/KNrDfEjQi70JBfJV46BMR9KTG6iAVmQ==
-
-ag-grid-enterprise@^31.0.2:
-  version "31.0.2"
-  resolved "https://registry.yarnpkg.com/ag-grid-enterprise/-/ag-grid-enterprise-31.0.2.tgz#c5bca244e088a87ed568aaa54a5475e9348f5dc1"
-  integrity sha512-KVtlvc8kcZVs4nRozUM0Ir7sd1W8I0JqSRSRhScob5lEE5aQnuYfy7LF8ZSic/HYLqZMBMDDsVfX8EfjkWfLlw==
-  dependencies:
-    ag-grid-community "~31.0.2"
-
-ag-grid-vue3@^31.0.2:
-  version "31.0.2"
-  resolved "https://registry.yarnpkg.com/ag-grid-vue3/-/ag-grid-vue3-31.0.2.tgz#70d6e363b0fa35aed0fe757cf510b1f79e81cdf6"
-  integrity sha512-b9ZAAI+Ktw1Ew8xQ10u/jWfiwgu6hJ01Da337Hp7d+3eBharQpvcY9MC00K/OxP34yrX04Gq34ChT/axeyO1qA==
-  dependencies:
-    ag-grid-community "~31.0.2"
-
-ag-grid-vue@^31.0.2:
-  version "31.0.2"
-  resolved "https://registry.yarnpkg.com/ag-grid-vue/-/ag-grid-vue-31.0.2.tgz#d717eb15dcf8a04d286a2e064e12909220c702a7"
-  integrity sha512-RHQnfLLBENg3gD90uwM0CD0XG0ExxiJ1VpvcJSdC1hRCgBDHKDmWaNF3VKA+hX470XW1ZGSJgKDZVQhKwkzHrg==
-  dependencies:
-    ag-grid-community "~31.0.2"
-
 agent-base@6, agent-base@^6.0.0, agent-base@^6.0.2:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/agent-base/-/agent-base-6.0.2.tgz#49fff58577cfee3f37176feab4c22e00f86d7f77"
@@ -3408,7 +3382,7 @@ boolbase@^1.0.0:
   resolved "https://registry.yarnpkg.com/boolbase/-/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
   integrity sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==
 
-bootstrap-vue@^2.0.0:
+bootstrap-vue@^2.15.0:
   version "2.23.1"
   resolved "https://registry.yarnpkg.com/bootstrap-vue/-/bootstrap-vue-2.23.1.tgz#8f866f7cda27eb0e7e13a0bea8d55d8fc7a82199"
   integrity sha512-SEWkG4LzmMuWjQdSYmAQk1G/oOKm37dtNfjB5kxq0YafnL2W6qUAmeDTcIZVbPiQd2OQlIkWOMPBRGySk/zGsg==
@@ -3419,7 +3393,7 @@ bootstrap-vue@^2.0.0:
     portal-vue "^2.1.7"
     vue-functional-data-merge "^3.1.0"
 
-bootstrap@^4.1.3, bootstrap@^4.6.1:
+bootstrap@^4.5.0, bootstrap@^4.6.1:
   version "4.6.2"
   resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-4.6.2.tgz#8e0cd61611728a5bf65a3a2b8d6ff6c77d5d7479"
   integrity sha512-51Bbp/Uxr9aTuy6ca/8FbFloBUJZLHwnhTcnjIeRn2suQWsWzcuJhGjKDB5eppVte/8oCdOL3VuwxvZDUggwGQ==

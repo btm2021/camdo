@@ -51,6 +51,16 @@ export const state = () => ({
         { text: "Vàng 610", value: "610" },
         { text: "TOÀN BỘ", value: null }
     ],
+    sanpham_optionImportype: [
+        { text: "Chành", value: "chanh" },
+        { text: "Nội Bộ", value: "noibo" },
+    ],
+    sanpham_optionImportype_view: [
+        { text: "Chành", value: "chanh" },
+        { text: "Nội Bộ", value: "noibo" },
+        { text: "Tất cả", value: null },
+
+    ]
 })
 
 export const getters = {

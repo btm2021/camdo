@@ -76,6 +76,6 @@ export default {
       else
         config.devtool = "inline-source-map"
     }
-  }
+  },
 
 }

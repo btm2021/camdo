@@ -252,7 +252,12 @@
         style="font-size: 50px; font-weight: bold"
       ></b-input>
     </b-modal>
-    <b-navbar toggleable="lg" type="dark" variant="primary">
+    <b-navbar
+      style="padding: 0px; height: 40px"
+      toggleable="lg"
+      type="dark"
+      variant="primary"
+    >
       <b-navbar-brand to="/">BPJ</b-navbar-brand>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -261,14 +266,14 @@
         <b-navbar-nav>
           <b-nav-item-dropdown text="Cầm Đồ">
             <b-dropdown-group id="dropdown-group-1">
-              <b-dropdown-item to="/camdo/">
+              <b-dropdown-item href="/camdo/">
                 Danh sách hóa đơn
               </b-dropdown-item>
-              <b-dropdown-item to="/camdo/them"
+              <b-dropdown-item href="/camdo/them"
                 >Thêm hóa đơn thế</b-dropdown-item
               >
-              <b-dropdown-item to="/camdo/chuocdo">Rút giấy</b-dropdown-item>
-              <b-dropdown-item to="/camdo/thanhly"> Thanh lý</b-dropdown-item>
+              <b-dropdown-item href="/camdo/chuocdo">Rút giấy</b-dropdown-item>
+              <b-dropdown-item href="/camdo/thanhly"> Thanh lý</b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -276,7 +281,7 @@
         <b-navbar-nav>
           <b-nav-item-dropdown text="Sản phẩm">
             <b-dropdown-group id="dropdown-group-1" header="Sản phẩm">
-              <b-dropdown-item to="/sanpham/"
+              <b-dropdown-item href="/sanpham/"
                 >Danh sách sản phẩm</b-dropdown-item
               >
               <b-dropdown-item to="/sanpham/them"
@@ -284,7 +289,7 @@
               >
             </b-dropdown-group>
             <b-dropdown-group id="dropdown-group-2" header="Bảng giá">
-              <b-dropdown-item to="/">Bảng Giá</b-dropdown-item>
+              <b-dropdown-item href="/">Bảng Giá</b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -315,7 +320,7 @@
               style="width: 300px"
             >
               <b-dropdown-item-button>Sản phẩm</b-dropdown-item-button>
-              <b-dropdown-item to="/thongke/camdo">Cầm đồ</b-dropdown-item>
+              <b-dropdown-item href="/thongke/camdo">Cầm đồ</b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -323,7 +328,7 @@
           <b-nav-item to="/chat">Chat</b-nav-item>
         </b-navbar-nav>
         <!-- Right aligned nav items -->
-        <b-navbar-nav class="ml-auto">
+        <!-- <b-navbar-nav class="ml-auto">
           <b-nav-form>
             <b-form-input
               size="sm"
@@ -331,7 +336,7 @@
               placeholder="Search"
             ></b-form-input>
           </b-nav-form>
-        </b-navbar-nav>
+        </b-navbar-nav> -->
       </b-collapse>
     </b-navbar>
     <nuxt />

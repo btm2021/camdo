@@ -10,7 +10,7 @@
             <img src="~/assets/logo.png" alt="" width="30%" height="50%" />
           </th>
           <th colspan="4" rowspan="2">
-            <h1 class="textGa">DNTN VÀNG BẠC BẢO PHƯƠNG</h1>
+            <h1 class="textGa">DNTN BẢO PHƯƠNG</h1>
           </th>
           <th rowspan="3"></th>
         </tr>

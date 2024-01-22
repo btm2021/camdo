@@ -9,6 +9,7 @@
         responsive
         bordered
         striped
+        
         no-border-collapse
         small
         :fields="fieldsSanPham"
@@ -267,14 +268,7 @@
 
       <div
         class="pagination-container"
-        style="
-          z-index: 999;
-          margin-top: 20px;
-          overflow-y: scroll;
-          position: absolute;
-          bottom: 0;
-          width: 100%;
-        "
+        style="position: absolute; bottom: 0; width: 100%"
       >
         <b-select v-model="perPage" class="per-page-selector">
           <option value="20">20 mục/trang</option>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="background-color: black">
     <nuxt />
   </div>
 </template>
@@ -7,5 +7,8 @@
 export default {};
 </script>
   <style>
+body {
+  background-color: black;
+}
 </style>
   

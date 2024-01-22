@@ -135,6 +135,9 @@ export default {
 };
 </script>
 <style scoped>
+html{
+  background-color:Black
+}
 .main {
   background-image: url("~/assets/background1.gif") !important;
   background-size: cover !important; /* Hoặc bạn có thể sử dụng 'contain' tùy thuộc vào cách bạn muốn ảnh GIF được hiển thị */
@@ -178,7 +181,7 @@ export default {
   color: yellow;
   table-layout: fixed;
   width: 100vw;
-  height: 90vh;
+  height: 80vh;
   border-collapse: collapse;
   overflow: hidden;
   text-align: center;

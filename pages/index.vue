@@ -170,6 +170,8 @@ export default {
           id: "inputModal",
           props: {
             type: "number",
+            value:
+              type === "sellingPrice" ? item.sellingPrice : item.buyingPrice,
             placeholder:
               type === "sellingPrice" ? item.sellingPrice : item.buyingPrice,
           },

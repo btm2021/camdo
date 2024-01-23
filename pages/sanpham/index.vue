@@ -2,9 +2,9 @@
   <b-row no-gutters>
     <b-col cols="3">
       <iframe
-        src="http://34.83.102.208/d-solo/b732af6c-14be-4593-8350-698bb9ef9a96/san-pham?orgId=1&from=1705952047119&to=1705973647119&panelId=1"
+        src="https://f3a1-34-83-102-208.ngrok-free.app/d-solo/b732af6c-14be-4593-8350-698bb9ef9a96/san-pham?orgId=1&from=1705952949217&to=1705974549217&panelId=1"
         width="100%"
-        height="300px"
+        height="300"
         frameborder="0"
       ></iframe>
     </b-col>

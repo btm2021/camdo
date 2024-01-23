@@ -40,10 +40,14 @@
         <tr>
           <td class="isBordered">9999</td>
           <td class="isBordered">
-            {{ getGiaVang(giavang, "9999", "buyingPrice") }}
+            <span class="price">
+              {{ getGiaVang(giavang, "9999", "buyingPrice") }}</span
+            >
           </td>
           <td class="isBordered">
-            {{ getGiaVang(giavang, "9999", "sellingPrice") }}
+            <span class="price">
+              {{ getGiaVang(giavang, "9999", "sellingPrice") }}</span
+            >
           </td>
           <td class="isBordered" colspan="4" rowspan="4">
             <img
@@ -56,28 +60,40 @@
         <tr>
           <td class="isBordered">980</td>
           <td class="isBordered">
-            {{ getGiaVang(giavang, "980", "buyingPrice") }}
+            <span class="price">
+              {{ getGiaVang(giavang, "980", "buyingPrice") }}</span
+            >
           </td>
           <td class="isBordered">
-            {{ getGiaVang(giavang, "980", "sellingPrice") }}
+            <span class="price">
+              {{ getGiaVang(giavang, "980", "sellingPrice") }}</span
+            >
           </td>
         </tr>
         <tr>
           <td class="isBordered">710</td>
           <td class="isBordered">
-            {{ getGiaVang(giavang, "750", "buyingPrice") }}
+            <span class="price">
+              {{ getGiaVang(giavang, "750", "buyingPrice") }}</span
+            >
           </td>
           <td class="isBordered">
-            {{ getGiaVang(giavang, "750", "sellingPrice") }}
+            <span class="price">
+              {{ getGiaVang(giavang, "750", "sellingPrice") }}</span
+            >
           </td>
         </tr>
         <tr>
           <td class="isBordered">610</td>
           <td class="isBordered">
-            {{ getGiaVang(giavang, "610", "buyingPrice") }}
+            <span class="price">
+              {{ getGiaVang(giavang, "980", "buyingPrice") }}</span
+            >
           </td>
           <td class="isBordered">
-            {{ getGiaVang(giavang, "610", "sellingPrice") }}
+            <span class="price">
+              {{ getGiaVang(giavang, "610", "sellingPrice") }}</span
+            >
           </td>
         </tr>
         <tr>
@@ -136,10 +152,34 @@ export default {
 </script>
 <style scoped>
 .main {
-  background-image: url("~/assets/background1.gif") !important;
-  background-size: cover !important; /* Hoặc bạn có thể sử dụng 'contain' tùy thuộc vào cách bạn muốn ảnh GIF được hiển thị */
-  background-repeat: no-repeat !important;
+  background: linear-gradient(
+    to right,
+    #ff0000 0%,
+    /* Đỏ */ #ff7f00 14.3%,
+    /* Cam */ #ffff00 28.6%,
+    /* Vàng */ #00ff00 42.9%,
+    /* Xanh lá */ #0000ff 57.1%,
+    /* Xanh dương */ #4b0082 71.4%,
+    /* Chàm */ #8b00ff 85.7%,
+    /* Tím */ #8b00ff 100%
+  ); /* Tím */
+  background-size: 400% 400%;
+  animation: gradient 10s ease-in infinite;
+  height: 100vh;
 }
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 .textGa {
   text-align: center;
   background: linear-gradient(
@@ -154,18 +194,11 @@ export default {
     /* Tím */ #8b00ff 100%
   ); /* Tím */
   background-size: 200% auto;
-  color: #000;
-
   background-clip: text;
-  text-fill-color: transparent;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: shine 1s linear infinite;
-}
-@keyframes shine {
-  to {
-    background-position: 200% center;
-  }
+
+  animation: gradient 10s ease-in-out infinite;
 }
 .isBordered {
   border: 1px solid yellow;

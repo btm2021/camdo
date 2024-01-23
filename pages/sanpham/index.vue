@@ -1,6 +1,13 @@
 <template>
   <b-row no-gutters>
-    <b-col cols="3"> </b-col>
+    <b-col cols="3">
+      <iframe
+        src="http://34.83.102.208/d-solo/b732af6c-14be-4593-8350-698bb9ef9a96/san-pham?orgId=1&from=1705952047119&to=1705973647119&panelId=1"
+        width="100%"
+        height="300px"
+        frameborder="0"
+      ></iframe>
+    </b-col>
     <b-col cols="9" style="font-size: 13px">
       <b-table
         :items="myProvider"
@@ -9,7 +16,6 @@
         responsive
         bordered
         striped
-        
         no-border-collapse
         small
         :fields="fieldsSanPham"

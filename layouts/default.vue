@@ -301,7 +301,7 @@
               header="Sản phẩm"
               style="width: 300px"
             >
-              <b-dropdown-item-button>Bảng giá</b-dropdown-item-button>
+              <b-dropdown-item href="/tv">Bảng giá</b-dropdown-item>
               <b-dropdown-item-button>Đặt đồ</b-dropdown-item-button>
               <b-dropdown-item-button>Tiền công thợ</b-dropdown-item-button>
               <b-dropdown-item-button>Chế vàng</b-dropdown-item-button>

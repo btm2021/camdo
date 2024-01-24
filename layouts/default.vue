@@ -302,10 +302,11 @@
               style="width: 300px"
             >
               <b-dropdown-item href="/tv">Bảng giá</b-dropdown-item>
+              <b-dropdown-item href="/tool/cannuoc">Cân Nước</b-dropdown-item>
               <b-dropdown-item-button>Đặt đồ</b-dropdown-item-button>
               <b-dropdown-item-button>Tiền công thợ</b-dropdown-item-button>
               <b-dropdown-item-button>Chế vàng</b-dropdown-item-button>
-              <b-dropdown-item-button>Kiểm tiền</b-dropdown-item-button>
+              <b-dropdown-item href="/tool/kiemtien">Kiểm tiền</b-dropdown-item>
               <b-dropdown-item-button>Thông tin tiệm</b-dropdown-item-button>
               <b-dropdown-item-button>Sổ đánh bóng</b-dropdown-item-button>
             </b-dropdown-group>

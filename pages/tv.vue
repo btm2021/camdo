@@ -152,20 +152,7 @@ export default {
 </script>
 <style scoped>
 .main {
-  background: linear-gradient(
-    to right,
-    #ff0000 0%,
-    /* Đỏ */ #ff7f00 14.3%,
-    /* Cam */ #ffff00 28.6%,
-    /* Vàng */ #00ff00 42.9%,
-    /* Xanh lá */ #0000ff 57.1%,
-    /* Xanh dương */ #4b0082 71.4%,
-    /* Chàm */ #8b00ff 85.7%,
-    /* Tím */ #8b00ff 100%
-  ); /* Tím */
-  background-size: 400% 400%;
-  animation: gradient 10s ease-in infinite;
-  height: 100vh;
+  background-color: red;
 }
 
 @keyframes gradient {
@@ -197,7 +184,6 @@ export default {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-
   animation: gradient 10s ease-in-out infinite;
 }
 .isBordered {

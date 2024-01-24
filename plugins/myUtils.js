@@ -18,6 +18,20 @@ export default async ({
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
     })
+    inject('getBangGia', () => {
+        return new Promise((resolve, reject) => {
+            app.$supabase
+                .from("banggia")
+                .select()
+                .order("id", { ascending: true })
+                .then((data) => {
+                    resolve(data)
+                });
+        })
+
+    })
+
+
     inject('getCountDateComponent', (item) => {
         let dateStart;
         let dateEnd;

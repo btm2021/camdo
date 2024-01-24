@@ -490,7 +490,7 @@ export default {
       optionLoaiVang: [
         { text: "Vàng 9999", value: "9999" },
         { text: "Vàng 980", value: "980" },
-        { text: "Vàng 710", value: "710" },
+        { text: "Vàng 710", value: "750" },
         { text: "Vàng 610", value: "610" },
       ],
       streamCamera: null,

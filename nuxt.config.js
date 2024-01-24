@@ -30,7 +30,9 @@ export default {
   plugins: [
 
     '~/plugins/chart.js', '~/plugins/myUtils.js',
-    '~/plugins/veevalidator.js'
+    '~/plugins/veevalidator.js',
+    '~/plugins/sanpham.js', '~/plugins/dothe.js',
+    '~/plugins/banggia.js',
   ],
   /*
   ** Nuxt.js dev-modules

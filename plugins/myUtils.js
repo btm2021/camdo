@@ -114,6 +114,9 @@ export default async ({
         }
         return objectFormat
     })
+    inject("showToast", (x) => {
+        console.log('showToast call')
+    })
     inject("formatSoTien", (x) => {
         if (0 == x || null == x || null == x) {
             return 0;

@@ -14,4 +14,22 @@ export default async ({
 }, inject) => {
 
 
+    inject('pl_banggia_getOne', (list_tem) => {
+        return "làm gì với in tem"
+    })
+
+    inject('pl_banggia_getAll', (list_tem) => {
+        return "làm gì với in tem"
+    })
+
+    inject('pl_banggia_edit', (list_tem) => {
+        return "làm gì với in tem"
+    })
+
+    inject('pl_banggiamihong_getAll', (list_tem) => {
+        return "làm gì với in tem"
+    })
+
+
+
 };

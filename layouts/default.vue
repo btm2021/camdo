@@ -386,31 +386,31 @@ export default {
     getCamDo() {},
   },
   mounted() {
+    //init pubnub
     window.addEventListener("keyup", (e) => {
-      if (e.key === "Enter") {
-        const regex = /^[ts]\d+$/;
-        if (regex.test(this.tempInput)) {
-          // Định dạng hợp lệ
-          console.log("hople", this.tempInput);
-
-          this.$bvModal.show("modal_input");
-          this.modal_input = this.tempInput;
-          let action = this.tempInput[0];
-          if (action === "t") {
-            //call san pham
-            this.inputFromScanner = this.tempInput.replace("t", "");
-          }
-          if (action === "s") {
-            this.inputFromScanner = this.tempInput.replace("s", "");
-            //call do the
-          }
-        } else {
-          console.log("Định dạng không hợp lệ:", this.tempInput);
-        }
-        this.tempInput = "";
-      } else {
-        this.tempInput += e.key;
-      }
+      // if (e.key === "Enter") {
+      //   const regex = /^[ts]\d+$/;
+      //   if (regex.test(this.tempInput)) {
+      //     // Định dạng hợp lệ
+      //     console.log("hople", this.tempInput);
+      //     this.$bvModal.show("modal_input");
+      //     this.modal_input = this.tempInput;
+      //     let action = this.tempInput[0];
+      //     if (action === "t") {
+      //       //call san pham
+      //       this.inputFromScanner = this.tempInput.replace("t", "");
+      //     }
+      //     if (action === "s") {
+      //       this.inputFromScanner = this.tempInput.replace("s", "");
+      //       //call do the
+      //     }
+      //   } else {
+      //     console.log("Định dạng không hợp lệ:", this.tempInput);
+      //   }
+      //   this.tempInput = "";
+      // } else {
+      //   this.tempInput += e.key;
+      // }
     });
   },
 };

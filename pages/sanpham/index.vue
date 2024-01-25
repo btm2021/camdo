@@ -50,18 +50,23 @@
         <b-card no-body>
           <div>
             <b-table
-              :items="myProvider"
-              class="mytable text-center"
+              style="min-height: 600px"
+              responsive
+              :per-page="perPage"
+              :current-page="currentPage"
+              bordered
+              no-border-collapse
+              sticky-header="500px"
+              ref="my_table"
               show-empty
-
-              sticky-header="600px"
+              select-mode="single"
+              selectable
+              head-row-variant="success"
+              :items="myProvider"
+              class="mytable text-center w-auto"
               striped
               small
               :fields="fieldsSanPham"
-              :per-page="perPage"
-              selectable
-              select-mode="single"
-              :current-page="currentPage"
               @filtered="onFiltered"
             >
               <template #head(product_barcode)="data">

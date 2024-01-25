@@ -60,11 +60,26 @@ export const state = () => ({
         { text: "Nội Bộ", value: "noibo" },
         { text: "Tất cả", value: null },
 
-    ]
+    ],
+    isBangGiaChange: false
 })
 
 export const getters = {
     optionCatalog(state) {
         return state.optionCatalog
+    },
+
+}
+export const mutations = {
+    changeBanggia(state) {
+        console.log('thay bang gia')
+        console.log(state.isBangGiaChange)
+        if (state.isBangGiaChange) {
+            state.isBangGiaChange = false;
+
+        } else {
+            state.isBangGiaChange = true;
+        }
+        console.log(state.isBangGiaChange)
     }
 }

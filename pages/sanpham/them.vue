@@ -340,7 +340,9 @@
           <template #header>
             <div class="mb-0">
               <span>Số sản phẩm đã nhập</span>
-              <b-button variant="primary" size="sm">In Tem Toàn Bộ</b-button>
+              <b-button variant="primary" size="sm" @click="inTemSelect"
+                >In Tem Toàn Bộ</b-button
+              >
               <b-button
                 variant="success"
                 size="sm"
@@ -525,6 +527,13 @@ export default {
     rotationLeft() {
       this.rotationAngle -= 10;
       this.updateVideo();
+    },
+    inTemSelect() {
+      if (this.productList.length > 0) {
+        this.$pl_sanpham_intem(this, this.productList);
+      } else {
+        alert("Không có gì để in");
+      }
     },
     rotationRight() {
       this.rotationAngle += 10;

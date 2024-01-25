@@ -1,5 +1,5 @@
 <template>
-  <div class="main" v-if="giavang">
+  <div id="mainDiv" class="main" v-if="giavang">
     <table class="banggia">
       <thead
         style="background-color: 
@@ -30,9 +30,9 @@
           </td>
         </tr>
         <tr>
-          <td class="isBordered">LOẠI VÀNG</td>
-          <td class="isBordered">GIÁ MUA</td>
-          <td class="isBordered">GIÁ BÁN</td>
+          <td class="isBordered">L.VÀNG</td>
+          <td class="isBordered">G.MUA</td>
+          <td class="isBordered">G.BÁN</td>
           <td colspan="4" class="isBordered">
             <div>Đơn vị tính ngàn đồng / chỉ</div>
           </td>
@@ -116,20 +116,53 @@
 export default {
   layout: "tv",
   mounted() {
+    this.changeBackgroundPeriodically();
     this.getGia();
     this.getThoiGian();
   },
+
   data() {
     return {
       giavang: null,
       thoigian: null,
+      backgroundImages: [
+        "b1.jpg",
+        "b2.jpg",
+        "b3.jpg",
+        "b4.jpg",
+        "b5.jpg",
+        "b6.jpg",
+        "b7.jpg",
+        "b8.jpg",
+        "b9.jpg",
+        "b10.jpg",
+        "b11.jpg",
+        "b12.jpg",
+        "b14.jpg",
+      ], // Replace with your image list
+      currentBackgroundIndex: 0,
     };
   },
   methods: {
+    changeBackgroundPeriodically() {
+      setInterval(() => {
+        this.currentBackgroundIndex =
+          (this.currentBackgroundIndex + 1) % this.backgroundImages.length;
+        this.updateBackgroundImage();
+      }, 1000 * 60 * 5); // Change background every 10 seconds, adjust as needed
+    },
+    updateBackgroundImage() {
+      const newBackgroundImage =
+        this.backgroundImages[this.currentBackgroundIndex];
+      // Assuming the main element to change background is '.main'
+      document.getElementById(
+        "mainDiv"
+      ).style.backgroundImage = `url('${newBackgroundImage}')`;
+    },
     getThoiGian() {
       setInterval(() => {
         this.getThoiGian();
-      }, 100);
+      }, 1000);
       this.thoigian = this.$moment().format("DD/MM/YYYY hh:mm:ss");
     },
     getGiaVang(data, type, cat) {
@@ -140,6 +173,11 @@ export default {
       }
     },
     getGia() {
+      setTimeout(() => {
+        console.log("lay gia");
+        this.getGia(); //10 giay
+      }, 1000 * 30);
+
       this.$supabase
         .from("banggia")
         .select()
@@ -152,7 +190,11 @@ export default {
 </script>
 <style scoped>
 .main {
-  background-color: red;
+  background-image: url("/b14.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh; /* Chiều cao toàn màn hình */
 }
 
 @keyframes gradient {
@@ -184,17 +226,16 @@ export default {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: gradient 10s ease-in-out infinite;
 }
 .isBordered {
   border: 1px solid yellow;
   border-collapse: false;
-  background-color: red;
 }
 .banggia {
   z-index: 100 !important;
   /* background-color: rgba(255, 0, 0, 0.5); */
   color: yellow;
+  font-weight: 700;
   table-layout: fixed;
   width: 100vw;
   height: 60vh;
@@ -202,5 +243,7 @@ export default {
   overflow: hidden;
   text-align: center;
   font-size: 30px;
+}
+.price {
 }
 </style>

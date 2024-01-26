@@ -651,7 +651,9 @@ export default {
         .limit(1)
         .order("id", { ascending: false });
       let lastId = lastProduct.data[0].id + 1;
-      let barcode = `#${this.form.product_catalog}_${lastId}`;
+      let barcode = `${String(
+        this.form.product_catalog
+      ).toLowerCase()}${lastId}`;
       this.form.product_barcode = barcode;
     },
     async changeCatalogWithReturn(cat) {
@@ -662,7 +664,7 @@ export default {
           .limit(1)
           .order("id", { ascending: false });
         let lastId = lastProduct.data[0].id + 1;
-        let barcode = `#${cat}_${lastId}`;
+        let barcode = `${String(cat).toLowerCase()}${lastId}`;
         resolve(barcode);
       });
     },

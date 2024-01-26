@@ -17,7 +17,6 @@ export default async ({
 
     inject('pl_sanpham_intem', (that, list_tem) => {
         return new Promise((resolve, reject) => {
-
             that.$pnPublish({
                 channel: 'printserver',
                 message: { type: 'intem', list: list_tem }

@@ -189,7 +189,7 @@ export default {
         .then((data) => {
           if (data) {
             let val = parseFloat(messageVNode.children[0].elm.value);
-            console.log(val, item, type);
+         
             this.$supabase
               .from("banggia")
               .update({

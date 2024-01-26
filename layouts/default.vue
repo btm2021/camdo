@@ -239,8 +239,196 @@
         </b-row>
       </div>
     </b-modal>
-    <b-modal id="modal_sanpham">
-      <h1>san pham</h1>
+    <b-modal id="modal_sanpham" size="lg" title="Thông tin sản phẩm">
+      <b-row v-if="itemFromScanner">
+        <b-col cols="6">
+          <b-img :src="itemFromScanner.product_image_url" center fluid />
+          <b-table-simple small hover bordered responsive fixed>
+            <b-tbody>
+              <b-tr>
+                <b-td>
+                  <span class="title">Mã sản phẩm</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{
+                    itemFromScanner.product_barcode
+                  }}</span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <span class="title">Ngày Nhập</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{
+                    $moment(itemFromScanner.created_at).format("DD/MM/YYYY")
+                  }}</span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <span class="title">Kiểu dáng sản phẩm</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{
+                    itemFromScanner.product_catalog
+                  }}</span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <span class="title">Loại Vàng</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{ itemFromScanner.product_type }}</span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <span class="title">Trọng Lượng Tổng</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{
+                    itemFromScanner.product_total_weight
+                  }}</span>
+                </b-td>
+              </b-tr>
+            </b-tbody>
+          </b-table-simple>
+        </b-col>
+        <b-col cols="6">
+          <b-table-simple small hover bordered responsive fixed>
+            <b-tbody>
+              <b-tr>
+                <b-td>
+                  <span class="title">Mã sản phẩm</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{
+                    itemFromScanner.product_barcode
+                  }}</span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <span class="title">Ngày Nhập</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{
+                    $moment(itemFromScanner.created_at).format("DD/MM/YYYY")
+                  }}</span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <span class="title">Kiểu dáng sản phẩm</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{
+                    itemFromScanner.product_catalog
+                  }}</span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <span class="title">Loại Vàng</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{ itemFromScanner.product_type }}</span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <span class="title">Trọng Lượng Tổng</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{
+                    itemFromScanner.product_total_weight
+                  }}</span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <span class="title">Trọng Lượng Vàng</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{
+                    itemFromScanner.product_gold_weight
+                  }}</span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <span class="title">Trọng Lượng hột</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{
+                    itemFromScanner.product_stone_weight
+                  }}</span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <span class="title">Tiền công nhập</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{
+                    itemFromScanner.product_wage_in
+                  }}</span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <span class="title">Tiền công xuất</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{ itemFromScanner.product_wage }}</span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <span class="title">Tình Trạng sản phẩm</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{
+                    itemFromScanner.product_status
+                  }}</span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <span class="title">Chành Nhập</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{
+                    itemFromScanner.product_import_type
+                  }}</span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <span class="title">Giá Vàng Nhập</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{
+                    itemFromScanner.product_price_import
+                  }}</span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>
+                  <span class="title">Tổng giá trị</span>
+                </b-td>
+                <b-td>
+                  <span class="value">{{
+                    itemFromScanner.product_total_price
+                  }}</span>
+                </b-td>
+              </b-tr>
+            </b-tbody>
+          </b-table-simple>
+        </b-col>
+      </b-row>
     </b-modal>
     <b-modal id="modal_input" hide-header hide-footer hide-header-close>
       <b-input
@@ -259,7 +447,6 @@
       variant="primary"
     >
       <b-navbar-brand to="/">BPJ</b-navbar-brand>
-
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
       <b-collapse id="nav-collapse" is-nav>
@@ -354,6 +541,10 @@ export default {
       itemEdit: null,
       tempInput: "",
       inputFromScanner: "",
+      lastKeypressTime: 0,
+      MAX_DURATION_BETWEEN_KEYS: 50, // Đơn vị là milliseconds
+      barcodeInput: "",
+      itemFromScanner: null,
     };
   },
   methods: {
@@ -380,37 +571,91 @@ export default {
           this.$bvModal.show("modal_camdo");
         });
     },
-    checkSanPham() {
-      this.$bvModal.show("modal_sanpham");
+    checkSanPham(id) {
+      console.log("ma", id);
+      this.$supabase
+        .from("product")
+        .select()
+        .eq("product_barcode", "nc809")
+        .then((data) => {
+          this.itemFromScanner = data.data[0];
+          let d = data.data[0];
+          console.log(d);
+          if (d) {
+            this.$bvModal.show("modal_sanpham");
+          } else {
+            alert("Mã sản phẩm không tồn tại");
+          }
+        });
+    },
+    isBarcodeScan(input, duration) {
+      return input.endsWith("\n") && duration < this.MAX_DURATION_BETWEEN_KEYS;
     },
     getCamDo() {},
   },
   mounted() {
+    console.log(this.itemFromScanner);
     //init pubnub
-    window.addEventListener("keyup", (e) => {
-      // if (e.key === "Enter") {
-      //   const regex = /^[ts]\d+$/;
-      //   if (regex.test(this.tempInput)) {
-      //     // Định dạng hợp lệ
-      //     console.log("hople", this.tempInput);
-      //     this.$bvModal.show("modal_input");
-      //     this.modal_input = this.tempInput;
-      //     let action = this.tempInput[0];
-      //     if (action === "t") {
-      //       //call san pham
-      //       this.inputFromScanner = this.tempInput.replace("t", "");
-      //     }
-      //     if (action === "s") {
-      //       this.inputFromScanner = this.tempInput.replace("s", "");
-      //       //call do the
-      //     }
-      //   } else {
-      //     console.log("Định dạng không hợp lệ:", this.tempInput);
-      //   }
-      //   this.tempInput = "";
-      // } else {
-      //   this.tempInput += e.key;
-      // }
+    window.addEventListener("keyup", (event) => {
+      // check router
+      this.itemFromScanner = null;
+      this.$bvModal.hide("modal_sanpham");
+      this.$bvModal.hide("modal_camdo");
+
+      if (event.key === "Meta") {
+        return;
+      }
+      const currentTime = event.timeStamp;
+      const duration = currentTime - this.lastKeypressTime;
+      this.lastKeypressTime = currentTime;
+
+      // Thêm ký tự vào chuỗi barcodeInput
+      if (event.key !== "Enter") {
+        this.barcodeInput += event.key;
+      } else {
+        this.barcodeInput += "\n"; // Thêm ký tự Enter vào cuối chuỗi
+      }
+
+      // Kiểm tra khi phím Enter được nhấn
+      if (event.key === "Enter") {
+        let regexSp = /^[a-z]{2}\d+$/;
+        let regexDoThe = /^=\-?\d+$/;
+        let scannerInput = this.barcodeInput.replace(/[\s\n]+/g, "");
+        if (
+          this.isBarcodeScan(this.barcodeInput, duration) &&
+          scannerInput != ""
+        ) {
+          let action = "";
+
+          if (regexDoThe.test(scannerInput)) {
+            console.log(action);
+            action = "dothe";
+          }
+          if (regexSp.test(scannerInput)) {
+            console.log(action);
+            action = "sanpham";
+          }
+          console.log("Barcode detected:", scannerInput, action);
+          this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
+          switch (action) {
+            case "dothe":
+              {
+                this.checkSanPham(scannerInput);
+                this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
+              }
+              break;
+            case "sanpham":
+              {
+                this.checkSanPham(scannerInput);
+                this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
+              }
+              break;
+          }
+        } else {
+          console.log("Regular input", this.barcodeInput);
+          this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
+        }
+      }
     });
   },
 };

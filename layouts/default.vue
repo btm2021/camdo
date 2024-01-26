@@ -576,7 +576,7 @@ export default {
       this.$supabase
         .from("product")
         .select()
-        .eq("product_barcode", "nc809")
+        .eq("product_barcode", id)
         .then((data) => {
           this.itemFromScanner = data.data[0];
           let d = data.data[0];

@@ -528,7 +528,10 @@ export default {
                     variant: "primary",
                   }
                 );
+                this.lastInsert.reverse();
                 this.lastInsert.push(data.data[0]);
+                //đảo mảng
+                this.lastInsert.reverse();
                 this.focusTen();
                 this.form = {
                   ten: null,

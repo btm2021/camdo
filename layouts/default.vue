@@ -954,7 +954,6 @@ export default {
     getCamDo() {},
   },
   mounted() {
-    this.checkSanPham("ll4");
     //init pubnub
     window.addEventListener("keyup", (event) => {
       // check router

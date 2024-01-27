@@ -317,15 +317,20 @@
                         >Thanh toán</b-button
                       >
                       <b-button
-                        :disabled="!itemFromScanner.product_status"
                         variant="success"
                         @click="themgiohang"
+                        :disabled="
+                          !itemFromScanner.product_status &&
+                          !listGioHang.find(
+                            (item) => item.id == itemFromScanner.id
+                          )
+                        "
                         >Thêm giỏ hàng</b-button
                       >
                       <b-button
                         :disabled="!itemFromScanner.product_status"
                         variant="danger"
-                        @click="themgiohang"
+                        @click="xoaSanPhamGioHang"
                         >Xóa trong giỏ hàng</b-button
                       >
                     </b-button-group>
@@ -555,7 +560,13 @@
         style="font-size: 50px; font-weight: bold"
       ></b-input>
     </b-modal>
-    <b-sidebar width="700px" id="sidebargiohang" title="Giỏ hàng" shadow>
+    <b-sidebar
+      ref="sidebargiohang"
+      width="700px"
+      id="sidebargiohang"
+      title="Giỏ hàng"
+      shadow
+    >
       <b-overlay :show="overlayGioHang">
         <div class="px-3 py-2">
           <b-table
@@ -739,6 +750,9 @@
         <b-navbar-nav>
           <b-nav-item to="/chat">Chat</b-nav-item>
         </b-navbar-nav>
+        <b-navbar-nav>
+          <b-nav-item v-b-toggle.sidebargiohang>Giỏ hàng</b-nav-item>
+        </b-navbar-nav>
         <!-- Right aligned nav items -->
         <!-- <b-navbar-nav class="ml-auto">
           <b-nav-form>
@@ -801,9 +815,20 @@ export default {
       return count;
     },
     themgiohang() {
-      this.listGioHang.push(this.itemFromScanner);
+      this.$bvModal.hide("modal_sanpham");
+      console.log(this.$refs.sidebargiohang);
 
-      this.$root.$emit("bv::toggle::collapse", "sidebargiohang");
+      let isDupplicate = this.listGioHang.find(
+        (i) => i.id === this.itemFromScanner.id
+      );
+      console.log("=====", isDupplicate);
+      if (!isDupplicate) {
+        this.listGioHang.push(this.itemFromScanner);
+      }
+      if (this.$refs.sidebargiohang.isOpen) {
+      } else {
+        this.$root.$emit("bv::toggle::collapse", "sidebargiohang");
+      }
     },
     async thanhtoan() {
       this.overlaySanPham = true;
@@ -906,6 +931,7 @@ export default {
       );
       this.listGioHang = [];
       this.overlayGioHang = false;
+      this.$root.$emit("bv::toggle::collapse", "sidebargiohang");
     },
     checkInput() {
       this.$bvModal.hide("modal_input");

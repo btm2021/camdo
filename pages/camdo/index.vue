@@ -259,6 +259,7 @@
                 style="margin-bottom: 0px !important"
               >
                 <b-tr>
+                  <b-th>Mã</b-th>
                   <b-th>Tên</b-th>
                   <b-th>Ngày Đầu</b-th>
                   <b-th>Ngày Kết</b-th>
@@ -274,6 +275,17 @@
               </b-thead>
               <b-tbody>
                 <b-tr>
+                  <b-td>
+                    <b-input
+                      class="filter_input"
+                      style="text-transform: uppercase; text-align: center"
+                      v-model="filter_ma"
+                      autocomplete="off"
+                      placeholder="Mã"
+                      type="search"
+                      @change="refreshTable()"
+                    ></b-input>
+                  </b-td>
                   <b-td>
                     <b-input
                       class="filter_input"
@@ -382,16 +394,52 @@
         </b-row>
 
         <b-row class="">
+          <b-col cols="3">
+            <b-form-group
+              label="Hiển thị"
+              label-for="per-page-select"
+              label-cols-sm="6"
+              label-cols-md="4"
+              label-cols-lg="3"
+              label-align-sm="right"
+              label-size="sm"
+              class="mb-0"
+            >
+              <b-form-select
+                id="per-page-select"
+                v-model="perPage"
+                :options="[50, 100, 200]"
+                size="sm"
+              ></b-form-select>
+            </b-form-group>
+          </b-col>
+          <b-col cols="4"></b-col>
+          <b-col cols="4" class="mb-2">
+            <b-pagination
+              v-model="currentPage"
+              :total-rows="totalRows"
+              :per-page="perPage"
+              size="sm"
+              align="right"
+              first-number
+              last-number
+              class="my-0"
+            >
+              <template #first-text><span class="">Đầu</span></template>
+              <template #prev-text><span class="">Lùi</span></template>
+              <template #next-text><span class="">Tới</span></template>
+              <template #last-text><span class="">Cuối</span></template>
+            </b-pagination>
+          </b-col>
           <b-col cols="12" class="min-vw-100">
             <b-table
-              style="min-height: 600px"
+              style="min-height: 400px"
               class="my_table align-middle w-auto"
               responsive
               :per-page="perPage"
               :current-page="currentPage"
               bordered
               no-border-collapse
-              sticky-header="500px"
               ref="my_table"
               :busy="tableOverlay"
               :items="myProvider"
@@ -512,43 +560,6 @@
               </template>
             </b-table>
           </b-col>
-          <b-col cols="3">
-            <b-form-group
-              label="Hiển thị"
-              label-for="per-page-select"
-              label-cols-sm="6"
-              label-cols-md="4"
-              label-cols-lg="3"
-              label-align-sm="right"
-              label-size="sm"
-              class="mb-0"
-            >
-              <b-form-select
-                id="per-page-select"
-                v-model="perPage"
-                :options="[50, 100, 200]"
-                size="sm"
-              ></b-form-select>
-            </b-form-group>
-          </b-col>
-          <b-col cols="4"></b-col>
-          <b-col cols="4" class="mb-2">
-            <b-pagination
-              v-model="currentPage"
-              :total-rows="totalRows"
-              :per-page="perPage"
-              size="sm"
-              align="right"
-              first-number
-              last-number
-              class="my-0"
-            >
-              <template #first-text><span class="">Đầu</span></template>
-              <template #prev-text><span class="">Lùi</span></template>
-              <template #next-text><span class="">Tới</span></template>
-              <template #last-text><span class="">Cuối</span></template>
-            </b-pagination>
-          </b-col>
         </b-row>
       </div>
     </b-overlay>
@@ -579,6 +590,7 @@ export default {
       filter_ngaycam_end: null,
       filter_sotien_start: null,
       filter_sotien_end: null,
+      filter_ma: null,
       filter_status: null,
       filter_invoice_store: null,
       filter_invoice_store_type: null,
@@ -1265,7 +1277,6 @@ export default {
         .select("*", { count: "exact", head: true })
         .then((data) => {
           this.totalRows = data.count;
-
           this.dataReady = true;
         });
     },
@@ -1337,6 +1348,16 @@ export default {
       try {
         let s = (ctx.currentPage - 1) * ctx.perPage;
         let e = s + ctx.perPage;
+        // let totalRow =  this.$supabase
+        //         .from("invoice")
+        //         .select("*", { count: "exact", head: true })
+        //         .then((data) => {
+        //           this.totalRows = data.count;
+        //           this.dataReady = true;
+        //         });
+        let queryCount = this.$supabase
+          .from("invoice")
+          .select("*", { count: "exact", head: true });
 
         let query = this.$supabase
           .from("invoice")
@@ -1345,15 +1366,27 @@ export default {
           .order(sortBy, { ascending: ctx.sortDesc });
         if (this.filter_ten && this.filter_ten.length > 1) {
           query = query.ilike("customer_name", `%${this.filter_ten}%`);
+          queryCount = queryCount.ilike(
+            "customer_name",
+            `%${this.filter_ten}%`
+          );
         }
         if (parseInt(this.filter_sotien_start) > 0) {
           query = query.gte(
             "invoice_money",
             parseInt(this.filter_sotien_start) * 1000
           );
+          queryCount = queryCount.gte(
+            "invoice_money",
+            parseInt(this.filter_sotien_start) * 1000
+          );
         }
         if (parseInt(this.filter_sotien_end) > 0) {
           query = query.lte(
+            "invoice_money",
+            parseInt(this.filter_sotien_end) * 1000
+          );
+          queryCount = queryCount.lte(
             "invoice_money",
             parseInt(this.filter_sotien_end) * 1000
           );
@@ -1367,6 +1400,10 @@ export default {
         ) {
           let ngayStart = this.getNgayCam(this.filter_ngaycam_start);
           query = query.gte("invoice_date_create", ngayStart.toInsert);
+          queryCount = queryCount.gte(
+            "invoice_date_create",
+            ngayStart.toInsert
+          );
         }
 
         if (
@@ -1375,35 +1412,57 @@ export default {
           this.getNgayCam(this.filter_ngaycam_end).isValid
         ) {
           let ngayEnd = this.getNgayCam(this.filter_ngaycam_end);
+          queryCount = queryCount.lte("invoice_date_create", ngayEnd.toInsert);
           query = query.lte("invoice_date_create", ngayEnd.toInsert);
         }
 
         if (this.filter_status != null) {
           if (this.filter_status) {
+            queryCount = queryCount.eq("invoice_status", false);
             query = query.eq("invoice_status", false);
           } else {
+            queryCount = queryCount.eq("invoice_status", true);
             query = query.eq("invoice_status", true);
           }
         }
         if (this.filter_invoice_store != null) {
           query = query.eq("invoice_store", this.filter_invoice_store);
+          queryCount = queryCount.eq(
+            "invoice_store",
+            this.filter_invoice_store
+          );
+        }
+        if (this.filter_ma != null && this.filter_ma != "") {
+          queryCount = queryCount.eq(
+            "invoice_number",
+            parseInt(this.filter_ma)
+          );
+          query = query.eq("invoice_number", parseInt(this.filter_ma));
         }
         if (this.filter_invoice_store_type != null) {
           query = query.eq(
             "invoice_store_type",
             this.filter_invoice_store_type
           );
+          queryCount = queryCount.eq(
+            "invoice_store_type",
+            this.filter_invoice_store_type
+          );
         }
         if (this.filter_invoice_cat != null) {
           query = query.eq("invoice_cat", this.filter_invoice_cat);
+          queryCount = queryCount.eq("invoice_cat", this.filter_invoice_cat);
         }
         if (
           this.filter_invoice_tag.length > 0 &&
           this.filter_invoice_tag != null
         ) {
           for (let o = 0; o < this.filter_invoice_tag.length; o++) {
-            console.log(this.filter_invoice_tag[o]);
             query = query.like(
+              "invoice_tag",
+              `%${this.filter_invoice_tag[o]}%`
+            );
+            queryCount = queryCount.like(
               "invoice_tag",
               `%${this.filter_invoice_tag[o]}%`
             );
@@ -1411,12 +1470,16 @@ export default {
         }
 
         if (this.filter_invoice_type != null) {
+          queryCount = queryCount.eq("invoice_type", this.filter_invoice_type);
           query = query.eq("invoice_type", this.filter_invoice_type);
         }
         //kiểm tra kiểu thế
         //   query = query.eq("invoice_store_type", this.filter_store_type);
 
         let item = await query;
+        let itemCount = await queryCount;
+
+        this.totalRows = itemCount.count;
         let result = item.data;
         let newResult = [];
         result.forEach((item) => {
@@ -1431,7 +1494,6 @@ export default {
           item.invoice_number_beauty = item.invoice_number;
           newResult.push(item);
         });
-
         this.tableOverlay = false;
         return newResult;
       } catch (error) {
@@ -1487,8 +1549,7 @@ export default {
 body {
   font-family: Circular, custom-font, Helvetica Neue, Helvetica, Arial,
     sans-serif !important;
-  overflow-x: hidden;
-  overflow-y: hidden;
+
   height: 100vh;
   min-height: 100vh;
 }

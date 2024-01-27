@@ -278,7 +278,7 @@
                     class="text-center"
                     hover
                     data-sort-name="id"
-                    data-sort-order="asc"
+                    data-sort-order="desc"
                     :items="lastInsert"
                     :fields="lastInsertField"
                     show-empty

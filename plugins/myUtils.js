@@ -14,7 +14,7 @@ export default async ({
 }, inject) => {
     var profitPercent = 2;
     inject('formatN', (x) => {
-
+        x = parseFloat(x)
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
     })

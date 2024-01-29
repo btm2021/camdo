@@ -3,253 +3,142 @@
     <b-modal
       ref="modal_camdo"
       id="modal_camdo"
+      class="default_modal_camdo"
       title="Cầm đồ - Hóa đơn "
       hide-footer
       size="lg"
-      @ok="edit_invoice()"
-      @cancel="itemEdit = null"
+      hide-header
     >
-      <div v-if="itemEdit">
-        <b-row>
-          <b-col cols="4">
-            <b-form-group label="Tên khách:" description="Tên khách">
-              <b-form-input
-                autocomplete="off"
-                style="text-transform: uppercase"
-                :disabled="itemEdit.invoice_status ? true : false"
-                autocapitalize
-                v-model="itemEdit.customer_name"
-                type="text"
-                :placeholder="itemEdit.customer_name"
-              ></b-form-input>
-            </b-form-group>
-            <b-form-group label="Mã số:">
-              <b-form-input
-                autocomplete="off"
-                :disabled="itemEdit.invoice_status ? true : false"
-                autocapitalize
-                v-model="itemEdit.invoice_number"
-                type="text"
-                @change="checkMaSo"
-              ></b-form-input>
-            </b-form-group>
-            <b-form-group
-              id="input-group-3"
-              label="Phân loại:"
-              label-for="input-3"
+      <b-table-simple
+        v-if="tempCheckDothe"
+        class="table_giaycamdo"
+        responsive
+        borderless
+        style="min-height: 600px"
+      >
+        <b-thead>
+          <b-tr>
+            <b-th colspan="2" rowspan="3">
+              <b-img
+                lazy
+                src="~assets/logo.png"
+                style="width: 100px; height: 100px; vertical-align: middle"
+                fluid
+              />
+            </b-th>
+            <b-th colspan="4" rowspan="2">
+              <h3 class="text-center">Tiệm Vàng BẢO PHƯƠNG</h3>
+              <p>
+                Chuyên mua bán, cầm cố các loại trang sức nữ trang
+                <br />
+                KHU PHỐ 2, THỊ TRẤN PHƯỚC DÂN, NINH PHƯỚC, TỈNH NINH THUẬN<BR />
+                ĐT : 0329.984.983 - 0982.646.754
+              </p>
+            </b-th>
+          </b-tr>
+          <b-tr> </b-tr>
+          <b-tr>
+            <b-th colspan="4">
+              <div>
+                <h3 style="float: right; color: red !important">
+                  {{ tempCheckDothe.invoice_number }}
+                </h3>
+                <h2
+                  class="text-center"
+                  style="
+                    color: blue;
+                    text-decoration: underline;
+                    font-weight: bold;
+                  "
+                >
+                  GIẤY CẦM
+                </h2>
+              </div>
+            </b-th>
+            <!-- <b-th><h5 class="text-center text-danger">121213</h5></b-th> -->
+          </b-tr>
+        </b-thead>
+        <b-tbody>
+          <b-tr>
+            <b-td>Khách Hàng : </b-td>
+            <b-td colspan="5" style="border-bottom: 1px dotted black">
+              {{ tempCheckDothe.customer_name }}
+            </b-td>
+          </b-tr>
+          <b-tr>
+            <b-td>Tên vật cầm :</b-td>
+            <b-td colspan="5" style="border-bottom: 1px dotted black">
+              {{ tempCheckDothe.invoice_tag }}</b-td
             >
-              <b-form-select
-                v-model="itemEdit.invoice_type"
-                :options="['BÌNH THƯỜNG', 'MẤT GIẤY', 'THANH LÝ']"
-                :disabled="itemEdit.invoice_status ? true : false"
-                required
-              ></b-form-select>
-            </b-form-group>
-            <b-form-group
-              id="input-group-3"
-              label="Loại lưu:"
-              label-for="input-3"
-            >
-              <b-form-select
-                v-model="itemEdit.invoice_store"
-                :options="[
-                  'BỊCH KÉO MIỆNG',
-                  'HỘP TRÁI BÍ TO',
-                  'HỘP TRÁI BÍ TRUNG',
-                  'HỘP TRÁI BÍ NHỎ',
-                  'HỘP HỒNG TRONG TO',
-                  'HỘP HỒNG DẸP',
-                  'HỘP NHUNG KIỀNG',
-                  'HỘP NHUNG DẸP',
-                  'HỘP KIỀNG',
-                  'KHÁC',
-                ]"
-                :disabled="itemEdit.invoice_status ? true : false"
-                required
-              ></b-form-select>
-            </b-form-group>
-            <b-form-group
-              id="input-group-3"
-              label="Nơi lưu:"
-              label-for="input-3"
-            >
-              <b-form-select
-                v-model="itemEdit.invoice_store_type"
-                :options="['KHAY', 'KÉT', 'KHÁC']"
-                required
-              ></b-form-select>
-            </b-form-group>
-            <b-form-group label="Comment">
-              <b-form-textarea
-                id="textarea"
-                :disabled="itemEdit.invoice_status ? true : false"
-                v-model="itemEdit.invoice_comment"
-                rows="3"
-                max-rows="6"
-              ></b-form-textarea>
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
-            <b-form-group
-              label="Số tiền"
-              :description="$formatN(itemEdit.invoice_money)"
-            >
-              <b-form-input
-                autocomplete="off"
-                :disabled="itemEdit.invoice_status ? true : false"
-                autocapitalize
-                v-model="itemEdit.invoice_money"
-                type="number"
-                :placeholder="$formatN(itemEdit.invoice_money)"
-              ></b-form-input>
-            </b-form-group>
-            <b-form-group label="Ngày thế">
-              <b-form-input
-                autocomplete="off"
-                :disabled="itemEdit.invoice_status ? true : false"
-                autocapitalize
-                @change="changeEditDate"
-                v-model="itemEdit.invoice_date_create"
-                type="text"
-              ></b-form-input>
-            </b-form-group>
-            <b-form-group label="Ngày lấy">
-              <b-form-input
-                autocomplete="off"
-                autocapitalize
-                disabled
-                v-model="itemEdit.invoice_date_get_beauty"
-                :disable="true"
-                type="text"
-              ></b-form-input>
-            </b-form-group>
+          </b-tr>
 
-            <b-form-group label="Sdt">
-              <b-form-input
-                type="search"
-                autocomplete="off"
-                v-model="itemEdit.invoice_phone"
-              ></b-form-input>
-            </b-form-group>
-            <b-form-group
-              id="input-group-3"
-              label="Loại thế:"
-              label-for="input-3"
+          <b-tr>
+            <b-td>Số tiền : </b-td>
+            <b-td colspan="5" style="border-bottom: 1px dotted black">
+              {{ $formatN(tempCheckDothe.invoice_money) }} ({{
+                docsotien(tempCheckDothe.invoice_money)
+              }})
+            </b-td>
+          </b-tr>
+          <b-tr>
+            <b-td colspan="4"></b-td>
+            <b-td>Ngày thế</b-td>
+            <b-td style="border-bottom: 1px dotted black">
+              {{
+                $moment(tempCheckDothe.invoice_date_create).format("DD/MM/YYYY")
+              }}</b-td
             >
-              <b-form-select
-                v-model="itemEdit.invoice_cat"
-                :options="['THẾ MỚI', 'ĐÓNG LÃI', 'KHÁC']"
-                :disabled="itemEdit.invoice_status ? true : false"
-                required
-              ></b-form-select>
-            </b-form-group>
-          </b-col>
-          <b-col cols="4">
-            <b-form-group>
-              <b-button
-                @click="edit_invoice()"
-                block
-                variant="primary"
-                :disabled="itemEdit.invoice_status ? true : false"
-                >Chỉnh giấy</b-button
-              >
-              <b-button
-                block
-                variant="success"
-                @click="check_invoice()"
-                :disabled="itemEdit.invoice_status ? true : false"
-                >Chuộc đồ</b-button
-              >
-              <b-button
-                block
-                variant="warning"
-                @click="sell_invoice()"
-                :disabled="itemEdit.invoice_status ? true : false"
-                >Thanh Lý</b-button
-              >
+          </b-tr>
+          <b-tr>
+            <b-td>Thông tin</b-td>
+            <b-td colspan="5">
+              <p class="default_thongtin" style="text-align: left">
+                Số ngày cầm :
+                {{
+                  $moment().diff(
+                    $moment(tempCheckDothe.invoice_date_create),
+                    "days"
+                  ) + 1
+                }}<br />
+                Số tiền lãi :{{ $formatN(getTienLai(tempCheckDothe)) }}
 
-              <b-button
-                block
-                variant="danger"
-                @click="lost_invoice()"
-                :disabled="itemEdit.invoice_status ? true : false"
-                >Mất giấy</b-button
-              >
-              <b-button block variant="danger" @click="delete_invoice()"
-                >Xóa Giấy</b-button
-              >
-            </b-form-group>
-            <b-form-group>
-              <template #label>
-                <h5 class="text-center">Thông tin</h5>
-              </template>
-              <b-icon
-                icon="check-square-fill"
-                :variant="itemEdit.invoice_status ? 'primary' : 'success'"
-              ></b-icon>
-              {{ itemEdit.invoice_status ? "Đã chuộc" : "Chưa chuộc" }}
-            </b-form-group>
-            <b-form-group>
-              <table style="width: 100%">
-                <tr>
-                  <td class="text-left">Ngày thế</td>
-                  <td class="text-right">
-                    {{ $getCountDateComponent(itemEdit) }}
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-left">Tiền Vốn</td>
-                  <td class="text-right">
-                    {{ $formatN(itemEdit.invoice_money) }}
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-left">Tiền Lãi</td>
-                  <td class="text-right">
-                    {{
-                      $formatN(
-                        parseInt(
-                          (
-                            ($getCountDateComponent(itemEdit) *
-                              itemEdit.invoice_money *
-                              profitPercent) /
-                            3 /
-                            1000 /
-                            1000
-                          ).toFixed(0)
-                        ) * 1000
-                      )
-                    }}
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">
-                    <hr />
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-left">Tổng tiền :</td>
-                  <td class="text-right">
-                    {{ $formatN($getTongTien(itemEdit)) }}
-                  </td>
-                </tr>
-              </table>
-            </b-form-group>
-          </b-col>
-        </b-row>
-      </div>
+                ({{ docsotien(getTienLai(tempCheckDothe)) }})
+                <br />
+                Số tiền tổng :
+                {{
+                  $formatN(
+                    tempCheckDothe.invoice_money + getTienLai(tempCheckDothe)
+                  )
+                }}
+                (
+                {{
+                  docsotien(
+                    tempCheckDothe.invoice_money + getTienLai(tempCheckDothe)
+                  )
+                }})
+              </p>
+            </b-td>
+          </b-tr>
+        </b-tbody>
+      </b-table-simple>
     </b-modal>
     <b-modal
       id="modal_sanpham"
       size="lg"
       hide-footer
       no-close-on-backdrop
+      @hidden="closeModalSanPham"
       title="Thông tin sản phẩm"
     >
       <b-overlay :show="overlaySanPham">
         <b-row v-if="itemFromScanner">
           <b-col cols="6">
-            <b-img :src="itemFromScanner.product_image_url" center fluid />
+            <b-img
+              v-zoom-on-hover
+              :src="itemFromScanner.product_image_url"
+              center
+              fluid
+            />
             <b-table-simple
               small
               hover
@@ -683,6 +572,10 @@
               <b-dropdown-item href="/camdo/them"
                 >Thêm hóa đơn thế</b-dropdown-item
               >
+
+              <b-dropdown-item href="/camdo/intem"
+                >In tem bọc cầm đồ</b-dropdown-item
+              >
               <b-dropdown-item href="/camdo/chuocdo">Rút giấy</b-dropdown-item>
               <b-dropdown-item href="/camdo/thanhly"> Thanh lý</b-dropdown-item>
             </b-dropdown-group>
@@ -769,6 +662,135 @@
   </div>
 </template>
 <script>
+var DocTienBangChu = function () {
+  this.ChuSo = new Array(
+    " không ",
+    " một ",
+    " hai ",
+    " ba ",
+    " bốn ",
+    " năm ",
+    " sáu ",
+    " bảy ",
+    " tám ",
+    " chín "
+  );
+  this.Tien = new Array(
+    "",
+    " nghìn",
+    " triệu",
+    " tỷ",
+    " nghìn tỷ",
+    " triệu tỷ"
+  );
+};
+
+DocTienBangChu.prototype.docSo3ChuSo = function (baso) {
+  var tram;
+  var chuc;
+  var donvi;
+  var KetQua = "";
+  tram = parseInt(baso / 100);
+  chuc = parseInt((baso % 100) / 10);
+  donvi = baso % 10;
+  if (tram == 0 && chuc == 0 && donvi == 0) return "";
+  if (tram != 0) {
+    KetQua += this.ChuSo[tram] + " trăm ";
+    if (chuc == 0 && donvi != 0) KetQua += " linh ";
+  }
+  if (chuc != 0 && chuc != 1) {
+    KetQua += this.ChuSo[chuc] + " mươi";
+    if (chuc == 0 && donvi != 0) KetQua = KetQua + " linh ";
+  }
+  if (chuc == 1) KetQua += " mười ";
+  switch (donvi) {
+    case 1:
+      if (chuc != 0 && chuc != 1) {
+        KetQua += " mốt ";
+      } else {
+        KetQua += this.ChuSo[donvi];
+      }
+      break;
+    case 5:
+      if (chuc == 0) {
+        KetQua += this.ChuSo[donvi];
+      } else {
+        KetQua += " lăm ";
+      }
+      break;
+    default:
+      if (donvi != 0) {
+        KetQua += this.ChuSo[donvi];
+      }
+      break;
+  }
+  return KetQua;
+};
+
+DocTienBangChu.prototype.doc = function (SoTien) {
+  var lan = 0;
+  var i = 0;
+  var so = 0;
+  var KetQua = "";
+  var tmp = "";
+  var soAm = false;
+  var ViTri = new Array();
+  if (SoTien < 0) soAm = true; //return "Số tiền âm !";
+  if (SoTien == 0) return "Không đồng"; //"Không đồng !";
+  if (SoTien > 0) {
+    so = SoTien;
+  } else {
+    so = -SoTien;
+  }
+  if (SoTien > 8999999999999999) {
+    //SoTien = 0;
+    return ""; //"Số quá lớn!";
+  }
+  ViTri[5] = Math.floor(so / 1000000000000000);
+  if (isNaN(ViTri[5])) ViTri[5] = "0";
+  so = so - parseFloat(ViTri[5].toString()) * 1000000000000000;
+  ViTri[4] = Math.floor(so / 1000000000000);
+  if (isNaN(ViTri[4])) ViTri[4] = "0";
+  so = so - parseFloat(ViTri[4].toString()) * 1000000000000;
+  ViTri[3] = Math.floor(so / 1000000000);
+  if (isNaN(ViTri[3])) ViTri[3] = "0";
+  so = so - parseFloat(ViTri[3].toString()) * 1000000000;
+  ViTri[2] = parseInt(so / 1000000);
+  if (isNaN(ViTri[2])) ViTri[2] = "0";
+  ViTri[1] = parseInt((so % 1000000) / 1000);
+  if (isNaN(ViTri[1])) ViTri[1] = "0";
+  ViTri[0] = parseInt(so % 1000);
+  if (isNaN(ViTri[0])) ViTri[0] = "0";
+  if (ViTri[5] > 0) {
+    lan = 5;
+  } else if (ViTri[4] > 0) {
+    lan = 4;
+  } else if (ViTri[3] > 0) {
+    lan = 3;
+  } else if (ViTri[2] > 0) {
+    lan = 2;
+  } else if (ViTri[1] > 0) {
+    lan = 1;
+  } else {
+    lan = 0;
+  }
+  for (i = lan; i >= 0; i--) {
+    tmp = this.docSo3ChuSo(ViTri[i]);
+    KetQua += tmp;
+    if (ViTri[i] > 0) KetQua += this.Tien[i];
+    if (i > 0 && tmp.length > 0) KetQua += ""; //',';//&& (!string.IsNullOrEmpty(tmp))
+  }
+  if (KetQua.substring(KetQua.length - 1) == ",") {
+    KetQua = KetQua.substring(0, KetQua.length - 1);
+  }
+  KetQua = KetQua.substring(1, 2).toUpperCase() + KetQua.substring(2);
+  if (soAm) {
+    return "Âm " + KetQua + " đồng"; //.substring(0, 1);//.toUpperCase();// + KetQua.substring(1);
+  } else {
+    return KetQua + " đồng"; //.substring(0, 1);//.toUpperCase();// + KetQua.substring(1);
+  }
+};
+
 export default {
   data() {
     return {
@@ -801,11 +823,31 @@ export default {
       barcodeInput: "",
       itemFromScanner: null,
       listGioHang: [],
+      tempCheckDothe: null,
     };
   },
+  components: {},
+  computed: {},
   methods: {
+    closeModalSanPham() {
+      zoomLens.style.visibility = "hidden";
+    },
+    getTienLai(x) {
+      let tienlai =
+        ((x.invoice_money / 1000) *
+          this.$moment().diff(this.$moment(x.invoice_date_create), "days") *
+          2) /
+        3;
+
+      return this.$roundToThousand(tienlai, x.invoice_money);
+    },
     xoaSanPhamGioHang(item) {
       this.listGioHang = this.listGioHang.filter((x) => x !== item);
+    },
+    docsotien(x) {
+      let docTien = new DocTienBangChu();
+
+      return docTien.doc(x);
     },
     getTongGiaTriGioHang() {
       let count = 0;
@@ -944,19 +986,19 @@ export default {
       this.type = null;
       this.modal_input = null;
     },
-    checkCamDo() {
-      let hoadon = this.modal_input;
+    checkDoThe(id) {
+      console.log("dothe", id);
       this.$supabase
         .from("invoice")
         .select()
-        .eq("invoice_number", hoadon)
-        .then((data) => {
-          this.itemEdit = data.data[0];
-          //console.log(this.itemEdit);
+        .eq("invoice_number", id)
+        .then(async (data) => {
+          this.tempCheckDothe = data.data[0];
           this.$bvModal.show("modal_camdo");
         });
     },
     checkSanPham(id) {
+      console.log("spaaa", id);
       this.$supabase
         .from("product")
         .select()
@@ -981,7 +1023,48 @@ export default {
   },
   mounted() {
     //init pubnub
+    // this.checkDoThe(82690);
+    // this.checkSanPham("nn61");
     window.addEventListener("keyup", (event) => {
+      var specialKeys = [
+        "Control",
+        "Ctrl",
+        "Alt",
+        "Shift",
+        "Backspace",
+        "Tab",
+        "Space",
+        "Meta",
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5",
+        "F6",
+        "F7",
+        "F8",
+        "F9",
+        "F10",
+        "F11",
+        "F12",
+        "ShiftLeft",
+        "ShiftRight",
+        "ControlLeft",
+        "ControlRight",
+        "AltLeft",
+        "AltRight",
+        "Escape",
+      ];
+
+      function removeSpecialKeysFromString(str) {
+        specialKeys.forEach(function (key) {
+          // Tạo regex với từng từ khóa và thay thế chúng bằng chuỗi rỗng
+          var regex = new RegExp(key, "g");
+          str = str.replace(regex, "");
+        });
+        return str;
+      }
+
       // check router
       this.itemFromScanner = null;
       this.$bvModal.hide("modal_sanpham");
@@ -1013,13 +1096,13 @@ export default {
           let action = "";
 
           if (regexDoThe.test(scannerInput)) {
-            console.log(action);
             action = "dothe";
           }
           if (regexSp.test(scannerInput)) {
-            console.log(action);
             action = "sanpham";
           }
+
+          scannerInput = removeSpecialKeysFromString(scannerInput);
           console.log("Barcode detected:", scannerInput, action);
           this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
           switch (action) {
@@ -1083,5 +1166,23 @@ export default {
   transform: scale(
     4
   ); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}
+.table_giaycamdo td {
+  vertical-align: middle;
+}
+.table_giaycamdo {
+  background-color: #7aafe8;
+  color: blue !important;
+}
+.table_giaycamdo td,
+.table_giaycamdo h3,
+.table_giaycamdo P {
+  color: blue !important;
+  text-align: center;
+}
+.default_thongtin {
+  color: red !important;
+  font-size: 20px;
+  font-weight: 500;
 }
 </style>

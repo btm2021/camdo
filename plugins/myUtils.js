@@ -13,6 +13,84 @@ export default async ({
     $config
 }, inject) => {
     var profitPercent = 2;
+    inject('roundToThousand', (input, invoice_money) => {
+        input = parseInt(input)
+        if (invoice_money > 3000000) {
+            return Math.max(10000, Math.ceil(input / 1000) * 1000);
+        }
+
+        // Làm tròn số đến số chẵn gần nhất chia hết cho 1000
+        let rounded = Math.ceil(input / 1000) * 1000;
+
+        // Nếu kết quả dưới 5000, trả về 5000
+        return Math.max(5000, rounded);
+
+    })
+
+    inject('docsotien', (so) => {
+        if (so === 0) return 'Không đồng';
+
+        const donVi = ['', ' Mươi', ' Trăm', ' Ngàn', ' Triệu', ' Tỷ'];
+        const chuSo = ['Không', 'Một', 'Hai', 'Ba', 'Bốn', 'Năm', 'Sáu', 'Bảy', 'Tám', 'Chín'];
+
+        let chuoi = "";
+        let hauto = false;
+
+        function docHang(trieu) {
+            let tram;
+            let chuc;
+            let donvi;
+            let ketqua = '';
+            tram = parseInt(trieu / 100);
+            chuc = parseInt((trieu % 100) / 10);
+            donvi = trieu % 10;
+            if (tram === 0 && chuc === 0 && donvi === 0) return '';
+            if (tram !== 0) {
+                ketqua += chuSo[tram] + donVi[2];
+                if ((chuc === 0) && (donvi !== 0)) ketqua += ' Linh';
+            }
+            if ((chuc !== 0) && (chuc !== 1)) {
+                ketqua += chuSo[chuc] + donVi[1];
+                if ((chuc === 0) && (donvi !== 0)) ketqua = ketqua + ' Linh';
+            }
+            if (chuc === 1) ketqua += donVi[1];
+            switch (donvi) {
+                case 1:
+                    if ((chuc !== 0) && (chuc !== 1)) {
+                        ketqua += ' Mốt';
+                    } else {
+                        ketqua += chuSo[donvi];
+                    }
+                    break;
+                case 5:
+                    if (chuc === 0) {
+                        ketqua += chuSo[donvi];
+                    } else {
+                        ketqua += ' Lăm';
+                    }
+                    break;
+                default:
+                    if (donvi !== 0) {
+                        ketqua += chuSo[donvi];
+                    }
+                    break;
+            }
+            return ketqua;
+        }
+
+        do {
+            let ty = so % 1000000000;
+            so = Math.floor(so / 1000000000);
+            if (so > 0) {
+                chuoi = docHang(ty) + donVi[5] + chuoi;
+            } else {
+                chuoi = docHang(ty) + chuoi;
+            }
+            hauto = true;
+        } while (so > 0);
+
+        return chuoi.trim() + ' đồng';
+    })
     inject('formatN', (x) => {
         x = parseFloat(x)
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");

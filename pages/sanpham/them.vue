@@ -139,25 +139,26 @@
                         v-slot="{ errors, valid, failedRules }"
                       >
                         <b-form-group
-                          label="Tiền công:"
+                          label="Trọng lượng đá:"
                           :description="
                             valid
-                              ? 'Tiền công : ' +
-                                $formatN(parseInt(form.product_wage || 0))
+                              ? 'Trọng lượng đá : ' +
+                                $formatSoVang(form.product_stone_weight).fullStr
                               : ''
                           "
                         >
                           <b-form-input
-                            v-model="form.product_wage"
+                            v-model="form.product_stone_weight"
                             type="number"
                             autocomplete="off"
                             :state="valid"
                           ></b-form-input>
                           <b-form-invalid-feedback>
-                            Nhập sai tiền công
+                            Nhập sai trọng lượng đá
                           </b-form-invalid-feedback>
                         </b-form-group>
                       </ValidationProvider>
+
                       <ValidationProvider
                         rules="required"
                         v-slot="{ errors, valid, failedRules }"
@@ -179,25 +180,26 @@
                         v-slot="{ errors, valid, failedRules }"
                       >
                         <b-form-group
-                          label="Trọng lượng đá:"
+                          label="Tiền công:"
                           :description="
                             valid
-                              ? 'Trọng lượng đá : ' +
-                                $formatSoVang(form.product_stone_weight).fullStr
+                              ? 'Tiền công : ' +
+                                $formatN(parseInt(form.product_wage || 0))
                               : ''
                           "
                         >
                           <b-form-input
-                            v-model="form.product_stone_weight"
+                            v-model="form.product_wage"
                             type="number"
                             autocomplete="off"
                             :state="valid"
                           ></b-form-input>
                           <b-form-invalid-feedback>
-                            Nhập sai trọng lượng đá
+                            Nhập sai tiền công
                           </b-form-invalid-feedback>
                         </b-form-group>
                       </ValidationProvider>
+
                       <ValidationProvider
                         rules="required|min_value:0|max_value:10000|numeric"
                         v-slot="{ errors, valid, failedRules }"
@@ -378,6 +380,7 @@
                   <b-img
                     thumbnail
                     rounded
+                    v-zoom-on-hover
                     center
                     :src="data.item.product_image_url"
                     fluid

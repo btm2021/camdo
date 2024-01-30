@@ -534,6 +534,7 @@ export default {
     inTemSelect() {
       if (this.productList.length > 0) {
         this.$pl_sanpham_intem(this, this.productList);
+        this.productList=[]
       } else {
         alert("Không có gì để in");
       }

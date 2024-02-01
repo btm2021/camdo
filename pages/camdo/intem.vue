@@ -25,9 +25,11 @@
           <b-button variant="primary" @click="intemSingle"
             >In Tem Cầm đồ đã chọn
           </b-button>
-          <b-button variant="success">In Tem sản phẩm hôm nay</b-button></b-col
+
+          <b-button variant="success" @click="selectAllRow"
+            >Chọn tất cả</b-button
+          ></b-col
         >
-        {{ selected }}
         <b-col cols="4" class="mb-2">
           <b-pagination
             v-model="currentPage"
@@ -56,6 +58,7 @@
             :current-page="currentPage"
             bordered
             small
+            
             no-border-collapse
             ref="my_table"
             :busy="tableOverlay"
@@ -313,9 +316,14 @@ export default {
           },
         },
       ],
+      allListData: null,
+      tableOverlay: false,
     };
   },
   methods: {
+    selectAllRow() {
+      this.$refs['my_table'].selectAllRows()
+    },
     async myProvider(ctx) {
       let sortBy = "id";
       // console.log(ctx);
@@ -358,6 +366,7 @@ export default {
 
         this.totalRows = itemCount.count;
         let result = item.data;
+        this.allListData = item.data;
         let newResult = [];
         result.forEach((item) => {
           if (item.invoice_date_get != null) {

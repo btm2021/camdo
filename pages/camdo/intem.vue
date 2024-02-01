@@ -58,7 +58,6 @@
             :current-page="currentPage"
             bordered
             small
-            
             no-border-collapse
             ref="my_table"
             :busy="tableOverlay"
@@ -322,7 +321,7 @@ export default {
   },
   methods: {
     selectAllRow() {
-      this.$refs['my_table'].selectAllRows()
+      this.$refs["my_table"].selectAllRows();
     },
     async myProvider(ctx) {
       let sortBy = "id";
@@ -352,7 +351,9 @@ export default {
           .from("invoice")
           .select("*")
           .range(s, e)
+          .eq("invoice_label", false)
           .order(sortBy, { ascending: ctx.sortDesc });
+
         if (this.filter_ten && this.filter_ten.length > 1) {
           query = query.ilike("customer_name", `%${this.filter_ten}%`);
           queryCount = queryCount.ilike(
@@ -406,6 +407,9 @@ export default {
             if (status.error) {
               console.log(status);
             } else {
+              alert("Chờ máy in ra tem ra rồi hẵn bấm OK");
+              this.$refs["my_table"].refresh();
+              this.select = [];
               console.log("Message Published", response);
             }
           }

@@ -153,6 +153,13 @@
             <b-col cols="4">
               <b-form-group>
                 <b-button
+                  @click="intemSingle"
+                  block
+                  variant="primary"
+                  :disabled="itemEdit.invoice_status ? true : false"
+                  >In giấy</b-button
+                >
+                <b-button
                   @click="edit_invoice()"
                   block
                   variant="primary"
@@ -891,6 +898,33 @@ export default {
       } else {
         alert("Vui lòng kiểm tra các trường");
       }
+    },
+    intem() {},
+    intemSingle() {
+      let list_tem = [];
+      list_tem.push({
+        maso: this.itemEdit.invoice_number,
+        tien: this.itemEdit.invoice_money,
+        ten: this.itemEdit.customer_name,
+        ngay: this.itemEdit.invoice_date_create,
+        id: this.itemEdit.id,
+      });
+      this.$pnPublish(
+        {
+          channel: "printserver",
+          message: { type: "ingiaythe", list: list_tem },
+        },
+        (status, response) => {
+          if (status.error) {
+            console.log(status);
+          } else {
+            alert("Chờ máy in ra tem ra rồi mới bấm OK");
+            this.$refs["my_table"].refresh();
+            this.select = [];
+            console.log("Message Published", response);
+          }
+        }
+      );
     },
     delete_invoice() {
       this.$bvModal

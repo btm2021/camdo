@@ -22,9 +22,12 @@
           </b-form-group>
         </b-col>
         <b-col cols="4">
-          <b-button variant="primary">In Tem Cầm đồ đã chọn </b-button>
+          <b-button variant="primary" @click="intemSingle"
+            >In Tem Cầm đồ đã chọn
+          </b-button>
           <b-button variant="success">In Tem sản phẩm hôm nay</b-button></b-col
         >
+        {{ selected }}
         <b-col cols="4" class="mb-2">
           <b-pagination
             v-model="currentPage"
@@ -65,6 +68,7 @@
             @row-dblclicked="
               cellClick(arguments[0], arguments[1], arguments[2])
             "
+            @row-selected="onRowSelected"
           >
             <template #cell(index)="data">
               {{ data.index + 1 }}
@@ -183,6 +187,7 @@
 export default {
   data() {
     return {
+      selected: [],
       currentPage: 1,
       totalRows: 0,
       perPage: 200,
@@ -371,6 +376,35 @@ export default {
       } catch (error) {
         return [];
       }
+    },
+    async intemSingle() {
+      if (this.selected.length > 0) {
+        let list_tem = this.selected.map((item) => {
+          return {
+            maso: item.invoice_number,
+            tien: item.invoice_money,
+            ten: item.customer_name,
+            ngay: item.invoice_date_create,
+            id: item.id,
+          };
+        });
+        this.$pnPublish(
+          {
+            channel: "printserver",
+            message: { type: "ingiaythe", list: list_tem },
+          },
+          (status, response) => {
+            if (status.error) {
+              console.log(status);
+            } else {
+              console.log("Message Published", response);
+            }
+          }
+        );
+      }
+    },
+    onRowSelected(items) {
+      this.selected = items;
     },
     formatDay(d) {
       let n = this.$moment(d);

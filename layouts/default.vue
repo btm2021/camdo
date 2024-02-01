@@ -40,7 +40,7 @@
           <b-tr>
             <b-th colspan="4">
               <div>
-                <h3 style="float: right; color: red !important">
+                <h3 style="float: right; color: #dc3545 !important">
                   {{ tempCheckDothe.invoice_number }}
                 </h3>
                 <h2
@@ -62,60 +62,93 @@
           <b-tr>
             <b-td>Khách Hàng : </b-td>
             <b-td colspan="5" style="border-bottom: 1px dotted black">
-              {{ tempCheckDothe.customer_name }}
+              <span style="color: #dc3545; font-weight: bold; font-size: 24px">
+                {{ tempCheckDothe.customer_name }}
+              </span>
             </b-td>
           </b-tr>
           <b-tr>
             <b-td>Tên vật cầm :</b-td>
             <b-td colspan="5" style="border-bottom: 1px dotted black">
-              {{ tempCheckDothe.invoice_tag }}</b-td
+              <span style="color: #dc3545; font-weight: bold; font-size: 24px">
+                <span
+                  v-for="(item, index) in JSON.parse(
+                    tempCheckDothe.invoice_tag
+                  )"
+                  :key="index"
+                >
+                  {{ item }} ,
+                </span>
+              </span>
+              {{ tempCheckDothe.invoice_store }} -
+              {{ tempCheckDothe.invoice_store_type }}</b-td
             >
           </b-tr>
 
           <b-tr>
             <b-td>Số tiền : </b-td>
             <b-td colspan="5" style="border-bottom: 1px dotted black">
-              {{ $formatN(tempCheckDothe.invoice_money) }} ({{
-                docsotien(tempCheckDothe.invoice_money)
-              }})
+              <span style="color: #dc3545; font-weight: bold; font-size: 24px">
+                {{ $formatN(tempCheckDothe.invoice_money) }} ({{
+                  docsotien(tempCheckDothe.invoice_money)
+                }})
+              </span>
             </b-td>
           </b-tr>
           <b-tr>
             <b-td colspan="4"></b-td>
             <b-td>Ngày thế</b-td>
             <b-td style="border-bottom: 1px dotted black">
-              {{
-                $moment(tempCheckDothe.invoice_date_create).format("DD/MM/YYYY")
-              }}</b-td
-            >
+              <span style="color: #dc3545; font-weight: bold; font-size: 24px">
+                {{
+                  $moment(tempCheckDothe.invoice_date_create).format(
+                    "DD/MM/YYYY"
+                  )
+                }}
+              </span>
+            </b-td>
           </b-tr>
           <b-tr>
             <b-td>Thông tin</b-td>
             <b-td colspan="5">
               <p class="default_thongtin" style="text-align: left">
                 Số ngày cầm :
-                {{
-                  $moment().diff(
-                    $moment(tempCheckDothe.invoice_date_create),
-                    "days"
-                  ) + 1
-                }}<br />
+                <span class="text-danger">
+                  {{
+                    $moment().diff(
+                      $moment(tempCheckDothe.invoice_date_create),
+                      "days"
+                    )
+                  }}
+                  ngày
+                </span>
+                <br />
                 Số tiền lãi :{{ $formatN(getTienLai(tempCheckDothe)) }}
-
-                ({{ docsotien(getTienLai(tempCheckDothe)) }})
+                <span class="text-danger">
+                  ({{ docsotien(getTienLai(tempCheckDothe)) }})
+                </span>
                 <br />
                 Số tiền tổng :
-                {{
-                  $formatN(
-                    tempCheckDothe.invoice_money + getTienLai(tempCheckDothe)
-                  )
-                }}
-                (
-                {{
-                  docsotien(
-                    tempCheckDothe.invoice_money + getTienLai(tempCheckDothe)
-                  )
-                }})
+                <span class="text-danger">
+                  {{
+                    $formatN(
+                      tempCheckDothe.invoice_money + getTienLai(tempCheckDothe)
+                    )
+                  }}
+                  (
+                  {{
+                    docsotien(
+                      tempCheckDothe.invoice_money + getTienLai(tempCheckDothe)
+                    )
+                  }})
+                  <br />
+                </span>
+                <span style="font-style: italic">
+                  Ghi chú : {{ tempCheckDothe.invoice_comment }}</span
+                >
+                <span style="font-style: italic">
+                  SDT : {{ tempCheckDothe.invoice_phone }}</span
+                >
               </p>
             </b-td>
           </b-tr>
@@ -576,7 +609,9 @@
               <b-dropdown-item href="/camdo/intem"
                 >In tem bọc cầm đồ</b-dropdown-item
               >
-              <b-dropdown-item href="/camdo/chuocdo">Rút giấy</b-dropdown-item>
+              <b-dropdown-item href="/camdo/chuocdo"
+                >Đánh dấu chuộc</b-dropdown-item
+              >
               <b-dropdown-item href="/camdo/thanhly"> Thanh lý</b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>
@@ -987,7 +1022,6 @@ export default {
       this.modal_input = null;
     },
     checkDoThe(id) {
-      console.log("dothe", id);
       this.$supabase
         .from("invoice")
         .select()
@@ -1022,109 +1056,114 @@ export default {
     getCamDo() {},
   },
   mounted() {
-    //init pubnub
-    // this.checkDoThe(82690);
-    // this.checkSanPham("nn61");
-    window.addEventListener("keyup", (event) => {
-      var specialKeys = [
-        "Control",
-        "Ctrl",
-        "Alt",
-        "Shift",
-        "Backspace",
-        "Tab",
-        "Space",
-        "Meta",
-        "F1",
-        "F2",
-        "F3",
-        "F4",
-        "F5",
-        "F6",
-        "F7",
-        "F8",
-        "F9",
-        "F10",
-        "F11",
-        "F12",
-        "ShiftLeft",
-        "ShiftRight",
-        "ControlLeft",
-        "ControlRight",
-        "AltLeft",
-        "AltRight",
-        "Escape",
-      ];
+    let listDisableRouter = ["/camdo/chuocdo", "/chat"];
+    var isDisable = listDisableRouter.includes(this.$nuxt.$route.fullPath);
+    if (isDisable) {
+      return;
+    } else {
+     // this.checkDoThe(26304);
+      window.addEventListener("keyup", (event) => {
+        var specialKeys = [
+          "Control",
+          "Ctrl",
+          "Alt",
+          "Shift",
+          "Backspace",
+          "Tab",
+          "Space",
+          "Meta",
+          "F1",
+          "F2",
+          "F3",
+          "F4",
+          "F5",
+          "F6",
+          "F7",
+          "F8",
+          "F9",
+          "F10",
+          "F11",
+          "F12",
+          "ShiftLeft",
+          "ShiftRight",
+          "ControlLeft",
+          "ControlRight",
+          "AltLeft",
+          "AltRight",
+          "Escape",
+        ];
 
-      function removeSpecialKeysFromString(str) {
-        specialKeys.forEach(function (key) {
-          // Tạo regex với từng từ khóa và thay thế chúng bằng chuỗi rỗng
-          var regex = new RegExp(key, "g");
-          str = str.replace(regex, "");
-        });
-        return str;
-      }
-
-      // check router
-      this.itemFromScanner = null;
-      this.$bvModal.hide("modal_sanpham");
-      this.$bvModal.hide("modal_camdo");
-
-      if (event.key === "Meta") {
-        return;
-      }
-      const currentTime = event.timeStamp;
-      const duration = currentTime - this.lastKeypressTime;
-      this.lastKeypressTime = currentTime;
-
-      // Thêm ký tự vào chuỗi barcodeInput
-      if (event.key !== "Enter") {
-        this.barcodeInput += event.key;
-      } else {
-        this.barcodeInput += "\n"; // Thêm ký tự Enter vào cuối chuỗi
-      }
-
-      // Kiểm tra khi phím Enter được nhấn
-      if (event.key === "Enter") {
-        let regexSp = /^[a-z]{2}\d+$/;
-        let regexDoThe = /^=\-?\d+$/;
-        let scannerInput = this.barcodeInput.replace(/[\s\n]+/g, "");
-        if (
-          this.isBarcodeScan(this.barcodeInput, duration) &&
-          scannerInput != ""
-        ) {
-          let action = "";
-
-          if (regexDoThe.test(scannerInput)) {
-            action = "dothe";
-          }
-          if (regexSp.test(scannerInput)) {
-            action = "sanpham";
-          }
-
-          scannerInput = removeSpecialKeysFromString(scannerInput);
-          console.log("Barcode detected:", scannerInput, action);
-          this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
-          switch (action) {
-            case "dothe":
-              {
-                this.checkSanPham(scannerInput);
-                this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
-              }
-              break;
-            case "sanpham":
-              {
-                this.checkSanPham(scannerInput);
-                this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
-              }
-              break;
-          }
-        } else {
-          console.log("Regular input", this.barcodeInput);
-          this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
+        function removeSpecialKeysFromString(str) {
+          specialKeys.forEach(function (key) {
+            // Tạo regex với từng từ khóa và thay thế chúng bằng chuỗi rỗng
+            var regex = new RegExp(key, "g");
+            str = str.replace(regex, "");
+          });
+          return str;
         }
-      }
-    });
+
+        // check router
+        this.itemFromScanner = null;
+        this.$bvModal.hide("modal_sanpham");
+        this.$bvModal.hide("modal_camdo");
+
+        if (event.key === "Meta") {
+          return;
+        }
+        const currentTime = event.timeStamp;
+        const duration = currentTime - this.lastKeypressTime;
+        this.lastKeypressTime = currentTime;
+
+        // Thêm ký tự vào chuỗi barcodeInput
+        if (event.key !== "Enter") {
+          this.barcodeInput += event.key;
+        } else {
+          this.barcodeInput += "\n"; // Thêm ký tự Enter vào cuối chuỗi
+        }
+
+        // Kiểm tra khi phím Enter được nhấn
+        if (event.key === "Enter") {
+          let regexSp = /^[a-z]{2}\d+$/;
+          let regexDoThe = /^=\-?\d+$/;
+          let scannerInput = this.barcodeInput.replace(/[\s\n]+/g, "");
+          if (
+            this.isBarcodeScan(this.barcodeInput, duration) &&
+            scannerInput != ""
+          ) {
+            let action = "";
+
+            if (regexDoThe.test(scannerInput)) {
+              action = "dothe";
+            }
+            if (regexSp.test(scannerInput)) {
+              action = "sanpham";
+            }
+
+            scannerInput = removeSpecialKeysFromString(scannerInput);
+            console.log("Barcode detected:", scannerInput, action);
+            this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
+            switch (action) {
+              case "dothe":
+                {
+                  scannerInput = scannerInput.replace("=", "");
+                  this.checkDoThe(scannerInput);
+                  this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
+                }
+                break;
+              case "sanpham":
+                {
+                  this.checkSanPham(scannerInput);
+                  this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
+                }
+                break;
+            }
+          } else {
+            console.log("Regular input", this.barcodeInput);
+            this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
+          }
+        }
+      });
+    }
   },
 };
 </script>

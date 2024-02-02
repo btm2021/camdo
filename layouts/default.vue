@@ -175,9 +175,6 @@
                 <b-button variant="success" @click="check_invoice()">
                   Chuộc Đồ</b-button
                 >
-
-                <b-button variant="warning">In lại tem</b-button>
-                <b-button variant="danger">Thanh lý</b-button>
               </b-td>
             </b-tr>
           </b-tbody>

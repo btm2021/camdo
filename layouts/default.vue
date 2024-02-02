@@ -1200,7 +1200,7 @@ export default {
     if (isDisable) {
       return;
     } else {
-      this.checkDoThe(26304);
+     // this.checkDoThe(26304);
       window.addEventListener("keyup", (event) => {
         var specialKeys = [
           "Control",

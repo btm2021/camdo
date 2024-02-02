@@ -533,8 +533,10 @@ export default {
     },
     inTemSelect() {
       if (this.productList.length > 0) {
+        alert("Chờ máy in tem xong rồi bấm OK");
         this.$pl_sanpham_intem(this, this.productList);
         this.productList = [];
+     
       } else {
         alert("Không có gì để in");
       }
@@ -742,8 +744,6 @@ export default {
           //reset form
           this.toggleOverlay();
           this.resetForm();
-
-          alert("Chờ máy in ra tem ra rồi hẵn bấm OK");
         } else {
           console.log("form sai");
         }

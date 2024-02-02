@@ -1168,6 +1168,8 @@ export default {
         .then(async (data) => {
           this.tempCheckDothe = data.data[0];
           this.$bvModal.show("modal_camdo");
+          //unset
+          this.thanhtoan();
         });
     },
     checkSanPham(id) {
@@ -1200,7 +1202,7 @@ export default {
     if (isDisable) {
       return;
     } else {
-     // this.checkDoThe(26304);
+      // this.checkDoThe(26304);
       window.addEventListener("keyup", (event) => {
         var specialKeys = [
           "Control",

@@ -9,151 +9,180 @@
       size="lg"
       hide-header
     >
-      <b-table-simple
-        v-if="tempCheckDothe"
-        class="table_giaycamdo"
-        responsive
-        borderless
-        style="min-height: 600px"
-      >
-        <b-thead>
-          <b-tr>
-            <b-th colspan="2" rowspan="3">
-              <b-img
-                lazy
-                src="~assets/logo.png"
-                style="width: 100px; height: 100px; vertical-align: middle"
-                fluid
-              />
-            </b-th>
-            <b-th colspan="4" rowspan="2">
-              <h3 class="text-center">Tiệm Vàng BẢO PHƯƠNG</h3>
-              <p>
-                Chuyên mua bán, cầm cố các loại trang sức nữ trang
-                <br />
-                KHU PHỐ 2, THỊ TRẤN PHƯỚC DÂN, NINH PHƯỚC, TỈNH NINH THUẬN<BR />
-                ĐT : 0329.984.983 - 0982.646.754
-              </p>
-            </b-th>
-          </b-tr>
-          <b-tr> </b-tr>
-          <b-tr>
-            <b-th colspan="4">
-              <div>
-                <h3 style="float: right; color: #dc3545 !important">
-                  {{ tempCheckDothe.invoice_number }}
-                </h3>
-                <h2
-                  class="text-center"
-                  style="
-                    color: blue;
-                    text-decoration: underline;
-                    font-weight: bold;
-                  "
-                >
-                  GIẤY CẦM
-                </h2>
-              </div>
-            </b-th>
-            <!-- <b-th><h5 class="text-center text-danger">121213</h5></b-th> -->
-          </b-tr>
-        </b-thead>
-        <b-tbody>
-          <b-tr>
-            <b-td>Khách Hàng : </b-td>
-            <b-td colspan="5" style="border-bottom: 1px dotted black">
-              <span style="color: #dc3545; font-weight: bold; font-size: 24px">
-                {{ tempCheckDothe.customer_name }}
-              </span>
-            </b-td>
-          </b-tr>
-          <b-tr>
-            <b-td>Tên vật cầm :</b-td>
-            <b-td colspan="5" style="border-bottom: 1px dotted black">
-              <span style="color: #dc3545; font-weight: bold; font-size: 24px">
-                <span
-                  v-for="(item, index) in JSON.parse(
-                    tempCheckDothe.invoice_tag
-                  )"
-                  :key="index"
-                >
-                  {{ item }} ,
-                </span>
-              </span>
-              {{ tempCheckDothe.invoice_store }} -
-              {{ tempCheckDothe.invoice_store_type }}</b-td
-            >
-          </b-tr>
-
-          <b-tr>
-            <b-td>Số tiền : </b-td>
-            <b-td colspan="5" style="border-bottom: 1px dotted black">
-              <span style="color: #dc3545; font-weight: bold; font-size: 24px">
-                {{ $formatN(tempCheckDothe.invoice_money) }} ({{
-                  docsotien(tempCheckDothe.invoice_money)
-                }})
-              </span>
-            </b-td>
-          </b-tr>
-          <b-tr>
-            <b-td colspan="4"></b-td>
-            <b-td>Ngày thế</b-td>
-            <b-td style="border-bottom: 1px dotted black">
-              <span style="color: #dc3545; font-weight: bold; font-size: 24px">
-                {{
-                  $moment(tempCheckDothe.invoice_date_create).format(
-                    "DD/MM/YYYY"
-                  )
-                }}
-              </span>
-            </b-td>
-          </b-tr>
-          <b-tr>
-            <b-td>Thông tin</b-td>
-            <b-td colspan="5">
-              <p class="default_thongtin" style="text-align: left">
-                Số ngày cầm :
-                <span class="text-danger">
-                  {{
-                    $moment().diff(
-                      $moment(tempCheckDothe.invoice_date_create),
-                      "days"
-                    )
-                  }}
-                  ngày
-                </span>
-                <br />
-                Số tiền lãi :{{ $formatN(getTienLai(tempCheckDothe)) }}
-                <span class="text-danger">
-                  ({{ docsotien(getTienLai(tempCheckDothe)) }})
-                </span>
-                <br />
-                Số tiền tổng :
-                <span class="text-danger">
-                  {{
-                    $formatN(
-                      tempCheckDothe.invoice_money + getTienLai(tempCheckDothe)
-                    )
-                  }}
-                  (
-                  {{
-                    docsotien(
-                      tempCheckDothe.invoice_money + getTienLai(tempCheckDothe)
-                    )
-                  }})
+      <b-overlay :show="overlayCamDo">
+        <b-table-simple
+          v-if="tempCheckDothe"
+          class="table_giaycamdo"
+          responsive
+          borderless
+          style="min-height: 600px"
+        >
+          <b-thead>
+            <b-tr>
+              <b-th colspan="2" rowspan="3">
+                <b-img
+                  lazy
+                  src="~assets/logo.png"
+                  style="width: 100px; height: 100px; vertical-align: middle"
+                  fluid
+                />
+              </b-th>
+              <b-th colspan="4" rowspan="2">
+                <h3 class="text-center">Tiệm Vàng BẢO PHƯƠNG</h3>
+                <p>
+                  Chuyên mua bán, cầm cố các loại trang sức nữ trang
                   <br />
+                  KHU PHỐ 2, THỊ TRẤN PHƯỚC DÂN, NINH PHƯỚC, TỈNH NINH THUẬN<BR />
+                  ĐT : 0329.984.983 - 0982.646.754
+                </p>
+              </b-th>
+            </b-tr>
+            <b-tr> </b-tr>
+            <b-tr>
+              <b-th colspan="4">
+                <div>
+                  <h3 style="float: right; color: #dc3545 !important">
+                    {{ tempCheckDothe.invoice_number }}
+                    <span v-if="tempCheckDothe.invoice_status">
+                      <!-- da chuoc -->
+                      <b-badge variant="primary">Đã chuộc</b-badge>
+                    </span>
+                    <span v-else>
+                      <b-badge variant="success">Chưa chuộc</b-badge>
+                    </span>
+                  </h3>
+                  <h2
+                    class="text-center"
+                    style="
+                      color: blue;
+                      text-decoration: underline;
+                      font-weight: bold;
+                    "
+                  >
+                    GIẤY CẦM
+                  </h2>
+                </div>
+              </b-th>
+              <!-- <b-th><h5 class="text-center text-danger">121213</h5></b-th> -->
+            </b-tr>
+          </b-thead>
+          <b-tbody>
+            <b-tr>
+              <b-td>Khách Hàng : </b-td>
+              <b-td colspan="5" style="border-bottom: 1px dotted black">
+                <span
+                  style="color: #dc3545; font-weight: bold; font-size: 24px"
+                >
+                  {{ tempCheckDothe.customer_name }}
                 </span>
-                <span style="font-style: italic">
-                  Ghi chú : {{ tempCheckDothe.invoice_comment }}</span
+              </b-td>
+            </b-tr>
+            <b-tr>
+              <b-td>Tên vật cầm :</b-td>
+              <b-td colspan="5" style="border-bottom: 1px dotted black">
+                <span
+                  style="color: #dc3545; font-weight: bold; font-size: 24px"
                 >
-                <span style="font-style: italic">
-                  SDT : {{ tempCheckDothe.invoice_phone }}</span
+                  <span
+                    v-for="(item, index) in JSON.parse(
+                      tempCheckDothe.invoice_tag
+                    )"
+                    :key="index"
+                  >
+                    {{ item }} ,
+                  </span>
+                </span>
+                {{ tempCheckDothe.invoice_store }} -
+                {{ tempCheckDothe.invoice_store_type }}</b-td
+              >
+            </b-tr>
+
+            <b-tr>
+              <b-td>Số tiền : </b-td>
+              <b-td colspan="5" style="border-bottom: 1px dotted black">
+                <span
+                  style="color: #dc3545; font-weight: bold; font-size: 24px"
                 >
-              </p>
-            </b-td>
-          </b-tr>
-        </b-tbody>
-      </b-table-simple>
+                  {{ $formatN(tempCheckDothe.invoice_money) }} ({{
+                    docsotien(tempCheckDothe.invoice_money)
+                  }})
+                </span>
+              </b-td>
+            </b-tr>
+            <b-tr>
+              <b-td colspan="4"></b-td>
+              <b-td>Ngày thế</b-td>
+              <b-td style="border-bottom: 1px dotted black">
+                <span
+                  style="color: #dc3545; font-weight: bold; font-size: 24px"
+                >
+                  {{
+                    $moment(tempCheckDothe.invoice_date_create).format(
+                      "DD/MM/YYYY"
+                    )
+                  }}
+                </span>
+              </b-td>
+            </b-tr>
+            <b-tr>
+              <b-td>Thông tin</b-td>
+              <b-td colspan="5">
+                <p class="default_thongtin" style="text-align: left">
+                  Số ngày cầm :
+                  <span class="text-danger">
+                    {{
+                      $moment().diff(
+                        $moment(tempCheckDothe.invoice_date_create),
+                        "days"
+                      )
+                    }}
+                    ngày
+                  </span>
+                  <br />
+                  Số tiền lãi :{{ $formatN(getTienLai(tempCheckDothe)) }}
+                  <span class="text-danger">
+                    ({{ docsotien(getTienLai(tempCheckDothe)) }})
+                  </span>
+                  <br />
+                  Số tiền tổng :
+                  <span class="text-danger">
+                    {{
+                      $formatN(
+                        tempCheckDothe.invoice_money +
+                          getTienLai(tempCheckDothe)
+                      )
+                    }}
+                    (
+                    {{
+                      docsotien(
+                        tempCheckDothe.invoice_money +
+                          getTienLai(tempCheckDothe)
+                      )
+                    }})
+                    <br />
+                  </span>
+                  <span style="font-style: italic">
+                    Ghi chú : {{ tempCheckDothe.invoice_comment }}</span
+                  >
+                  <span style="font-style: italic">
+                    SDT : {{ tempCheckDothe.invoice_phone }}</span
+                  >
+                </p>
+              </b-td>
+            </b-tr>
+            <b-tr>
+              <b-td colspan="6">
+                <b-button variant="success" @click="check_invoice()">
+                  Chuộc Đồ</b-button
+                >
+
+                <b-button variant="warning">In lại tem</b-button>
+                <b-button variant="danger">Thanh lý</b-button>
+              </b-td>
+            </b-tr>
+          </b-tbody>
+        </b-table-simple>
+      </b-overlay>
     </b-modal>
     <b-modal
       id="modal_sanpham"
@@ -829,6 +858,9 @@ DocTienBangChu.prototype.doc = function (SoTien) {
 export default {
   data() {
     return {
+      overlayCamDo: false,
+      profitPercent: 2,
+      itemEdit: null,
       overlayGioHang: false,
       fieldsGioHang: [
         { key: "stt", label: "#" },
@@ -864,6 +896,116 @@ export default {
   components: {},
   computed: {},
   methods: {
+    chuocSanPham() {
+      console.log("chuoc");
+    },
+    check_invoice() {
+      this.itemEdit = this.tempCheckDothe;
+      this.overlayCamDo = true;
+      const h = this.$createElement;
+      const messageVNode = h("div", { class: ["foobar"] }, [
+        h("p", { class: ["text-center"] }, [
+          "Ngày chuộc đồ (mặc định hôm nay)",
+        ]),
+        h("b-input", {
+          props: {
+            type: "search",
+            value: new this.$moment().format("DD/MM/YYYY"),
+            id: "modal_thanhly_date",
+          },
+        }),
+      ]);
+      this.$bvModal
+        .msgBoxConfirm(messageVNode, {
+          title: "Xác nhận CHUỘC ĐỒ",
+          size: "sm",
+          buttonSize: "sm",
+          okVariant: "danger",
+          okTitle: "YES",
+          cancelTitle: "NO",
+          footerClass: "p-2",
+          hideHeaderClose: false,
+          centered: true,
+        })
+        .then((value) => {
+          console.log("aaaaa");
+          let ngaythanhli = document.getElementById("modal_thanhly_date").value;
+          let isValid = this.checkRegexDate(ngaythanhli);
+          if (isValid === false) {
+            alert("Ngày sai");
+            return;
+          }
+          if (value === true && ngaythanhli && isValid) {
+            //chuoc do
+            console.log(ngaythanhli);
+            let invoice_profit =
+              parseInt(
+                (
+                  (this.getCountDateComponent(this.itemEdit) *
+                    this.itemEdit.invoice_money *
+                    this.profitPercent) /
+                  3 /
+                  1000 /
+                  1000
+                ).toFixed(0)
+              ) * 1000;
+            this.$supabase
+              .from("invoice")
+              .update({
+                invoice_status: true,
+                invoice_date_get: ngaythanhli,
+                invoice_profit,
+              })
+              .eq("id", this.itemEdit.id)
+              .then((data) => {
+                this.$bvToast.toast(
+                  `Chuộc đồ thế ${this.itemEdit.invoice_number} thành công`,
+                  {
+                    title: "Thông báo",
+                    autoHideDelay: 1000,
+                    appendToast: true,
+                    variant: "primary",
+                  }
+                );
+                this.overlayCamDo = false;
+                this.$refs.modal_camdo.hide();
+                this.itemEdit = null;
+              });
+          } else {
+            alert("Ngày thanh lí không được bỏ trống");
+          }
+        })
+        .catch((err) => {
+          // An error occurred
+        });
+    },
+    getCountDate(dateStart, dateEnd) {
+      let _dateStart = this.$moment(dateStart);
+      let _dateEnd = this.$moment(dateEnd);
+      let count = _dateEnd.diff(_dateStart, "days");
+      return count + 1;
+      // =1
+    },
+    getCountDateComponent(item) {
+      let dateStart;
+      let dateEnd;
+      dateStart = item.invoice_date_create;
+
+      if (item.invoice_status) {
+        dateEnd = item.invoice_date_get;
+        //đã chuộc, invoice_status : false. => đã chuộc, lấy ra invoice_date_get
+      } else {
+        dateEnd = new Date();
+        //chưa chuộc, lấy ra invoice_date_create - now
+      }
+      let count = this.getCountDate(dateStart, dateEnd);
+      return count + 1;
+    },
+    checkRegexDate(str) {
+      const regex =
+        /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[0-2])\/(20[2-4][3-9]|2050)$/;
+      return regex.test(str);
+    },
     closeModalSanPham() {
       zoomLens.style.visibility = "hidden";
     },
@@ -1061,7 +1203,7 @@ export default {
     if (isDisable) {
       return;
     } else {
-     // this.checkDoThe(26304);
+      this.checkDoThe(26304);
       window.addEventListener("keyup", (event) => {
         var specialKeys = [
           "Control",

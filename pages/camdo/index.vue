@@ -859,7 +859,6 @@ export default {
       this.tableOverlay = false;
     },
     async toggleStatus(item) {
-      console.log("hello");
       this.tableOverlay = true;
       if (item.invoice_status) {
         //từ chưa chuộc qua đã chuôc5

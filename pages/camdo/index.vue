@@ -509,6 +509,7 @@
                       variant="primary"
                     ></b-icon>
                   </span>
+
                   <span v-else>
                     <b-icon
                       icon="backspace-reverse-fill"
@@ -544,9 +545,16 @@
                 >
               </template>
               <template #cell(invoice_status)="data">
-                <!-- `data.value` is the value after formatted by the Formatter -->
-
-                <center>
+                <div>
+                  <span>
+                    <b-form-checkbox
+                      @change="toggleStatus(data.item)"
+                      v-model="data.item.invoice_status"
+                      switch
+                      v-show="data.item.invoice_status"
+                    >
+                    </b-form-checkbox>
+                  </span>
                   <span v-if="data.item.invoice_status">
                     <!-- da chuoc -->
                     <b-badge variant="primary">Đã chuộc</b-badge>
@@ -554,7 +562,24 @@
                   <span v-else>
                     <b-badge variant="success">Chưa chuộc</b-badge>
                   </span>
-                </center>
+                </div>
+                <!-- `data.value` is the value after formatted by the Formatter -->
+              </template>
+              <template #cell(invoice_label)="data">
+                <!-- `data.value` is the value after formatted by the Formatter -->
+                <b-form-checkbox
+                  v-model="data.item.invoice_label"
+                  @change="toggleInTem(data.item)"
+                  switch
+                >
+                  <span v-if="data.item.invoice_label">
+                    <!-- da chuoc -->
+                    <b-badge variant="primary">Đã In</b-badge>
+                  </span>
+                  <span v-else>
+                    <b-badge variant="success">Chưa In</b-badge>
+                  </span>
+                </b-form-checkbox>
               </template>
               <template #head()="scope">
                 <div class="text-nowrap">{{ scope.label }}</div>
@@ -708,6 +733,12 @@ export default {
           key: "invoice_status",
           sortable: true,
           label: "Tình trạng",
+          thClass: "myThClass500px",
+        },
+        {
+          key: "invoice_label",
+          sortable: true,
+          label: "Tem",
           thClass: "myThClass",
         },
         {
@@ -816,6 +847,40 @@ export default {
     };
   },
   methods: {
+    async toggleInTem(item) {
+      this.tableOverlay = true;
+      let v = item.invoice_label;
+      let { data, error } = await this.$supabase
+        .from("invoice")
+        .update({ invoice_label: v })
+        .eq("id", item.id)
+        .select();
+      this.$refs.my_table.refresh();
+      this.tableOverlay = false;
+    },
+    async toggleStatus(item) {
+      console.log("hello");
+      this.tableOverlay = true;
+      if (item.invoice_status) {
+        //từ chưa chuộc qua đã chuôc5
+      } else {
+        //đa chuoc qua chua chua chuoc
+        //reset lại table
+        console.log("a");
+        await this.$supabase
+          .from("invoice")
+          .update({
+            invoice_status: false,
+            invoice_profit: null,
+            invoice_date_get: null,
+          })
+          .eq("id", item.id)
+          .select();
+      }
+
+      this.$refs.my_table.refresh();
+      this.tableOverlay = false;
+    },
     getVariant() {
       let listVariant = [
         { name: "day", variant: "warning" },
@@ -1015,7 +1080,6 @@ export default {
             this.$supabase
               .from("invoice")
               .update({
-                invoice_type: "THANH LÝ",
                 invoice_status: true,
                 invoice_date_get: ngaythanhli,
                 invoice_profit,
@@ -1043,6 +1107,7 @@ export default {
           // An error occurred
         });
     },
+
     lost_invoice() {
       const h = this.$createElement;
       const messageVNode = h("div", { class: ["foobar"] }, [
@@ -1378,21 +1443,16 @@ export default {
       if (ctx.sortBy != "") {
         sortBy = ctx.sortBy;
       }
+      if (ctx.sortBy === "invoice_status") {
+        sortBy = "invoice_status";
+      }
       this.tableOverlay = true;
       try {
         let s = (ctx.currentPage - 1) * ctx.perPage;
         let e = s + ctx.perPage;
-        // let totalRow =  this.$supabase
-        //         .from("invoice")
-        //         .select("*", { count: "exact", head: true })
-        //         .then((data) => {
-        //           this.totalRows = data.count;
-        //           this.dataReady = true;
-        //         });
         let queryCount = this.$supabase
           .from("invoice")
           .select("*", { count: "exact", head: true });
-
         let query = this.$supabase
           .from("invoice")
           .select("*")
@@ -1507,8 +1567,6 @@ export default {
           queryCount = queryCount.eq("invoice_type", this.filter_invoice_type);
           query = query.eq("invoice_type", this.filter_invoice_type);
         }
-        //kiểm tra kiểu thế
-        //   query = query.eq("invoice_store_type", this.filter_store_type);
 
         let item = await query;
         let itemCount = await queryCount;

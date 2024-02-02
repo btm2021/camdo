@@ -976,6 +976,43 @@ export default {
           // An error occurred
         });
     },
+    check_invoice_auto() {
+      this.itemEdit = this.tempCheckDothe;
+
+      let ngaythanhli = this.$moment().format("YYYY/MM/DD");
+
+      console.log(ngaythanhli);
+      let invoice_profit =
+        parseInt(
+          (
+            (this.getCountDateComponent(this.itemEdit) *
+              this.itemEdit.invoice_money *
+              this.profitPercent) /
+            3 /
+            1000 /
+            1000
+          ).toFixed(0)
+        ) * 1000;
+      this.$supabase
+        .from("invoice")
+        .update({
+          invoice_status: true,
+          invoice_date_get: ngaythanhli,
+          invoice_profit,
+        })
+        .eq("id", this.itemEdit.id)
+        .then((data) => {
+          this.$bvToast.toast(
+            `Chuộc đồ thế ${this.itemEdit.invoice_number} thành công`,
+            {
+              title: "Thông báo",
+              autoHideDelay: 1000,
+              appendToast: true,
+              variant: "primary",
+            }
+          );
+        });
+    },
     getCountDate(dateStart, dateEnd) {
       let _dateStart = this.$moment(dateStart);
       let _dateEnd = this.$moment(dateEnd);
@@ -1169,7 +1206,7 @@ export default {
           this.tempCheckDothe = data.data[0];
           this.$bvModal.show("modal_camdo");
           //unset
-          this.thanhtoan();
+          this.check_invoice_auto();
         });
     },
     checkSanPham(id) {
@@ -1202,7 +1239,7 @@ export default {
     if (isDisable) {
       return;
     } else {
-      // this.checkDoThe(26304);
+    //  this.checkDoThe(82485);
       window.addEventListener("keyup", (event) => {
         var specialKeys = [
           "Control",

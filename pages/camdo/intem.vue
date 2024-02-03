@@ -3,25 +3,6 @@
     <b-col cols="12" class="mt-3">
       <b-row no-gutters>
         <b-col cols="4">
-          <b-form-group
-            label="Hiển thị"
-            label-for="per-page-select"
-            label-cols-sm="6"
-            label-cols-md="4"
-            label-cols-lg="3"
-            label-align-sm="right"
-            label-size="sm"
-            class="mb-0"
-          >
-            <b-form-select
-              id="per-page-select"
-              v-model="perPage"
-              :options="[50, 100, 200]"
-              size="sm"
-            ></b-form-select>
-          </b-form-group>
-        </b-col>
-        <b-col cols="4">
           <b-button variant="primary" @click="intemSingle"
             >In Tem Cầm đồ đã chọn
           </b-button>
@@ -30,23 +11,7 @@
             >Chọn tất cả</b-button
           ></b-col
         >
-        <b-col cols="4" class="mb-2">
-          <b-pagination
-            v-model="currentPage"
-            :total-rows="totalRows"
-            :per-page="perPage"
-            size="sm"
-            align="right"
-            first-number
-            last-number
-            class="my-0"
-          >
-            <template #first-text><span class="">Đầu</span></template>
-            <template #prev-text><span class="">Lùi</span></template>
-            <template #next-text><span class="">Tới</span></template>
-            <template #last-text><span class="">Cuối</span></template>
-          </b-pagination>
-        </b-col>
+
         <b-col cols="12" class="min-vw-100">
           <b-table
             caption="Sản phẩm chưa in tem"
@@ -54,8 +19,6 @@
             style="min-height: 400px"
             class="my_table align-middle w-auto"
             responsive
-            :per-page="perPage"
-            :current-page="currentPage"
             bordered
             small
             no-border-collapse
@@ -324,43 +287,15 @@ export default {
       this.$refs["my_table"].selectAllRows();
     },
     async myProvider(ctx) {
-      let sortBy = "id";
-      // console.log(ctx);
-      if (ctx.sortBy === "invoice_count") {
-        ctx.sortBy = "invoice_date_create";
-      }
-      if (ctx.sortBy != "") {
-        sortBy = ctx.sortBy;
-      }
       this.tableOverlay = true;
       try {
-        let s = (ctx.currentPage - 1) * ctx.perPage;
-        let e = s + ctx.perPage;
-
-        let queryCount = this.$supabase
-          .from("invoice")
-          .eq("invoice_label", false)
-          .select("*", { count: "exact", head: true });
-
         let query = this.$supabase
           .from("invoice")
           .select("*")
-          .range(s, e)
           .eq("invoice_label", false)
-          .order(sortBy, { ascending: ctx.sortDesc });
-
-        if (this.filter_ten && this.filter_ten.length > 1) {
-          query = query.ilike("customer_name", `%${this.filter_ten}%`);
-          queryCount = queryCount.ilike(
-            "customer_name",
-            `%${this.filter_ten}%`
-          );
-        }
+          .order("invoice_number", { ascending: ctx.sortDesc });
 
         let item = await query;
-        let itemCount = await queryCount;
-
-        this.totalRows = itemCount.count;
         let result = item.data;
         this.allListData = item.data;
         let newResult = [];
@@ -379,6 +314,7 @@ export default {
         this.tableOverlay = false;
         return newResult;
       } catch (error) {
+        console.log(error);
         return [];
       }
     },

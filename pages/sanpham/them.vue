@@ -533,7 +533,6 @@ export default {
     },
     inTemSelect() {
       if (this.productList.length > 0) {
-        alert("Chờ máy in tem xong rồi bấm OK");
         this.$pl_sanpham_intem(this, this.productList);
         this.productList = [];
      

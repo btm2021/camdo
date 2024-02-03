@@ -336,15 +336,10 @@ export default {
       try {
         let s = (ctx.currentPage - 1) * ctx.perPage;
         let e = s + ctx.perPage;
-        // let totalRow =  this.$supabase
-        //         .from("invoice")
-        //         .select("*", { count: "exact", head: true })
-        //         .then((data) => {
-        //           this.totalRows = data.count;
-        //           this.dataReady = true;
-        //         });
+
         let queryCount = this.$supabase
           .from("invoice")
+          .eq("invoice_label", false)
           .select("*", { count: "exact", head: true });
 
         let query = this.$supabase

@@ -75,6 +75,11 @@
                 >
                   {{ tempCheckDothe.customer_name }}
                 </span>
+                Lãi :
+                <span
+                  style="color: yellow; font-size: 60px; font-weight: 800"
+                  >{{ $formatN(getTienLai(tempCheckDothe)) }}</span
+                >
               </b-td>
             </b-tr>
             <b-tr>
@@ -139,7 +144,11 @@
                     ngày
                   </span>
                   <br />
-                  Số tiền lãi :{{ $formatN(getTienLai(tempCheckDothe)) }}
+                  Số tiền lãi :<span
+                    style="color: yellow; font-size: 30px; font-weight: 800"
+                  >
+                    {{ $formatN(getTienLai(tempCheckDothe)) }}
+                  </span>
                   <span class="text-danger">
                     ({{ docsotien(getTienLai(tempCheckDothe)) }})
                   </span>
@@ -618,7 +627,7 @@
       type="dark"
       variant="primary"
     >
-      <b-navbar-brand to="/">BPJ</b-navbar-brand>
+      <b-navbar-brand href="/">BPJ</b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
       <b-collapse id="nav-collapse" is-nav>
@@ -649,7 +658,7 @@
               <b-dropdown-item href="/sanpham/"
                 >Danh sách sản phẩm</b-dropdown-item
               >
-              <b-dropdown-item to="/sanpham/them"
+              <b-dropdown-item href="/sanpham/them"
                 >Thêm sản phẩm</b-dropdown-item
               >
             </b-dropdown-group>
@@ -665,7 +674,7 @@
               <b-dropdown-item href="/hoadon/"
                 >Danh sách hóa đơn phẩm</b-dropdown-item
               >
-              <b-dropdown-item to="/hoadon/them">Tạo Hóa Đơn</b-dropdown-item>
+              <b-dropdown-item href="/hoadon/them">Tạo Hóa Đơn</b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -702,7 +711,7 @@
           </b-nav-item-dropdown>
         </b-navbar-nav>
         <b-navbar-nav>
-          <b-nav-item to="/chat">Chat</b-nav-item>
+          <b-nav-item href="/chat/">Chat</b-nav-item>
         </b-navbar-nav>
         <b-navbar-nav>
           <b-nav-item v-b-toggle.sidebargiohang>Giỏ hàng</b-nav-item>
@@ -1239,7 +1248,7 @@ export default {
     if (isDisable) {
       return;
     } else {
-    //  this.checkDoThe(82485);
+      this.checkDoThe(70850);
       window.addEventListener("keyup", (event) => {
         var specialKeys = [
           "Control",

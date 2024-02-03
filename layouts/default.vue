@@ -71,15 +71,11 @@
               <b-td>Khách Hàng : </b-td>
               <b-td colspan="5" style="border-bottom: 1px dotted black">
                 <span
-                  style="color: #dc3545; font-weight: bold; font-size: 24px"
+                  style="color: #dc3545; font-weight: bold; font-size: 40px"
                 >
                   {{ tempCheckDothe.customer_name }}
                 </span>
-                Lãi :
-                <span
-                  style="color: yellow; font-size: 60px; font-weight: 800"
-                  >{{ $formatN(getTienLai(tempCheckDothe)) }}</span
-                >
+              
               </b-td>
             </b-tr>
             <b-tr>
@@ -145,7 +141,7 @@
                   </span>
                   <br />
                   Số tiền lãi :<span
-                    style="color: yellow; font-size: 30px; font-weight: 800"
+                    style="color: yellow; font-size: 50px; font-weight: 800"
                   >
                     {{ $formatN(getTienLai(tempCheckDothe)) }}
                   </span>

@@ -75,7 +75,6 @@
                 >
                   {{ tempCheckDothe.customer_name }}
                 </span>
-              
               </b-td>
             </b-tr>
             <b-tr>
@@ -701,6 +700,9 @@
               header="Sản phẩm"
               style="width: 300px"
             >
+              <b-dropdown-item href="/thongke/ngay"
+                >Theo ngày</b-dropdown-item
+              >
               <b-dropdown-item-button>Sản phẩm</b-dropdown-item-button>
               <b-dropdown-item href="/thongke/camdo">Cầm đồ</b-dropdown-item>
             </b-dropdown-group>
@@ -1244,7 +1246,7 @@ export default {
     if (isDisable) {
       return;
     } else {
-    //  this.checkDoThe(70850);
+      //  this.checkDoThe(70850);
       window.addEventListener("keyup", (event) => {
         var specialKeys = [
           "Control",

@@ -82,8 +82,8 @@
 export default {
   data() {
     return {
-      dayStart: new Date("2024/02/01"),
-      dayEnd: new Date("2024/02/03"),
+      dayStart: new Date(),
+      dayEnd: new Date(),
       info: {
         tongdothe: 0,
         tongtienduara: 0,

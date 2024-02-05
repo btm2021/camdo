@@ -173,7 +173,6 @@
                   v-for="(item, index) in _chartTienRaVao"
                   :key="'cc_' + index"
                   style="width: 100%"
-                  type="bar"
                   :series="item.series"
                   :options="item.chartOptions"
                 ></apexchart>
@@ -500,6 +499,40 @@ export default {
           chuocInvoices: totalChuocMoney * -1,
         };
       });
+      let result1 = categories.map((date) => {
+        // Tìm các hóa đơn thế đồ
+
+        let theDoInvoices = _.filter(
+          invoices,
+          (invoice) =>
+            invoice.invoice_status === false &&
+            invoice.invoice_date_get === null &&
+            this.$moment(invoice.invoice_date_create).format("DD/MM/YYYY") ===
+              date
+        );
+        let totalTheDoMoney = _.sumBy(theDoInvoices, "invoice_money");
+
+        // Tìm các hóa đơn chuộc
+        let chuocInvoices = _.filter(invoices, (invoice) => {
+          let isChuoc =
+            invoice.invoice_status === true &&
+            this.$moment(invoice.invoice_date_get).format("DD/MM/YYYY") ===
+              date;
+          if (isChuoc) {
+          }
+          return isChuoc;
+        });
+        let totalChuocMoney = _.sumBy(
+          chuocInvoices,
+          (invoice) => invoice.invoice_money + invoice.invoice_profit
+        );
+
+        return {
+          date,
+          theDoInvoices: totalTheDoMoney,
+          chuocInvoices: totalChuocMoney,
+        };
+      });
 
       let theDoSeries = {
         name: "Thế Đồ",
@@ -510,8 +543,18 @@ export default {
         name: "Chuộc",
         data: result.map((item) => ({ x: item.date, y: item.chuocInvoices })),
       };
+      let theDoSeries1 = {
+        name: "Thế Đồ",
+        data: result1.map((item) => ({ x: item.date, y: item.theDoInvoices })),
+      };
+
+      let chuocSeries1 = {
+        name: "Chuộc",
+        data: result1.map((item) => ({ x: item.date, y: item.chuocInvoices })),
+      };
 
       let series = [theDoSeries, chuocSeries];
+      let series1 = [theDoSeries1, chuocSeries1];
       let objectChart = {
         series,
         chartOptions: {
@@ -565,14 +608,79 @@ export default {
               text: "Ngày",
             },
             labels: {
-              formatter: function (val) {
-                return val;
+              formatter: (val) => {
+                return this.$formatN(Math.abs(val));
               },
             },
           },
         },
       };
-      return [objectChart];
+      let objectChart1 = {
+        series: series1,
+        chartOptions: {
+          chart: {
+            height: 200,
+            type: "line",
+            toolbar: {
+              show: false,
+            },
+          },
+          colors: ["#008FFB", "#FF4560"],
+          dataLabels: {
+            enabled: true,
+            formatter: (val) => {
+              return this.$formatN(Math.abs(val));
+            },
+          },
+          stroke: {
+            curve: "smooth",
+          },
+          title: {
+            text: "Tiền thế / Tiền chuộc",
+            align: "left",
+          },
+
+          markers: {
+            size: 1,
+          },
+          xaxis: {
+            categories,
+            title: {
+              text: "Ngày",
+            },
+            crosshairs: {
+              fill: {
+                type: "gradient",
+                gradient: {
+                  colorFrom: "#D8E3F0",
+                  colorTo: "#BED1E6",
+                  stops: [0, 100],
+                  opacityFrom: 0.4,
+                  opacityTo: 0.5,
+                },
+              },
+            },
+          },
+          yaxis: {
+            title: {
+              text: "Tiền",
+            },
+            labels: {
+              formatter: (val) => {
+                return this.$formatN(Math.abs(val));
+              },
+            },
+          },
+          legend: {
+            position: "top",
+            horizontalAlign: "right",
+            floating: true,
+            offsetY: -25,
+            offsetX: -5,
+          },
+        },
+      };
+      return [objectChart, objectChart1];
     },
   },
   methods: {

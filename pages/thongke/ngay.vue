@@ -178,6 +178,17 @@
                 ></apexchart>
               </div>
             </b-tab>
+            <b-tab lazy title="Tiền lãi" @click="whatChartShow = 'tienlai'">
+              <div v-if="whatChartShow === 'tienlai'">
+                <apexchart
+                  v-for="(item, index) in _chartTienLai"
+                  :key="'dd_' + index"
+                  style="width: 100%"
+                  :series="item.series"
+                  :options="item.chartOptions"
+                ></apexchart>
+              </div>
+            </b-tab>
           </b-tabs>
         </b-col>
       </b-row>
@@ -681,6 +692,113 @@ export default {
         },
       };
       return [objectChart, objectChart1];
+    },
+    _chartTienLai() {
+      let categories = [];
+      let invoices = JSON.parse(JSON.stringify(this.listDataRaw));
+      for (
+        let m = this.$moment(this.dayStart);
+        m.isSameOrBefore(this.dayEnd);
+        m.add(1, "days")
+      ) {
+        categories.push(m.format("DD/MM/YYYY"));
+      }
+      let result = categories.map((date) => {
+        // Tìm các hóa đơn thế đồ
+
+        // Tìm các hóa đơn chuộc
+        let chuocInvoices = _.filter(invoices, (invoice) => {
+          let isChuoc =
+            invoice.invoice_status === true &&
+            this.$moment(invoice.invoice_date_get).format("DD/MM/YYYY") ===
+              date;
+          if (isChuoc) {
+          }
+          return isChuoc;
+        });
+        let totalChuocMoney = _.sumBy(
+          chuocInvoices,
+          (invoice) => invoice.invoice_profit
+        );
+
+        return {
+          date,
+          chuocInvoices: totalChuocMoney,
+        };
+      });
+
+      let chuocSeries = {
+        name: "Tiền lãi",
+        data: result.map((item) => ({ x: item.date, y: item.chuocInvoices })),
+      };
+
+      let series = [chuocSeries];
+
+      let objectChart = {
+        series,
+        chartOptions: {
+          chart: {
+            height: 200,
+            type: "line",
+            toolbar: {
+              show: false,
+            },
+          },
+          dataLabels: {
+            enabled: true,
+            formatter: (val) => {
+              return this.$formatN(Math.abs(val));
+            },
+          },
+          stroke: {
+            curve: "smooth",
+          },
+          title: {
+            text: "Tiền thế / Tiền chuộc",
+            align: "left",
+          },
+
+          markers: {
+            size: 1,
+          },
+          xaxis: {
+            categories,
+            title: {
+              text: "Ngày",
+            },
+            crosshairs: {
+              fill: {
+                type: "gradient",
+                gradient: {
+                  colorFrom: "#D8E3F0",
+                  colorTo: "#BED1E6",
+                  stops: [0, 100],
+                  opacityFrom: 0.4,
+                  opacityTo: 0.5,
+                },
+              },
+            },
+          },
+          yaxis: {
+            title: {
+              text: "Tiền",
+            },
+            labels: {
+              formatter: (val) => {
+                return this.$formatN(Math.abs(val));
+              },
+            },
+          },
+          legend: {
+            position: "top",
+            horizontalAlign: "right",
+            floating: true,
+            offsetY: -25,
+            offsetX: -5,
+          },
+        },
+      };
+      return [objectChart];
     },
   },
   methods: {

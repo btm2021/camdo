@@ -329,6 +329,10 @@ export default {
             id: item.id,
           };
         });
+        list_tem = list_tem.sort((a, b) => {
+          return a.maso - b.maso;
+        });
+        
         this.$pnPublish(
           {
             channel: "printserver",

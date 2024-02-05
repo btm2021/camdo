@@ -167,7 +167,11 @@ export default {
     return {
       overlayChartTheMoiDongLai: false,
       isNewData: false,
-      dayStart: new Date("2024/02/01"),
+      dayStart: new Date(
+        new Date().getFullYear(),
+        new Date().getMonth(),
+        1
+      ).toLocaleDateString("en-CA"),
       dayEnd: new Date(),
       info: {
         tongdothe: 0,

@@ -700,9 +700,7 @@
               header="Sản phẩm"
               style="width: 300px"
             >
-              <b-dropdown-item href="/thongke/ngay"
-                >Theo ngày</b-dropdown-item
-              >
+              <b-dropdown-item href="/thongke/ngay">Theo ngày</b-dropdown-item>
               <b-dropdown-item-button>Sản phẩm</b-dropdown-item-button>
               <b-dropdown-item href="/thongke/camdo">Cầm đồ</b-dropdown-item>
             </b-dropdown-group>
@@ -714,16 +712,16 @@
         <b-navbar-nav>
           <b-nav-item v-b-toggle.sidebargiohang>Giỏ hàng</b-nav-item>
         </b-navbar-nav>
-        <!-- Right aligned nav items -->
-        <!-- <b-navbar-nav class="ml-auto">
+        <b-navbar-nav class="ml-auto">
           <b-nav-form>
             <b-form-input
+              autocomplete="off"
               size="sm"
               class="mr-sm-2"
               placeholder="Search"
             ></b-form-input>
           </b-nav-form>
-        </b-navbar-nav> -->
+        </b-navbar-nav>
       </b-collapse>
     </b-navbar>
     <nuxt />

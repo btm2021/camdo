@@ -95,14 +95,39 @@
           <b-tabs card>
             <b-tab title="Đồ thế" active @click="whatChartShow = 'dothe'">
               <div v-if="whatChartShow === 'dothe'">
-                <apexchart
+                <span
                   v-for="(item, index) in _chartGetDoThe"
                   :key="'aa_' + index"
-                  style="width: 100%"
-                  type="bar"
-                  :series="item.series"
-                  :options="item.chartOptions"
-                ></apexchart>
+                >
+                  <apexchart
+                    style="width: 100%"
+                    type="bar"
+                    :series="item.series"
+                    :options="item.chartOptions"
+                  ></apexchart>
+                  <b-table
+                    :items="item.table"
+                    small
+                    hover
+                    responsive
+                    striped
+                    class="text-center"
+                    show-empty
+                    :fields="item.fields"
+                  >
+                    <template #cell(invoice_money)="data">
+                      <code>{{ $formatN(data.value) }}</code>
+                    </template>
+                    <template #cell(stt)="data">
+                      <strong>{{ data.index + 1 }}</strong>
+                    </template>
+                    <template #cell(invoice_date_create)="data">
+                      <strong>{{
+                        $moment(data.value).format("DD/MM/YYYY")
+                      }}</strong>
+                    </template>
+                  </b-table>
+                </span>
               </div>
             </b-tab>
             <b-tab
@@ -210,7 +235,35 @@ export default {
       ];
       let objectChart = {
         series,
+        table: item.sort((a, b) => b.invoice_number - a.invoice_number),
+        fields: [
+          "stt",
+          {
+            key: "customer_name",
+            label: "Tên khách",
+            sortable: true,
+          },
+          {
+            key: "invoice_number",
+            label: "Mã số",
+            sortable: true,
+          },
+          {
+            key: "invoice_money",
+            label: "Số tiền",
+            sortable: true,
+          },
 
+          {
+            key: "invoice_date_create",
+            label: "Ngày",
+            sortable: true,
+          },
+          {
+            key: "invoice_tag",
+            label: "Món",
+          },
+        ],
         chartOptions: {
           dataLabels: {
             enabled: true,
@@ -398,6 +451,8 @@ export default {
             horizontalAlign: "left",
           },
         },
+        table: result,
+        field: [],
       };
       return [objectChart];
     },

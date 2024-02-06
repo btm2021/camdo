@@ -51,7 +51,7 @@
         </b-col>
       </b-row>
       <div v-if="info">
-        <b-overlay :show="overlayChartTheMoiDongLai">
+        <b-overlay :show="isDataLoad">
           <div class="row">
             <div class="col-12">
               <div class="tile">
@@ -90,108 +90,215 @@
           </div>
         </b-overlay>
       </div>
-      <b-row>
-        <b-col cols="12">
-          <b-tabs card>
-            <b-tab title="Đồ thế" active @click="whatChartShow = 'dothe'">
-              <div v-if="whatChartShow === 'dothe'">
-                <span
-                  v-for="(item, index) in _chartGetDoThe"
-                  :key="'aa_' + index"
-                >
+      <b-overlay :show="isDataLoad">
+        <b-row>
+          <b-col cols="12">
+            <b-tabs card>
+              <b-tab title="Đồ thế" active @click="whatChartShow = 'dothe'">
+                <div v-if="whatChartShow === 'dothe'">
+                  <span
+                    v-for="(item, index) in _chartGetDoThe"
+                    :key="'aa_' + index"
+                  >
+                    <apexchart
+                      style="width: 100%"
+                      type="bar"
+                      :series="item.series"
+                      :options="item.chartOptions"
+                    ></apexchart>
+                    <b-table
+                      :items="item.table"
+                      small
+                      hover
+                      responsive
+                      striped
+                      class="text-center"
+                      show-empty
+                      :fields="item.fields"
+                    >
+                      <template #cell(invoice_money)="data">
+                        <code>{{ $formatN(data.value) }}</code>
+                      </template>
+                      <template #cell(stt)="data">
+                        <strong>{{ data.index + 1 }}</strong>
+                      </template>
+                      <template #cell(invoice_date_create)="data">
+                        <strong>{{
+                          $moment(data.value).format("DD/MM/YYYY")
+                        }}</strong>
+                      </template>
+                    </b-table>
+                  </span>
+                </div>
+              </b-tab>
+              <b-tab
+                title="Thế mới/Đóng lãi"
+                @click="whatChartShow = 'themoidonglai'"
+              >
+                <div v-if="whatChartShow === 'themoidonglai'">
                   <apexchart
+                    v-for="(item, index) in _chartThemoidonglai"
+                    :key="'bb_' + index"
                     style="width: 100%"
                     type="bar"
                     :series="item.series"
                     :options="item.chartOptions"
                   ></apexchart>
-                  <b-table
-                    :items="item.table"
-                    small
-                    hover
-                    responsive
-                    striped
-                    class="text-center"
-                    show-empty
-                    :fields="item.fields"
+                </div>
+              </b-tab>
+              <b-tab lazy title="Thế/Chuộc" @click="whatChartShow = 'thechuoc'">
+                <div v-if="whatChartShow === 'thechuoc'">
+                  <div
+                    v-for="(item, index) in _chartTheChuoc"
+                    :key="'cc_' + index"
                   >
-                    <template #cell(invoice_money)="data">
-                      <code>{{ $formatN(data.value) }}</code>
-                    </template>
-                    <template #cell(stt)="data">
-                      <strong>{{ data.index + 1 }}</strong>
-                    </template>
-                    <template #cell(invoice_date_create)="data">
-                      <strong>{{
-                        $moment(data.value).format("DD/MM/YYYY")
-                      }}</strong>
-                    </template>
-                  </b-table>
-                </span>
-              </div>
-            </b-tab>
-            <b-tab
-              title="Thế mới/Đóng lãi"
-              @click="whatChartShow = 'themoidonglai'"
-            >
-              <div v-if="whatChartShow === 'themoidonglai'">
-                <apexchart
-                  v-for="(item, index) in _chartThemoidonglai"
-                  :key="'bb_' + index"
-                  style="width: 100%"
-                  type="bar"
-                  :series="item.series"
-                  :options="item.chartOptions"
-                ></apexchart>
-              </div>
-            </b-tab>
-            <b-tab lazy title="Thế/Chuộc" @click="whatChartShow = 'thechuoc'">
-              <div v-if="whatChartShow === 'thechuoc'">
-                <!-- <span
-                  v-for="(item, index) in _chartTheChuoc"
-                  :key="'cc_' + index"
-                >
-                  {{ item }}
-                </span> -->
-                <apexchart
-                  v-for="(item, index) in _chartTheChuoc"
-                  :key="'cc_' + index"
-                  style="width: 100%"
-                  type="area"
-                  :series="item.series"
-                  :options="item.chartOptions"
-                ></apexchart>
-              </div>
-            </b-tab>
-            <b-tab
-              lazy
-              title="Tiền ra/vào"
-              @click="whatChartShow = 'tienravao'"
-            >
-              <div v-if="whatChartShow === 'tienravao'">
-                <apexchart
-                  v-for="(item, index) in _chartTienRaVao"
-                  :key="'cc_' + index"
-                  style="width: 100%"
-                  :series="item.series"
-                  :options="item.chartOptions"
-                ></apexchart>
-              </div>
-            </b-tab>
-            <b-tab lazy title="Tiền lãi" @click="whatChartShow = 'tienlai'">
-              <div v-if="whatChartShow === 'tienlai'">
-                <apexchart
-                  v-for="(item, index) in _chartTienLai"
-                  :key="'dd_' + index"
-                  style="width: 100%"
-                  :series="item.series"
-                  :options="item.chartOptions"
-                ></apexchart>
-              </div>
-            </b-tab>
-          </b-tabs>
-        </b-col>
-      </b-row>
+                    <apexchart
+                      style="width: 100%"
+                      type="area"
+                      :series="item.series"
+                      :options="item.chartOptions"
+                    ></apexchart>
+                    <b-row no-gutters class="text-center">
+                      <b-col cols="6">
+                        <b-table
+                          :items="
+                            item.series.filter((i) => i.name === 'Thế Đồ')[0]
+                              .data
+                          "
+                          :fields="[
+                            { key: 'x', label: 'Ngày' },
+                            { key: 'y', label: 'Số Lượng' },
+                          ]"
+                          small
+                          caption-top
+                          show-empty
+                          bordered
+                          caption="Thế Đồ theo ngày"
+                          hover
+                        ></b-table
+                      ></b-col>
+                      <b-col cols="6">
+                        <b-table
+                          caption-top
+                          caption="Chuộc Đồ theo ngày"
+                          :fields="[
+                            { key: 'x', label: 'Ngày' },
+                            { key: 'y', label: 'Số Lượng' },
+                          ]"
+                          :items="
+                            item.series.filter((i) => i.name === 'Chuộc')[0]
+                              .data
+                          "
+                          small
+                          bordered
+                          show-empty
+                          hover
+                        ></b-table
+                      ></b-col>
+                    </b-row>
+                  </div>
+                </div>
+              </b-tab>
+              <b-tab
+                lazy
+                title="Tiền ra/vào"
+                @click="whatChartShow = 'tienravao'"
+              >
+                <div v-if="whatChartShow === 'tienravao'">
+                  <div
+                    v-for="(item1, index) in _chartTienRaVao"
+                    :key="'cc_' + index"
+                  >
+                    <apexchart
+                      style="width: 100%"
+                      :series="item1.series"
+                      :options="item1.chartOptions"
+                    ></apexchart>
+                    <b-row no-gutters class="text-center" v-if="index === 0">
+                      <b-col cols="6">
+                        <b-table
+                          :items="
+                            item1.series.filter((i) => i.name === 'Thế Đồ')[0]
+                              .data
+                          "
+                          :fields="[
+                            { key: 'x', label: 'Ngày' },
+                            {
+                              key: 'y',
+                              label: 'Tiền Đưa ra',
+                              formatter: (value) => {
+                                return $formatN(Math.abs(value));
+                              },
+                            },
+                          ]"
+                          small
+                          no-border-collapse
+                          caption-top
+                          show-empty
+                          bordered
+                          caption="Tiền Đưa ra theo ngày"
+                          hover
+                        ></b-table
+                      ></b-col>
+                      <b-col cols="6">
+                        <b-table
+                          no-border-collapse
+                          caption-top
+                          caption="Tiền nhận vào theo ngày"
+                          :fields="[
+                            {
+                              key: 'y',
+                              label: 'Tiền Nhận Vào',
+                              formatter: (value) => {
+                                return $formatN(Math.abs(value));
+                              },
+                            },
+                            {
+                              key: 'x',
+                              label: 'Tiền Chênh lệch',
+                              formatter: (value, key, item) => {
+                                let ngay = item.x;
+                                let listTheDo = item1.series.filter(
+                                  (i) => i.name === 'Thế Đồ'
+                                )[0].data;
+                                let d = listTheDo.filter((i) => i.x === ngay)[0]
+                                  .y;
+
+                                return $formatN(
+                                  Math.abs(parseInt(item.y)) - parseInt(d)
+                                );
+                              },
+                            },
+                          ]"
+                          :items="
+                            item1.series.filter((i) => i.name === 'Chuộc')[0]
+                              .data
+                          "
+                          small
+                          bordered
+                          show-empty
+                          hover
+                        ></b-table
+                      ></b-col>
+                    </b-row>
+                  </div>
+                </div>
+              </b-tab>
+              <b-tab lazy title="Tiền lãi" @click="whatChartShow = 'tienlai'">
+                <div v-if="whatChartShow === 'tienlai'">
+                  <apexchart
+                    v-for="(item, index) in _chartTienLai"
+                    :key="'dd_' + index"
+                    style="width: 100%"
+                    :series="item.series"
+                    :options="item.chartOptions"
+                  ></apexchart>
+                </div>
+              </b-tab>
+            </b-tabs>
+          </b-col>
+        </b-row>
+      </b-overlay>
     </b-container>
   </div>
 </template>
@@ -200,6 +307,7 @@
 export default {
   data() {
     return {
+      isDataLoad: false,
       overlayChartTheMoiDongLai: false,
       isNewData: false,
       dayStart: new Date(
@@ -807,6 +915,7 @@ export default {
     },
 
     async getStat() {
+      this.isDataLoad = true;
       // lay toan bo data phat sinh trong khoang thoi gian
       let query = await this.$supabase
         .from("invoice")
@@ -843,6 +952,7 @@ export default {
 
       this.listDataRaw = newData;
       this.renderInfo(newData);
+      this.isDataLoad = false;
     },
     renderInfo(item) {
       this.info = {

@@ -434,11 +434,11 @@ export default {
       let maso = parseInt(this.form.maso);
       let lastNumber = this.lastInsertForInfo.invoice_number;
 
-      if (this.inputMode && (maso <= lastNumber || maso > lastNumber + 200)) {
-        this.form.maso = null;
-        alert("Mã số có vấn đề");
-        return;
-      }
+      // if (this.inputMode && (maso <= lastNumber)) {
+      //   this.form.maso = null;
+      //   alert("Mã số có vấn đề");
+      //   return;
+      // }
       //check
       this.isStatus = true;
       this.$supabase

@@ -344,6 +344,9 @@ export default {
       let seriesData = _.map(cat, (invoices, date) => {
         return { x: date, y: invoices.length };
       });
+      const categories = Object.keys(cat).sort(
+        (a, b) => new Date(a) - new Date(b)
+      );
 
       let series = [
         {
@@ -404,7 +407,7 @@ export default {
 
           xaxis: {
             type: "date",
-            categories: Object.keys(cat),
+            categories,
           },
           yaxis: {
             opposite: true,
@@ -422,6 +425,9 @@ export default {
       item = _.filter(item, { invoice_status: false });
 
       let cat = _.groupBy(item, "invoice_date_create");
+      const categories = Object.keys(cat).sort(
+        (a, b) => new Date(a) - new Date(b)
+      );
 
       let dongLaiSeries = _.map(cat, (invoices, date) => {
         return {
@@ -473,7 +479,7 @@ export default {
 
           xaxis: {
             type: "date",
-            categories: Object.keys(cat),
+            categories,
           },
           yaxis: {
             opposite: true,
@@ -496,6 +502,7 @@ export default {
       ) {
         categories.push(m.format("DD/MM/YYYY"));
       }
+      categories = categories.sort((a, b) => new Date(a) - new Date(b));
       let result = categories.map((date) => {
         // Tìm các hóa đơn thế đồ
 

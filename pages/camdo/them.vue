@@ -203,9 +203,6 @@
                       :disabled="invalid"
                       >Thêm</b-button
                     >
-                    <b-button block type="reset" variant="danger"
-                      >Reset</b-button
-                    >
                   </b-form>
                 </ValidationObserver>
               </b-card-body>
@@ -323,6 +320,10 @@ Object.keys(rules).forEach((rule) => {
   extend(rule, rules[rule]);
 });
 
+extend("masokhonglonhonsohientai", (value) => {
+  let sotien = parseInt(value) * 1000;
+  return sotien % 100000 === 0;
+});
 extend("maso", (value) => {
   let sotien = parseInt(value) * 1000;
   return sotien % 100000 === 0;
@@ -354,6 +355,7 @@ export default {
         { key: "invoice_date_create", label: "Ngày" },
         "tool",
       ],
+
       lastInsertForInfo: null,
       maSoTrung: false,
       lastInsert: [],
@@ -398,10 +400,9 @@ export default {
         .from("invoice")
         .select()
         .limit(1)
-        .order("id", { ascending: false })
+        .order("invoice_number", { ascending: false })
         .then((data) => {
           this.lastInsertForInfo = data.data[0];
-          console.log(this.lastInsertForInfo);
         });
     },
     changeInputMode() {
@@ -431,6 +432,14 @@ export default {
     },
     checkMaSo() {
       let maso = parseInt(this.form.maso);
+      let lastNumber = this.lastInsertForInfo.invoice_number;
+
+      if (this.inputMode && (maso <= lastNumber || maso > lastNumber + 200)) {
+        this.form.maso = null;
+        alert("Mã số có vấn đề");
+        return;
+      }
+      //check
       this.isStatus = true;
       this.$supabase
         .from("invoice")
@@ -439,7 +448,7 @@ export default {
         .then((data) => {
           this.isStatus = false;
           if (data.data.length > 0) {
-            console.log(data);
+            console.log("maso");
             this.form.maso = null;
             this.maSoTrung = true;
             let str = `Đã có 1 hóa đơn mã số ${

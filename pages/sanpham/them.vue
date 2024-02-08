@@ -473,6 +473,11 @@ export default {
             return this.$formatSoVang(v).fullStr;
           },
         },
+        {
+          tdClass: "align-middle",
+          key: "product_type",
+          label: "K",
+        },
         { key: "product_wage", label: "C", tdClass: "align-middle" },
         { key: "Tool", label: "#", tdClass: "align-middle" },
       ],
@@ -535,7 +540,6 @@ export default {
       if (this.productList.length > 0) {
         this.$pl_sanpham_intem(this, this.productList);
         this.productList = [];
-     
       } else {
         alert("Không có gì để in");
       }

@@ -137,6 +137,15 @@
                   v-model="itemEdit.invoice_phone"
                 ></b-form-input>
               </b-form-group>
+
+              <b-form-group label="Món">
+                <b-form-tags
+                  remove-on-delete
+                  tag-variant="primary"
+                  :value="getTag(itemEdit.invoice_tag)"
+                  ref="itemEditInvoiceTag"
+                ></b-form-tags>
+              </b-form-group>
               <b-form-group
                 id="input-group-3"
                 label="Loại thế:"
@@ -847,6 +856,9 @@ export default {
     };
   },
   methods: {
+    getTag(item) {
+      return JSON.parse(item);
+    },
     async toggleInTem(item) {
       this.tableOverlay = true;
       let v = item.invoice_label;

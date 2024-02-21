@@ -1,51 +1,7 @@
 <template>
   <div class="mt-2">
     <b-row no-gutters>
-      <b-col cols="12">
-        <b-row>
-          <b-col cols="3">
-            <div>
-              <iframe
-                src="https://1dfd-34-83-102-208.ngrok-free.app/d-solo/b732af6c-14be-4593-8350-698bb9ef9a96/san-pham?orgId=1&showCategory=Standard+options&from=1705959039439&to=1705980639439&theme=light&panelId=4"
-                width="100%"
-                height="100"
-                frameborder="0"
-              ></iframe>
-            </div>
-          </b-col>
-          <b-col cols="3">
-            <div>
-              <iframe
-                src="https://1dfd-34-83-102-208.ngrok-free.app/d-solo/b732af6c-14be-4593-8350-698bb9ef9a96/san-pham?orgId=1&showCategory=Standard+options&from=1705959306833&to=1705980906833&theme=light&panelId=9"
-                width="100%"
-                height="100"
-                frameborder="0"
-              ></iframe>
-            </div>
-          </b-col>
-          <b-col cols="3">
-            <div>
-              <iframe
-                src="https://1dfd-34-83-102-208.ngrok-free.app/d-solo/b732af6c-14be-4593-8350-698bb9ef9a96/san-pham?orgId=1&from=1705959405433&to=1705981005433&theme=light&panelId=8"
-                width="100%"
-                height="100"
-                frameborder="0"
-              ></iframe>
-            </div>
-          </b-col>
-          <b-col cols="3">
-            <div>
-              <iframe
-                src="https://1dfd-34-83-102-208.ngrok-free.app/d-solo/b732af6c-14be-4593-8350-698bb9ef9a96/san-pham?orgId=1&from=1705961646886&to=1705983246886&theme=light&panelId=7"
-                width="100%"
-                height="100"
-                frameborder="0"
-              ></iframe>
-            </div>
-          </b-col>
-        </b-row>
-      </b-col>
-
+      <b-input style="margin: 20px; text-align: center"></b-input>
       <b-col cols="12" style="font-size: 13px">
         <b-card no-body>
           <div>
@@ -69,148 +25,6 @@
               :fields="fieldsSanPham"
               @filtered="onFiltered"
             >
-              <template #head(product_barcode)="data">
-                <span>
-                  {{ data.label }}
-                  <b-input
-                    size="sm"
-                    type="search"
-                    autocomplete="off"
-                    v-model="filter.product_barcode"
-                  />
-                </span>
-              </template>
-
-              <template #head(product_wage)="data">
-                <span>
-                  {{ data.label }}
-                  <b-input
-                    size="sm"
-                    type="search"
-                    v-model="filter.product_wage"
-                    autocomplete="off"
-                  />
-                </span>
-              </template>
-
-              <template #head(product_type)="data">
-                <span>
-                  {{ data.label }}
-                  <b-select
-                    size="sm"
-                    v-model="filter.product_type"
-                    :options="$store.state.config.sanpham_optionLoaiVang_view"
-                  ></b-select>
-                </span>
-              </template>
-
-              <template #head(product_catalog)="data">
-                <span>
-                  {{ data.label }}
-                  <b-select
-                    size="sm"
-                    v-model="filter.product_catalog"
-                    :options="$store.state.config.sanpham_optionCatalog_view"
-                  ></b-select>
-                </span>
-              </template>
-
-              <template #head(product_total_weight)="data">
-                <span>
-                  {{ data.label }}
-                  <b-input
-                    size="sm"
-                    type="search"
-                    v-model="filter.product_total_weight"
-                    autocomplete="off"
-                  />
-                </span>
-              </template>
-
-              <template #head(product_gold_weight)="data">
-                <span>
-                  {{ data.label }}
-                  <b-input
-                    type="search"
-                    v-model="filter.product_gold_weight"
-                    size="sm"
-                    autocomplete="off"
-                  />
-                </span>
-              </template>
-
-              <template #head(product_stone_weight)="data">
-                <span>
-                  {{ data.label }}
-                  <b-input
-                    type="search"
-                    v-model="filter.product_stone_weight"
-                    size="sm"
-                    autocomplete="off"
-                  />
-                </span>
-              </template>
-
-              <template #head(product_price_import)="data">
-                <span>
-                  {{ data.label }}
-                  <b-input
-                    type="search"
-                    v-model="filter.product_price_import"
-                    size="sm"
-                    autocomplete="off"
-                  />
-                </span>
-              </template>
-
-              <template #head(product_price_export)="data">
-                <span>
-                  {{ data.label }}
-                  <b-input
-                    type="search"
-                    v-model="filter.product_price_export"
-                    size="sm"
-                    autocomplete="off"
-                  />
-                </span>
-              </template>
-
-              <template #head(product_sell_date)="data">
-                <span>
-                  {{ data.label }}
-                  <b-input
-                    type="search"
-                    v-model="filter.product_sell_date"
-                    size="sm"
-                    autocomplete="off"
-                  />
-                </span>
-              </template>
-
-              <template #head(product_total_price)="data">
-                <span>
-                  {{ data.label }}
-                  <b-input
-                    type="search"
-                    v-model="filter.product_total_price"
-                    size="sm"
-                    autocomplete="off"
-                  />
-                </span>
-              </template>
-
-              <template #head(product_import_type)="data">
-                <span>
-                  {{ data.label }}
-                  <b-select
-                    v-model="filter.product_import_type"
-                    size="sm"
-                    :options="$store.state.config.sanpham_optionImportype_view"
-                  >
-                  </b-select>
-                </span>
-              </template>
-
               <template #cell(product_total_price)="data">
                 {{ $formatN(data.value) }}
               </template>
@@ -221,22 +35,7 @@
               </template>
 
               <template #cell(product_total_weight)="data">
-                <span
-                  :id="'tooltip-edit-weight-' + data.index"
-                  variant="outline-success"
-                  @dblclick="
-                    showTooltip('tooltip-edit-weight-' + data.index, data)
-                  "
-                >
-                  {{ $formatSoVang(data.value).fullStr }}
-                  <b-tooltip
-                    :target="'tooltip-edit-weight-' + data.index"
-                    :triggers="''"
-                    :ref="'tooltip-edit-weight-' + data.index"
-                  >
-                    <cell-edit :data="data" />
-                  </b-tooltip>
-                </span>
+                {{ $formatSoVang(data.value).fullStr }}
               </template>
               <!-- Template cho trường product_gold_weight -->
               <template #cell(product_gold_weight)="data">
@@ -249,16 +48,6 @@
               </template>
 
               <!-- Template cho trường product_image_url -->
-              <template #cell(product_image_url)="data">
-                <img
-                  :src="data.value"
-                  alt="Product Image"
-                  style="width: 50px; height: auto"
-                />
-              </template>
-              <template #cell(id)="data">
-                {{ data.value }}
-              </template>
 
               <!-- Template cho trường created_at -->
               <template #cell(created_at)="data">
@@ -283,6 +72,15 @@
               <!-- Template cho trường product_barcode -->
               <template #cell(product_barcode)="data">
                 {{ data.value }}
+                <br />
+                <img
+                  class="imgSanPham"
+                  :src="data.item.product_image_url"
+                  alt="Product Image"
+                  style="width: 50px; height: auto"
+                  v-b-tooltip.html
+                  :title="'<img src=' + data.item.product_image_url + '></img>'"
+                />
               </template>
 
               <!-- Template cho trường product_catalog -->
@@ -381,6 +179,7 @@ export default {
           sortable: true,
           thClass: "myTdClass",
         },
+
         {
           key: "product_type",
           label: "Loại Vàng",
@@ -456,26 +255,16 @@ export default {
       totalRows: 0, // Tổng số dòng,
       tooltipData: null,
       tempEdit: null,
+      isZoomed: false,
     };
   },
 
   methods: {
-    showTooltip(v, data) {
-      Object.keys(this.$refs).forEach((i) => {
-        if (i.includes("tooltip")) {
-          this.$refs[i].$emit("close");
-        }
-      });
-      this.tooltipData = data;
-      this.$refs[v].$emit("open");
-    },
-
     updateItem() {
       // Logic cập nhật thông tin item vào danh sách hoặc database
       this.showEditPopover = false;
     },
     toggleEdit(item) {
-      console.log(item);
       if (item.editable) {
         item.editable = false;
       } else {

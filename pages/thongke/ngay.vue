@@ -295,6 +295,79 @@
                   ></apexchart>
                 </div>
               </b-tab>
+              <b-tab lazy title="Đồ chuộc" @click="whatChartShow = 'dochuoc'">
+                <div v-if="whatChartShow === 'dochuoc'">
+                  <div>
+                    <div class="accordion" role="tablist">
+                      <b-card
+                        no-body
+                        class="mb-1"
+                        v-for="(item, index) in _getDoChuocTheoNgay"
+                        :key="'dc1_' + index"
+                      >
+                        <b-card-header
+                          header-tag="header"
+                          class="p-1"
+                          role="tab"
+                        >
+                          <b-button
+                            block
+                            v-b-toggle="'accordion_' + index"
+                            variant="info"
+                          >
+                            {{ item.date }}</b-button
+                          >
+                        </b-card-header>
+                        <b-collapse
+                          :id="'accordion_' + index"
+                          visible
+                          accordion="my-accordion"
+                          role="tabpanel"
+                        >
+                          <b-card-body>
+                            <div>
+                              Tổng Món chuộc : <code>{{ item.item.length }}</code>
+                              Tổng tiền chuộc :
+                              <code>{{
+                                $formatN(
+                                  item.item.reduce(
+                                    (total, currentItem) =>
+                                      total + currentItem.invoice_money,
+                                    0
+                                  )
+                                )
+                              }}</code>
+                              Tổng tiền lãi :
+                              <code>{{
+                                $formatN(
+                                  item.item.reduce(
+                                    (total, currentItem) =>
+                                      total + currentItem.invoice_profit,
+                                    0
+                                  )
+                                )
+                              }}</code>
+                            </div>
+                            <b-table
+                              small
+                              responsive=""
+                              :items="item.item"
+                              class="my_table1 align-middle w-auto"
+                              striped
+                              hover
+                              :fields="fieldtb"
+                            >
+                              <template #cell(stt)="data">
+                                {{ data.index + 1 }}
+                              </template>
+                            </b-table>
+                          </b-card-body>
+                        </b-collapse>
+                      </b-card>
+                    </div>
+                  </div>
+                </div>
+              </b-tab>
             </b-tabs>
           </b-col>
         </b-row>
@@ -307,6 +380,46 @@
 export default {
   data() {
     return {
+      fieldtb: [
+        { key: "stt", label: "Stt", sortable: true },
+        { key: "invoice_number", label: "Mã", sortable: true },
+        { key: "customer_name", label: "Tên khách", sortable: true },
+        {
+          key: "invoice_money",
+          label: "Số tiền",
+          formatter: (value) => {
+            return this.formatN(value || 0);
+          },
+          sortable: true,
+        },
+        {
+          key: "invoice_profit",
+
+          label: "Tiền lời",
+          sortable: true,
+          formatter: (value) => {
+            return this.formatN(value || 0);
+          },
+        },
+        {
+          key: "invoice_tag",
+          label: "Món đồ",
+        },
+        {
+          key: "invoice_date_create",
+          label: "Ngày thế",
+          sortable: true,
+          formatter: (value) => {
+            //yyyy/mm/dd
+            //  console.log(value);
+            let date = value.split("-");
+            let newDate = new Date(date[0], date[1] - 1, date[1]);
+            let newDateStr = `${date[2]}/${date[1]}/${date[0]}`;
+            return newDateStr;
+          },
+        },
+        { key: "invoice_comment", label: "Comment" },
+      ],
       isDataLoad: false,
       overlayChartTheMoiDongLai: false,
       isNewData: false,
@@ -331,10 +444,46 @@ export default {
       listDataRaw: [],
       tempDataConfig: [],
       whatChartShow: "dothe",
+      tempDoChuocStat: null,
       //
     };
   },
   computed: {
+    _getDoChuocTheoNgay() {
+      let categories = [];
+      let invoices = JSON.parse(JSON.stringify(this.listDataRaw));
+
+      for (
+        let m = this.$moment(this.dayStart);
+        m.isSameOrBefore(this.dayEnd);
+        m.add(1, "days")
+      ) {
+        categories.push(m.format("DD/MM/YYYY"));
+      }
+      categories = categories.sort((a, b) => new Date(a) - new Date(b));
+
+      let dochuoclist = _.groupBy(invoices, "invoice_date_get");
+      let result = categories.map((date) => {
+        // Tìm các hóa đơn thế đồ
+
+        // Tìm các hóa đơn chuộc
+        let chuocInvoices = _.filter(invoices, (invoice) => {
+          let isChuoc =
+            invoice.invoice_status === true &&
+            this.$moment(invoice.invoice_date_get).format("DD/MM/YYYY") ===
+              date;
+          if (isChuoc) {
+          }
+          return isChuoc;
+        });
+        return {
+          date,
+          item: chuocInvoices,
+        };
+      });
+
+      return result;
+    },
     _chartGetDoThe() {
       let item = JSON.parse(JSON.stringify(this.listDataRaw));
       item = _.filter(item, { invoice_status: false });
@@ -1183,5 +1332,8 @@ body {
 
 .stats div:nth-of-type(3) {
   border: none;
+}
+.my_table1 td {
+  width: 200px !important;
 }
 </style>

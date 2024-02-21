@@ -616,16 +616,12 @@
         </div>
       </template>
     </b-sidebar>
-    <b-navbar
-      style="padding: 0px; height: 40px"
-      toggleable="lg"
-      type="dark"
-      variant="primary"
-    >
+    <b-navbar toggleable="md" type="dark" variant="primary">
       <b-navbar-brand href="/">BPJ</b-navbar-brand>
-      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
-      <b-collapse id="nav-collapse" is-nav>
+      <b-navbar-toggle target="navbar-toggle-collapse"> </b-navbar-toggle>
+
+      <b-collapse id="navbar-toggle-collapse" is-nav>
         <b-navbar-nav>
           <b-nav-item-dropdown text="Cầm Đồ">
             <b-dropdown-group id="dropdown-group-1">
@@ -712,18 +708,9 @@
         <b-navbar-nav>
           <b-nav-item v-b-toggle.sidebargiohang>Giỏ hàng</b-nav-item>
         </b-navbar-nav>
-        <b-navbar-nav class="ml-auto">
-          <b-nav-form>
-            <b-form-input
-              autocomplete="off"
-              size="sm"
-              class="mr-sm-2"
-              placeholder="Search"
-            ></b-form-input>
-          </b-nav-form>
-        </b-navbar-nav>
       </b-collapse>
     </b-navbar>
+
     <nuxt />
   </div>
 </template>

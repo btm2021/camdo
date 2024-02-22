@@ -4,49 +4,32 @@
       <b-row class="mt-3">
         <b-col cols="5">
           <div>
-            <label for="example-input"
-              >Ngày bắt đầu
-              <code>{{ $moment(dayStart).format("DD/MM/YYYY") }}</code></label
-            >
-            <b-form-datepicker
-              v-model="dayStart"
-              :date-format-options="{
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric',
-              }"
-              @input="getStat()"
-              locale="vi"
-            ></b-form-datepicker>
+            <label for="example-input">Ngày bắt đầu
+              <code>{{ $moment(dayStart).format("DD/MM/YYYY") }}</code></label>
+            <b-form-datepicker v-model="dayStart" :date-format-options="{
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric',
+            }" @input="getStat()" locale="vi"></b-form-datepicker>
           </div>
         </b-col>
         <b-col cols="2" style="text-align: center">
           <div>
-            <label for="example-input"
-              >Chu kì<br />
+            <label for="example-input">Chu kì<br />
               <code>{{
                 $moment(dayEnd).diff($moment(dayStart), "days") + 1
-              }}</code
-              ><br />Ngày</label
-            >
+              }}</code><br />Ngày</label>
           </div>
         </b-col>
         <b-col cols="5">
           <div>
-            <label for="example-input"
-              >Ngày kết thúc
-              <code>{{ $moment(dayEnd).format("DD/MM/YYYY") }}</code></label
-            >
-            <b-form-datepicker
-              :date-format-options="{
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric',
-              }"
-              @input="getStat()"
-              v-model="dayEnd"
-              locale="vi"
-            ></b-form-datepicker>
+            <label for="example-input">Ngày kết thúc
+              <code>{{ $moment(dayEnd).format("DD/MM/YYYY") }}</code></label>
+            <b-form-datepicker :date-format-options="{
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric',
+            }" @input="getStat()" v-model="dayEnd" locale="vi"></b-form-datepicker>
           </div>
         </b-col>
       </b-row>
@@ -93,29 +76,14 @@
       <b-overlay :show="isDataLoad">
         <b-row>
           <b-col cols="12">
-            <b-tabs card>
+            <b-tabs card lazy>
               <b-tab title="Đồ thế" active @click="whatChartShow = 'dothe'">
                 <div v-if="whatChartShow === 'dothe'">
-                  <span
-                    v-for="(item, index) in _chartGetDoThe"
-                    :key="'aa_' + index"
-                  >
-                    <apexchart
-                      style="width: 100%"
-                      type="bar"
-                      :series="item.series"
-                      :options="item.chartOptions"
-                    ></apexchart>
-                    <b-table
-                      :items="item.table"
-                      small
-                      hover
-                      responsive
-                      striped
-                      class="text-center"
-                      show-empty
-                      :fields="item.fields"
-                    >
+                  <span v-for="(item, index) in _chartGetDoThe" :key="'aa_' + index">
+                    <apexchart style="width: 100%" type="bar" :series="item.series" :options="item.chartOptions">
+                    </apexchart>
+                    <b-table :items="item.table" small hover responsive striped class="text-center" show-empty
+                      :fields="item.fields">
                       <template #cell(invoice_money)="data">
                         <code>{{ $formatN(data.value) }}</code>
                       </template>
@@ -131,200 +99,105 @@
                   </span>
                 </div>
               </b-tab>
-              <b-tab
-                title="Thế mới/Đóng lãi"
-                @click="whatChartShow = 'themoidonglai'"
-              >
+              <b-tab title="Thế mới/Đóng lãi" @click="whatChartShow = 'themoidonglai'">
                 <div v-if="whatChartShow === 'themoidonglai'">
-                  <apexchart
-                    v-for="(item, index) in _chartThemoidonglai"
-                    :key="'bb_' + index"
-                    style="width: 100%"
-                    type="bar"
-                    :series="item.series"
-                    :options="item.chartOptions"
-                  ></apexchart>
+                  <apexchart v-for="(item, index) in _chartThemoidonglai" :key="'bb_' + index" style="width: 100%"
+                    type="bar" :series="item.series" :options="item.chartOptions"></apexchart>
                 </div>
               </b-tab>
               <b-tab lazy title="Thế/Chuộc" @click="whatChartShow = 'thechuoc'">
                 <div v-if="whatChartShow === 'thechuoc'">
-                  <div
-                    v-for="(item, index) in _chartTheChuoc"
-                    :key="'cc_' + index"
-                  >
-                    <apexchart
-                      style="width: 100%"
-                      type="area"
-                      :series="item.series"
-                      :options="item.chartOptions"
-                    ></apexchart>
+                  <div v-for="(item, index) in _chartTheChuoc" :key="'cc_' + index">
+                    <apexchart style="width: 100%" type="area" :series="item.series" :options="item.chartOptions">
+                    </apexchart>
                     <b-row no-gutters class="text-center">
                       <b-col cols="6">
-                        <b-table
-                          :items="
-                            item.series.filter((i) => i.name === 'Thế Đồ')[0]
-                              .data
-                          "
-                          :fields="[
-                            { key: 'x', label: 'Ngày' },
-                            { key: 'y', label: 'Số Lượng' },
-                          ]"
-                          small
-                          caption-top
-                          show-empty
-                          bordered
-                          caption="Thế Đồ theo ngày"
-                          hover
-                        ></b-table
-                      ></b-col>
+                        <b-table :items="item.series.filter((i) => i.name === 'Thế Đồ')[0]
+                            .data
+                          " :fields="[
+    { key: 'x', label: 'Ngày' },
+    { key: 'y', label: 'Số Lượng' },
+  ]" small caption-top show-empty bordered caption="Thế Đồ theo ngày" hover></b-table></b-col>
                       <b-col cols="6">
-                        <b-table
-                          caption-top
-                          caption="Chuộc Đồ theo ngày"
-                          :fields="[
-                            { key: 'x', label: 'Ngày' },
-                            { key: 'y', label: 'Số Lượng' },
-                          ]"
-                          :items="
-                            item.series.filter((i) => i.name === 'Chuộc')[0]
-                              .data
-                          "
-                          small
-                          bordered
-                          show-empty
-                          hover
-                        ></b-table
-                      ></b-col>
+                        <b-table caption-top caption="Chuộc Đồ theo ngày" :fields="[
+                          { key: 'x', label: 'Ngày' },
+                          { key: 'y', label: 'Số Lượng' },
+                        ]" :items="item.series.filter((i) => i.name === 'Chuộc')[0]
+    .data
+  " small bordered show-empty hover></b-table></b-col>
                     </b-row>
                   </div>
                 </div>
               </b-tab>
-              <b-tab
-                lazy
-                title="Tiền ra/vào"
-                @click="whatChartShow = 'tienravao'"
-              >
+              <b-tab lazy title="Tiền ra/vào" @click="whatChartShow = 'tienravao'">
                 <div v-if="whatChartShow === 'tienravao'">
-                  <div
-                    v-for="(item1, index) in _chartTienRaVao"
-                    :key="'cc_' + index"
-                  >
-                    <apexchart
-                      style="width: 100%"
-                      :series="item1.series"
-                      :options="item1.chartOptions"
-                    ></apexchart>
+                  <div v-for="(item1, index) in _chartTienRaVao" :key="'cc_' + index">
+                    <apexchart style="width: 100%" :series="item1.series" :options="item1.chartOptions"></apexchart>
                     <b-row no-gutters class="text-center" v-if="index === 0">
                       <b-col cols="6">
-                        <b-table
-                          :items="
-                            item1.series.filter((i) => i.name === 'Thế Đồ')[0]
-                              .data
-                          "
-                          :fields="[
-                            { key: 'x', label: 'Ngày' },
-                            {
-                              key: 'y',
-                              label: 'Tiền Đưa ra',
-                              formatter: (value) => {
-                                return $formatN(Math.abs(value));
-                              },
-                            },
-                          ]"
-                          small
-                          no-border-collapse
-                          caption-top
-                          show-empty
-                          bordered
-                          caption="Tiền Đưa ra theo ngày"
-                          hover
-                        ></b-table
-                      ></b-col>
+                        <b-table :items="item1.series.filter((i) => i.name === 'Thế Đồ')[0]
+                            .data
+                          " :fields="[
+    { key: 'x', label: 'Ngày' },
+    {
+      key: 'y',
+      label: 'Tiền Đưa ra',
+      formatter: (value) => {
+        return $formatN(Math.abs(value));
+      },
+    },
+  ]" small no-border-collapse caption-top show-empty bordered caption="Tiền Đưa ra theo ngày"
+                          hover></b-table></b-col>
                       <b-col cols="6">
-                        <b-table
-                          no-border-collapse
-                          caption-top
-                          caption="Tiền nhận vào theo ngày"
-                          :fields="[
-                            {
-                              key: 'y',
-                              label: 'Tiền Nhận Vào',
-                              formatter: (value) => {
-                                return $formatN(Math.abs(value));
-                              },
+                        <b-table no-border-collapse caption-top caption="Tiền nhận vào theo ngày" :fields="[
+                          {
+                            key: 'y',
+                            label: 'Tiền Nhận Vào',
+                            formatter: (value) => {
+                              return $formatN(Math.abs(value));
                             },
-                            {
-                              key: 'x',
-                              label: 'Tiền Chênh lệch',
-                              formatter: (value, key, item) => {
-                                let ngay = item.x;
-                                let listTheDo = item1.series.filter(
-                                  (i) => i.name === 'Thế Đồ'
-                                )[0].data;
-                                let d = listTheDo.filter((i) => i.x === ngay)[0]
-                                  .y;
+                          },
+                          {
+                            key: 'x',
+                            label: 'Tiền Chênh lệch',
+                            formatter: (value, key, item) => {
+                              let ngay = item.x;
+                              let listTheDo = item1.series.filter(
+                                (i) => i.name === 'Thế Đồ'
+                              )[0].data;
+                              let d = listTheDo.filter((i) => i.x === ngay)[0]
+                                .y;
 
-                                return $formatN(
-                                  Math.abs(parseInt(item.y)) - parseInt(d)
-                                );
-                              },
+                              return $formatN(
+                                Math.abs(parseInt(item.y)) - parseInt(d)
+                              );
                             },
-                          ]"
-                          :items="
-                            item1.series.filter((i) => i.name === 'Chuộc')[0]
-                              .data
-                          "
-                          small
-                          bordered
-                          show-empty
-                          hover
-                        ></b-table
-                      ></b-col>
+                          },
+                        ]" :items="item1.series.filter((i) => i.name === 'Chuộc')[0]
+    .data
+  " small bordered show-empty hover></b-table></b-col>
                     </b-row>
                   </div>
                 </div>
               </b-tab>
               <b-tab lazy title="Tiền lãi" @click="whatChartShow = 'tienlai'">
                 <div v-if="whatChartShow === 'tienlai'">
-                  <apexchart
-                    v-for="(item, index) in _chartTienLai"
-                    :key="'dd_' + index"
-                    style="width: 100%"
-                    :series="item.series"
-                    :options="item.chartOptions"
-                  ></apexchart>
+                  <apexchart v-for="(item, index) in _chartTienLai" :key="'dd_' + index" style="width: 100%"
+                    :series="item.series" :options="item.chartOptions"></apexchart>
                 </div>
               </b-tab>
               <b-tab lazy title="Đồ chuộc" @click="whatChartShow = 'dochuoc'">
                 <div v-if="whatChartShow === 'dochuoc'">
                   <div>
                     <div class="accordion" role="tablist">
-                      <b-card
-                        no-body
-                        class="mb-1"
-                        v-for="(item, index) in _getDoChuocTheoNgay"
-                        :key="'dc1_' + index"
-                      >
-                        <b-card-header
-                          header-tag="header"
-                          class="p-1"
-                          role="tab"
-                        >
-                          <b-button
-                            block
-                            v-b-toggle="'accordion_' + index"
-                            variant="info"
-                          >
-                            {{ item.date }}</b-button
-                          >
+                      <b-card no-body class="mb-1" v-for="(item, index) in _getDoChuocTheoNgay" :key="'dc1_' + index">
+                        <b-card-header header-tag="header" class="p-1" role="tab">
+                          <b-button block v-b-toggle="'accordion_' + index" @click="accordion = 'accordion_' + index"
+                            variant="info">
+                            {{ item.date }}</b-button>
                         </b-card-header>
-                        <b-collapse
-                          :id="'accordion_' + index"
-                          visible
-                          accordion="my-accordion"
-                          role="tabpanel"
-                        >
-                          <b-card-body>
+                        <b-collapse :id="'accordion_' + index" accordion="my-accordion" role="tabpanel">
+                          <b-card-body v-if="accordion === 'accordion_' + index">
                             <div>
                               Tổng Món chuộc : <code>{{ item.item.length }}</code>
                               Tổng tiền chuộc :
@@ -348,15 +221,8 @@
                                 )
                               }}</code>
                             </div>
-                            <b-table
-                              small
-                              responsive=""
-                              :items="item.item"
-                              class="my_table1 align-middle w-auto"
-                              striped
-                              hover
-                              :fields="fieldtb"
-                            >
+                            <b-table small responsive="" :items="item.item" class="my_table1 align-middle w-auto" striped
+                              hover :fields="fieldtb">
                               <template #cell(stt)="data">
                                 {{ data.index + 1 }}
                               </template>
@@ -380,6 +246,7 @@
 export default {
   data() {
     return {
+      accordion: 'accordion_0',
       fieldtb: [
         { key: "stt", label: "Stt", sortable: true },
         { key: "invoice_number", label: "Mã", sortable: true },
@@ -460,9 +327,10 @@ export default {
       ) {
         categories.push(m.format("DD/MM/YYYY"));
       }
-      categories = categories.sort((a, b) => new Date(a) - new Date(b));
+      categories = categories.sort((b, a) => {
+        return this.$moment(a, 'DD/MM/YYYY') - this.$moment(b, 'DD/MM/YYYY')
+      });
 
-      let dochuoclist = _.groupBy(invoices, "invoice_date_get");
       let result = categories.map((date) => {
         // Tìm các hóa đơn thế đồ
 
@@ -471,7 +339,7 @@ export default {
           let isChuoc =
             invoice.invoice_status === true &&
             this.$moment(invoice.invoice_date_get).format("DD/MM/YYYY") ===
-              date;
+            date;
           if (isChuoc) {
           }
           return isChuoc;
@@ -661,7 +529,7 @@ export default {
             invoice.invoice_status === false &&
             invoice.invoice_date_get === null &&
             this.$moment(invoice.invoice_date_create).format("DD/MM/YYYY") ===
-              date
+            date
         );
 
         // Tìm các hóa đơn chuộc
@@ -669,7 +537,7 @@ export default {
           let isChuoc =
             invoice.invoice_status === true &&
             this.$moment(invoice.invoice_date_get).format("DD/MM/YYYY") ===
-              date;
+            date;
           if (isChuoc) {
           }
           return isChuoc;
@@ -749,7 +617,7 @@ export default {
             invoice.invoice_status === false &&
             invoice.invoice_date_get === null &&
             this.$moment(invoice.invoice_date_create).format("DD/MM/YYYY") ===
-              date
+            date
         );
         let totalTheDoMoney = _.sumBy(theDoInvoices, "invoice_money");
 
@@ -758,7 +626,7 @@ export default {
           let isChuoc =
             invoice.invoice_status === true &&
             this.$moment(invoice.invoice_date_get).format("DD/MM/YYYY") ===
-              date;
+            date;
           if (isChuoc) {
           }
           return isChuoc;
@@ -783,7 +651,7 @@ export default {
             invoice.invoice_status === false &&
             invoice.invoice_date_get === null &&
             this.$moment(invoice.invoice_date_create).format("DD/MM/YYYY") ===
-              date
+            date
         );
         let totalTheDoMoney = _.sumBy(theDoInvoices, "invoice_money");
 
@@ -792,7 +660,7 @@ export default {
           let isChuoc =
             invoice.invoice_status === true &&
             this.$moment(invoice.invoice_date_get).format("DD/MM/YYYY") ===
-              date;
+            date;
           if (isChuoc) {
           }
           return isChuoc;
@@ -975,7 +843,7 @@ export default {
           let isChuoc =
             invoice.invoice_status === true &&
             this.$moment(invoice.invoice_date_get).format("DD/MM/YYYY") ===
-              date;
+            date;
           if (isChuoc) {
           }
           return isChuoc;
@@ -1292,12 +1160,14 @@ body {
   font-weight: 600;
   overflow: auto;
 }
+
 .dates div {
   float: left;
   width: 50%;
   text-align: center;
   position: relative;
 }
+
 .dates strong,
 .stats strong {
   display: block;
@@ -1305,6 +1175,7 @@ body {
   font-size: 11px;
   font-weight: 700;
 }
+
 .dates span {
   width: 1px;
   height: 40px;
@@ -1313,6 +1184,7 @@ body {
   top: 0;
   background: #ebeff2;
 }
+
 .stats {
   border-top: 1px solid #ebeff2;
   background: #f7f8fa;
@@ -1323,6 +1195,7 @@ body {
   font-weight: 600;
   border-radius: 0 0 5px 5px;
 }
+
 .stats div {
   border-right: 1px solid #ebeff2;
   width: 33.33333%;
@@ -1333,6 +1206,7 @@ body {
 .stats div:nth-of-type(3) {
   border: none;
 }
+
 .my_table1 td {
   width: 200px !important;
 }

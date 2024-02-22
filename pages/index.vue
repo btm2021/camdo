@@ -1,7 +1,7 @@
 <template>
   <div id="fullDiv" @keypress="checkInput(e)">
     <b-row no-gutters>
-      <b-col cols="3">
+      <b-col sm="12" lg="3">
         <div v-if="giavang && giado" class="mt-3">
           <h3 class="text-center">Bảng Giá MHJ</h3>
           <div class="text-right text-danger">
@@ -59,7 +59,7 @@
           </b-table-simple>
         </div>
       </b-col>
-      <b-col cols="3">
+      <b-col sm="12" lg="3">
         <div v-if="giavangnha" class="mt-3">
           <h3 class="text-center">Bảng Giá Nhà</h3>
           <div>&nbsp;</div>
@@ -110,7 +110,7 @@
           </b-table-simple>
         </div>
       </b-col>
-      <b-col cols="6">
+      <b-col sm="12" lg="6">
         <VueTradingView style="height: 90vh" :options="chartOp" />
       </b-col>
     </b-row>

@@ -706,9 +706,9 @@ export default {
             fileName,
             base64Image,
           };
-        //  let uploadResult = await this.$uploadPicture(fileUpload);
+          //  let uploadResult = await this.$uploadPicture(fileUpload);
 
-          this.form.product_image_name = uploadResult.data.data.id;
+          this.form.product_image_name = uploadResult.data.data.id || "demo"
 
           if (this.form.product_import_type) {
             //chanh

@@ -708,7 +708,7 @@ export default {
           };
           //  let uploadResult = await this.$uploadPicture(fileUpload);
 
-          this.form.product_image_name = uploadResult.data.data.id || "demo"
+          this.form.product_image_name = "demo";
 
           if (this.form.product_import_type) {
             //chanh
@@ -730,7 +730,7 @@ export default {
             product_stone_weight: parseInt(this.form.product_stone_weight),
             product_total_weight: parseInt(this.form.product_total_weight),
             product_gold_weight: parseInt(this.form.product_gold_weight),
-            product_image_url: uploadResult.data.data.url,
+            product_image_url: "demo",
             product_image_name: this.form.product_image_name,
             product_catalog: this.form.product_catalog,
             product_type: this.form.product_type,

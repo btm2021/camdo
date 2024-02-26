@@ -706,7 +706,7 @@ export default {
             fileName,
             base64Image,
           };
-          let uploadResult = await this.$uploadPicture(fileUpload);
+        //  let uploadResult = await this.$uploadPicture(fileUpload);
 
           this.form.product_image_name = uploadResult.data.data.id;
 

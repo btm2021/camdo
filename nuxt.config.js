@@ -29,7 +29,7 @@ export default {
   */
   plugins: [
 
-    '~/plugins/chart.js', '~/plugins/myUtils.js',
+    '~/plugins/chart.js', '~/plugins/myUtils.js', '~/plugins/s3.js',
     '~/plugins/veevalidator.js',
     '~/plugins/sanpham.js', '~/plugins/dothe.js',
     '~/plugins/banggia.js',
@@ -54,7 +54,7 @@ export default {
     // '@nuxtjs/sentry'
 
   ],
- 
+
   sentry: {
     dsn: "https://94263f6f0f79ffb7e7b1c2249a55acdb@o962567.ingest.sentry.io/4506625109262336",
     // Performance Monitoring

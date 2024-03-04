@@ -48,7 +48,9 @@
           </ValidationObserver>
         </b-overlay>
       </b-modal>
+
       <b-col cols="6">
+        <b-button @click="capturePic()">Click</b-button>
         <b-overlay :show="insertOverlay">
           <b-card style="margin: 0px">
             <template #header>
@@ -403,8 +405,8 @@
     </b-row>
   </div>
 </template>
-
-<script>
+  
+  <script>
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import { extend, configure } from "vee-validate";
 
@@ -532,6 +534,74 @@ export default {
     };
   },
   methods: {
+    // dataURItoBlob(dataURI) {
+    //   var binary = atob(dataURI.split(",")[1]);
+    //   var array = [];
+    //   for (var i = 0; i < binary.length; i++) {
+    //     array.push(binary.charCodeAt(i));
+    //   }
+    //   return new Blob([new Uint8Array(array)], { type: "image/jpeg" });
+    // },
+    async capturePic() {
+      this.takePhoto();
+      const canvas = document.getElementById("canvas");
+      const imageData = canvas.toDataURL("image/webp", 0.1);
+   
+
+      await this.$deletePicture("1862.webp");
+
+      //   var params = {
+      //     Key: "file_name.webp",
+      //     ContentType: "image/webp",
+      //     Body: blobData,
+      //     Bucket: "anhtiemvang",
+      //   };
+      //   // Lấy phần dữ liệu base64 (bỏ qua phần tiêu đề)
+      //   //   const base64Image = imageData.split(",")[1];
+
+      //   //   const params = {
+      //   //     Bucket: "anhtiemvang",
+      //   //     Key: `aa.jpg`, // type is not required
+      //   //     Body: imageData,
+      //   //     ContentEncoding: "base64", // required
+      //   //     ContentType: `image/webp`, // required. Notice the back ticks
+      //   //   };
+
+      //   this.$s3.upload(params, (err, data) => {
+      //     if (err) {
+      //       console.log(err);
+      //     } else {
+      //       console.log(data);
+      //     }
+      //   });
+    },
+    async uppic() {
+      return new Promise((resolve, reject) => {
+        try {
+          const apiKey = "99445a28159f1cd72b67666b9044ddee";
+          // Dữ liệu form để gửi
+
+          const data = new FormData();
+          data.append("image", base64Image);
+          data.append("name", fileName);
+
+          // Tải lên ImgBB
+          fetch("https://api.imgbb.com/1/upload?key=" + apiKey, {
+            method: "POST",
+            body: data,
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              resolve({ status: "success", data });
+            })
+            .catch((error) => {
+              reject({ status: "fail", error });
+            });
+        } catch (err) {
+          reject({ status: "fail", err });
+        }
+      });
+    },
     rotationLeft() {
       this.rotationAngle -= 10;
       this.updateVideo();
@@ -622,25 +692,23 @@ export default {
     },
     deleteItem(item) {
       this.toggleOverlay();
-      this.$deletePicture(`${item.id}.webp`).then((data) => {
-        this.$supabase
-          .from("product")
-          .delete()
-          .eq("id", item.id)
-          .then((data) => {
-            this.toggleOverlay();
-            this.productList = this.productList.filter((i) => i.id != item.id);
-            this.$bvToast.toast(
-              `Xóa sản phẩm ${item.product_barcode} thành công`,
-              {
-                title: "Thông báo",
-                autoHideDelay: 1000,
-                appendToast: true,
-                variant: "primary",
-              }
-            );
-          });
-      });
+      this.$supabase
+        .from("product")
+        .delete()
+        .eq("id", item.id)
+        .then((data) => {
+          this.toggleOverlay();
+          this.productList = this.productList.filter((i) => i.id != item.id);
+          this.$bvToast.toast(
+            `Xóa sản phẩm ${item.product_barcode} thành công`,
+            {
+              title: "Thông báo",
+              autoHideDelay: 1000,
+              appendToast: true,
+              variant: "primary",
+            }
+          );
+        });
     },
     toggleOverlay() {
       if (this.insertOverlay) {
@@ -696,7 +764,7 @@ export default {
             .limit(1)
             .order("id", { ascending: false });
           let lastId = lastProduct.data[0].id + 1;
-          let fileName = `${lastId}`;
+          let fileName = `a_${lastId}`;
           //   upload ảnh imgbb
           //   capture
           this.takePhoto();
@@ -708,9 +776,9 @@ export default {
             fileName,
             base64Image,
           };
-          let uploadResult = await this.$uploadPicture(fileName, imageData);
-          console.log(uploadResult);
-          this.form.product_image_name = fileName;
+          //  let uploadResult = await this.$uploadPicture(fileUpload);
+
+          this.form.product_image_name = "demo";
 
           if (this.form.product_import_type) {
             //chanh
@@ -732,7 +800,7 @@ export default {
             product_stone_weight: parseInt(this.form.product_stone_weight),
             product_total_weight: parseInt(this.form.product_total_weight),
             product_gold_weight: parseInt(this.form.product_gold_weight),
-            product_image_url: `https://pub-0b1ce08c730c44808fd2b5edcfbf8fe0.r2.dev/${fileName}.webp`,
+            product_image_url: "demo",
             product_image_name: this.form.product_image_name,
             product_catalog: this.form.product_catalog,
             product_type: this.form.product_type,
@@ -944,6 +1012,6 @@ export default {
   },
 };
 </script>
-
-<style>
+  
+  <style>
 </style>

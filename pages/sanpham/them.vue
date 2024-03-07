@@ -153,9 +153,8 @@
                             autocomplete="off"
                             :state="valid"
                           ></b-form-input>
-                          <b-form-invalid-feedback>
-                            Nhập sai trọng lượng đá
-                          </b-form-invalid-feedback>
+                    
+
                         </b-form-group>
                       </ValidationProvider>
 

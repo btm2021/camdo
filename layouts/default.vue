@@ -262,6 +262,9 @@
                         :href="`/sanpham/${itemFromScanner.product_barcode}`"
                         >Sửa Sp
                       </b-button>
+                      <b-button variant="primary" @click="taohoadon"
+                        >Tạo hóa đơn</b-button
+                      >
                       <b-button
                         :disabled="!itemFromScanner.product_status"
                         variant="primary"
@@ -512,12 +515,17 @@
         style="font-size: 50px; font-weight: bold"
       ></b-input>
     </b-modal>
+    <b-modal id="modalImage" hide-footer hide-header>
+      <b-img :src="imgUrl" style="width: 100%; height: 500px"> </b-img>
+    </b-modal>
+    <b-modal id="modalHoaDon"> </b-modal>
     <b-sidebar
       ref="sidebargiohang"
-      width="700px"
+      width="900px"
       id="sidebargiohang"
-      title="Giỏ hàng"
+      :title="'Giỏ hàng : ' + $moment().format('DD/MM/YYYY')"
       shadow
+      @shown="getGioHang()"
     >
       <b-overlay :show="overlayGioHang">
         <div class="px-3 py-2">
@@ -526,10 +534,14 @@
             no-border-collapse
             class="default_tablegiohang"
             hover
+            style=""
             :fields="fieldsGioHang"
             :items="listGioHang"
             show-empty
             small
+            select-mode="multi"
+            selectable
+            selected-variant="success"
             responsive
           >
             <template #cell(stt)="data">
@@ -587,9 +599,9 @@
             </template>
             <template #cell(product_image_url)="data">
               <b-img
-                class="hoverImage"
+                @click="showImage(data.item.product_image_url)"
                 :src="data.item.product_image_url"
-                style="width: 100px; height: 100px"
+                style="width: 25px; height: 25px"
               />
             </template>
           </b-table>
@@ -600,12 +612,13 @@
         <div
           class="d-flextext-light bg-warning align-items-center px-3 py-2 text-right"
         >
+          <!-- <b-button variant="success"> Tạo hóa đơn </b-button>
           <b-button
             v-if="listGioHang.length > 0"
-            @click="thanhtoangiohang"
+            @click="taohoadon"
             variant="success"
             >Thanh toán</b-button
-          >
+          > -->
           <strong
             v-if="listGioHang.length > 0"
             class="mr-auto text-danger text-right"
@@ -662,6 +675,9 @@
         <b-navbar-nav>
           <b-nav-item-dropdown text="Hóa đơn">
             <b-dropdown-group id="dropdown-group-1" header="Sản phẩm">
+              <b-dropdown-item href="/hoadon/giohang"
+                >Giỏ hàng
+              </b-dropdown-item>
               <b-dropdown-item href="/hoadon/"
                 >Danh sách hóa đơn phẩm</b-dropdown-item
               >
@@ -847,6 +863,8 @@ DocTienBangChu.prototype.doc = function (SoTien) {
 export default {
   data() {
     return {
+      imgUrl: null,
+      isImageShow: false,
       overlayCamDo: false,
       profitPercent: 2,
       itemEdit: null,
@@ -855,9 +873,7 @@ export default {
         { key: "stt", label: "#" },
         { key: "product_image_url", label: "Ảnh" },
         { key: "product_barcode", label: "Mã" },
-
         { key: "product_type", label: "Loại" },
-
         { key: "product_catalog", label: "Kiểu" },
         { key: "product_total_weight", label: "Tổng" },
         { key: "product_stone_weight", label: "Hột" },
@@ -885,6 +901,11 @@ export default {
   components: {},
   computed: {},
   methods: {
+    taohoadon() {},
+    showImage(url) {
+      this.imgUrl = url;
+      this.$bvModal.show("modalImage");
+    },
     chuocSanPham() {
       console.log("chuoc");
     },
@@ -1045,15 +1066,26 @@ export default {
       return this.$roundToThousand(tienlai, x.invoice_money);
     },
     xoaSanPhamGioHang(item) {
+      this.overlayGioHang = true;
       this.listGioHang = this.listGioHang.filter((x) => x !== item);
+
+      this.$supabase
+        .from("giohang")
+        .update({ listsanpham: this.listGioHang })
+        .eq("created_at", this.$moment().format("YYYY-MM-DD"))
+        .then((data) => {
+          this.getGioHang().then((data) => {
+            this.overlayGioHang = false;
+          });
+        });
     },
     docsotien(x) {
       let docTien = new DocTienBangChu();
-
       return docTien.doc(x);
     },
     getTongGiaTriGioHang() {
       let count = 0;
+
       this.listGioHang.forEach((item) => {
         count += item.giahientai;
       });
@@ -1189,6 +1221,7 @@ export default {
       this.type = null;
       this.modal_input = null;
     },
+
     checkDoThe(id) {
       this.$supabase
         .from("invoice")
@@ -1201,8 +1234,96 @@ export default {
           this.check_invoice_auto();
         });
     },
+    async capnhatgiohang() {
+      return new Promise((resolve, reject) => {
+        console.log("cập nhật giỏ hàng...");
+        resolve(true);
+      });
+    },
+    async getGioHang() {
+      this.$supabase
+        .from("giohang")
+        .select("*")
+        .eq("created_at", this.$moment().format("YYYY-MM-DD"))
+        .then((data) => {
+          let d = data.data[0].listsanpham;
+          this.listGioHang = d;
+        });
+    },
+    async insertGioHang(item) {
+      let currentDay = this.$moment().format("YYYY-MM-DD");
+      console.log("tìm kiếm giỏ hàng");
+      let dataGioHangHienTai = await this.$supabase
+        .from("giohang")
+        .select()
+        .eq("created_at", currentDay);
+
+      if (dataGioHangHienTai.data.length > 0) {
+        let dataGioHang = dataGioHangHienTai.data[0].listsanpham;
+        let idGioHang = dataGioHangHienTai.data[0].id;
+
+        let isItemExist = dataGioHang.find((i) => i.id === item.id);
+        if (!isItemExist) {
+          //đã tồn tại
+          dataGioHang.push(item);
+
+          await this.$supabase
+            .from("giohang")
+            .update({ listsanpham: dataGioHang })
+            .eq("id", idGioHang);
+
+          this.$bvToast.toast(
+            `Thêm sản phẩm ${item.product_barcode} vào giỏ hàng ngày ${currentDay} `,
+            {
+              title: "Thông báo",
+              autoHideDelay: 1000,
+              appendToast: true,
+              variant: "primary",
+            }
+          );
+        } else {
+          this.$bvToast.toast(
+            `Mã sản phẩm ${item.product_barcode} đã tồn tại trong giỏ hàng`,
+            {
+              title: "Thông báo",
+              autoHideDelay: 1000,
+              appendToast: true,
+              variant: "primary",
+            }
+          );
+        }
+      } else {
+        //tạo mới giỏ hàng cho ngày nay
+        let { data, error } = await this.$supabase.from("giohang").insert({
+          listsanpham: JSON.stringify([]),
+        });
+        this.insertGioHang(item);
+      }
+
+      // return new Promise(async (resolve, reject) => {
+      //   let currentDay = this.$moment().format("YYYY-MM-DD");
+      //   let dataGioHangHienTai = await this.$supabase()
+      //     .from("giohang")
+      //     .select()
+      //     .eq("invoice_date_create", currentDay);
+      //   //kiểm tra ngày hiện tại đã có hay chưa, nếu chưa có thì tạo mới
+      //   console.log(dataGioHangHienTai);
+      //   resolve(dataGioHangHienTai);
+      //   // let json_dataGioHangHienTai = JSON.parse(
+      //   //   JSON.stringify(dataGioHangHienTai.data.listsanpham||'[]')
+      //   // );
+      //   // const exists = json_dataGioHangHienTai.includes(id);
+      //   // if(exists){
+      //   //   //insert new
+      //   //   let objGioHang = {
+
+      //   //   }
+      //   //   this.$supabase.from('giohang').insert(objGioHang)
+      //   // }
+      // });
+    },
     checkSanPham(id) {
-      console.log("spaaa", id);
+      //insert to gioHang
       this.$supabase
         .from("product")
         .select()
@@ -1210,10 +1331,11 @@ export default {
         .then(async (data) => {
           let d = data.data[0];
           let a = await this.$sp_laygiatri(d);
-
+          let item = { ...d, ...a };
+          this.insertGioHang(item);
           if (d) {
             this.itemFromScanner = { ...d, ...a };
-            console.log(this.itemFromScanner);
+            //  console.log(this.itemFromScanner);
             this.$bvModal.show("modal_sanpham");
           } else {
             alert("Mã sản phẩm không tồn tại");
@@ -1226,6 +1348,17 @@ export default {
     getCamDo() {},
   },
   mounted() {
+    // //
+    // this.checkSanPham("md2003");
+    // this.checkSanPham("md2004");
+    // this.checkSanPham("md2006");
+    // this.checkSanPham("md2008");
+    // this.checkSanPham("md2009");
+    // this.checkSanPham("md20010");
+    // this.checkSanPham("dl2011");
+
+    // this.checkSanPham("kk2066");
+    // this.checkSanPham("ve2065");
     let listDisableRouter = ["/camdo/chuocdo", "/chat"];
     var isDisable = listDisableRouter.includes(this.$nuxt.$route.fullPath);
     if (isDisable) {

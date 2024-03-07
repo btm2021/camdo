@@ -13,7 +13,7 @@ export default async ({
     $config,
 }, inject) => {
     inject('sp_laygiatri', async (item) => {
-        console.log(item)
+      //  console.log(item)
         let { data, error } = await app.$supabase.from("banggia").select().eq('code', item.product_type);
         let banggia = data[0]
         let gianhap = (item.product_gold_weight * item.product_price_import) + item.product_wage_in * 1000

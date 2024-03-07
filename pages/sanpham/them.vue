@@ -701,7 +701,7 @@ export default {
           //   capture
           this.takePhoto();
           const canvas = document.getElementById("canvas");
-          const imageData = canvas.toDataURL("image/webp", 0.1);
+          const imageData = canvas.toDataURL("image/webp", 0.5);
           // Lấy phần dữ liệu base64 (bỏ qua phần tiêu đề)
           const base64Image = imageData.split(",")[1];
           let fileUpload = {

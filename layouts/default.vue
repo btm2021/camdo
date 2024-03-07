@@ -619,6 +619,7 @@
             variant="success"
             >Thanh toán</b-button
           > -->
+          <b-button variant="warning">Tạo mới sản phẩm</b-button>
           <strong
             v-if="listGioHang.length > 0"
             class="mr-auto text-danger text-right"

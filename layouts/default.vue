@@ -1237,6 +1237,8 @@ export default {
       // });
     },
     checkSanPham(id) {
+      //DL2083
+      id = String(id).toLowerCase()
       //insert to gioHang
       this.$supabase
         .from("product")

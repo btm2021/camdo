@@ -518,17 +518,55 @@
     <b-modal id="modalImage" hide-footer hide-header>
       <b-img lazy :src="imgUrl" style="width: 100%; height: 500px"> </b-img>
     </b-modal>
-    <b-modal size="lg" id="modalHoaDon" hide-footer hide-header>
+    <b-modal
+      scrollable
+      :title="raw_hoadon ? 'Hóa đơn #' + raw_hoadon.bill_code : ''"
+      size="lg"
+      id="modalHoaDon"
+      hide-footer
+    >
       <b-row v-if="raw_hoadon">
         <b-col cols="12">
-          <b
-            >Mã hóa đơn : {{ raw_hoadon.bill_code }}
+          <b-table-simple fixed bordered small outlined responsive>
+            <b-tbody>
+              <b-tr>
+                <b-td><b>Tên khách</b></b-td>
 
-            Tên Khách : {{ raw_hoadon.customer_name }} Comment :
-            {{ raw_hoadon.bill_comment }}
-          </b><br/>
-          <b> Tiền thực nhận : {{ raw_hoadon.bill_realmoney_get }} </b><br/>
-          <b>{{ raw_hoadon.billDetail }} </b>
+                <b-td>
+                  <span class="text-primary">{{
+                    raw_hoadon.customer_name
+                  }}</span>
+                </b-td>
+
+                <b-td><b>Tổng tiền hóa đơn :</b></b-td>
+                <b-td>
+                  <b>
+                    <span class="text-danger">{{
+                      $formatSoTien(raw_hoadon.bill_totalmoney)
+                    }}</span></b
+                  >
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td><b>Thực nhận :</b></b-td>
+                <b-td>
+                  <b>
+                    <span class="text-danger">{{
+                      $formatSoTien(raw_hoadon.bill_realmoney_get)
+                    }}</span></b
+                  >
+                </b-td>
+
+                <b-td><b>Số món :</b></b-td>
+                <b-td>{{ raw_hoadon.bill_listsanpham.length }}</b-td>
+              </b-tr>
+              <b-tr>
+                <b-td colspan="4">
+                  {{ raw_hoadon.billDetail }}
+                </b-td>
+              </b-tr>
+            </b-tbody>
+          </b-table-simple>
         </b-col>
         <b-col cols="12">
           <table
@@ -1447,10 +1485,7 @@
               <b-dropdown-item href="/hoadon/giohang"
                 >Giỏ hàng
               </b-dropdown-item>
-              <b-dropdown-item href="/hoadon/"
-                >Danh sách hóa đơn phẩm</b-dropdown-item
-              >
-              <b-dropdown-item href="/hoadon/them">Tạo Hóa Đơn</b-dropdown-item>
+              <b-dropdown-item href="/hoadon/">Hóa đơn</b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -2275,7 +2310,6 @@ export default {
         .select()
         .eq("bill_code", id)
         .then((data) => {
-          console.log(data);
           this.raw_hoadon = data.data[0];
           this.$bvModal.show("modalHoaDon");
         });
@@ -2434,7 +2468,7 @@ export default {
   },
   mounted() {
     this.subBanggia();
-    this.checkHoaDon("1_10032024");
+    // this.checkHoaDon("1_10032024");
     // //
     // this.checkSanPham("md2003");
     // this.checkSanPham("md2004");

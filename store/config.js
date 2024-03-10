@@ -1,4 +1,5 @@
 export const state = () => ({
+    banggia_vang: [],
     sanpham_optionCatalog: [
         { text: "NHẪN NỮ", value: "NT" },
         { text: "NHẪN CƯỚI", value: "NC" },
@@ -71,6 +72,10 @@ export const getters = {
 
 }
 export const mutations = {
+    setBanggia(state, banggia) {
+        console.log(banggia)
+        state.banggia_vang = banggia
+    },
     changeBanggia(state) {
         console.log('thay bang gia')
         console.log(state.isBangGiaChange)

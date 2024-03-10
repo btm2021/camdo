@@ -263,4 +263,101 @@ export default async ({
         }
 
     })
+    inject('convertToHTML', (data) => {
+        //max là 6 cột
+        let strTable = ""
+        for (let i = 0; i < 6; i++) {
+            let item = data[i]
+            if (item) {
+                //có dữ liệu
+                strTable += `  <tr>
+                <td>${i + 1}</td>
+                <td>${item.nameOfProduct}</td>
+                <td>${item.product_total_weight}</td>
+                <td>${item.product_stone_weight}</td>
+                <td>${item.product_gold_weight}</td>
+                <td>${item.price.sellingPrice}</td>
+                <td>${item.product_wage}</td>
+                <td>${item.giahientai}</td>
+              </tr>`
+            } else {
+                strTable += `<tr>
+            <td>${i + 1}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>`
+            }
+        }
+
+
+        let strHTML = `
+<style>
+    .tg  {border-collapse:collapse;border-spacing:1;}
+    .tg td{border-color:black;border-style:solid;border-width:1px;font-size:10px;padding:2px 2px;overflow:hidden;text-align: center;word-break:normal;}
+    .tg th{border-color:black;border-style:solid;border-width:1px;font-size:12px;
+      font-weight:bold;overflow:hidden;padding:2px 2px;word-break:normal;}
+      table{
+        width:100%;
+      }
+    </style>
+    <table class="tg">
+    <thead>
+      <tr>
+        <th>STT</th>
+        <th>Món</th>
+        <th>TL.Tổng</th>
+        <th>TL.Hột</th>
+        <th>TL.Vàng</th>
+        <th>Giá Vàng</th>
+        <th>Tiền Công</th>
+        <th>Thành Tiền</th>
+      </tr>
+    </thead>
+    <tbody>
+   ${strTable}
+          </tbody>
+    </table>`
+
+        return strHTML
+    })
+    inject('formatHTML', (html) => {
+
+        // Xóa khoảng trắng và xuống dòng thừa
+        html = html.replace(/>\s*\n+\s*</gm, '><');
+        html = html.replace(/\s+/g, ' ');
+
+        // Xóa chú thích HTML
+        html = html.replace(/<!--[\s\S]*?-->/g, '');
+
+        // Xóa thuộc tính không cần thiết
+        html = html.replace(/(\s\w+)="\s*"/g, '');
+
+        return html;
+
+    })
+    inject('getBill_code', async () => {
+        return new Promise((resolve, reject) => {
+            app.$supabase.from('hoadon').select('id').limit(1).order("id", { ascending: false }).then(data => {
+                if (data.data.length > 1) {
+                    let id = parseFloat(data.data[0].id) + 1
+                    resolve(`${id}_${app.$moment().format('DDMMYYYY')} `)
+                } else {
+                    resolve(`1_${app.$moment().format('DDMMYYYY')} `)
+                }
+            })
+        })
+    })
+    inject('insertBill', async (item) => {
+        return new Promise((resolve, reject) => {
+            app.$supabase.from('hoadon').insert([item]).then(data => {
+
+                resolve(data.data[0])
+            })
+        })
+    })
 };

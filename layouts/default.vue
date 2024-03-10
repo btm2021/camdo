@@ -518,7 +518,208 @@
     <b-modal id="modalImage" hide-footer hide-header>
       <b-img lazy :src="imgUrl" style="width: 100%; height: 500px"> </b-img>
     </b-modal>
-    <b-modal id="modalHoaDon"> </b-modal>
+    <b-modal size="lg" id="modalHoaDon" hide-footer hide-header>
+      <b-row v-if="raw_hoadon">
+        <b-col cols="12">
+          <b
+            >Mã hóa đơn : {{ raw_hoadon.bill_code }}
+
+            Tên Khách : {{ raw_hoadon.customer_name }} Comment :
+            {{ raw_hoadon.bill_comment }}
+          </b><br/>
+          <b> Tiền thực nhận : {{ raw_hoadon.bill_realmoney_get }} </b><br/>
+          <b>{{ raw_hoadon.billDetail }} </b>
+        </b-col>
+        <b-col cols="12">
+          <table
+            class="table table-sm table-bordered table-hover"
+            style="width: 100%"
+          >
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Loại</th>
+                <th>GiáV</th>
+                <th>TL.Vàng</th>
+                <th>Kiểu</th>
+                <th>Công</th>
+                <th>Giá</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="(item, index) in raw_hoadon.bill_listsanpham"
+                :key="index"
+              >
+                <td>
+                  <b>{{ index + 1 }}</b>
+                </td>
+                <td>
+                  <b
+                    @click="showInfoSanPham(item)"
+                    class="myHoverProductBarcode"
+                  >
+                    {{
+                      $store.state.config.sanpham_optionCatalog.find(
+                        (i) => i.value === item.product_catalog
+                      ).text
+                    }}</b
+                  >
+                </td>
+
+                <td>
+                  <b class="text-danger">{{ item.price.sellingPrice }}</b>
+                </td>
+
+                <td>
+                  <b class="text-danger">{{
+                    $formatSoVang(item.product_gold_weight).fullStr
+                  }}</b>
+                </td>
+
+                <td>
+                  <b>{{ item.product_type }}</b>
+                </td>
+
+                <td>
+                  <b>{{ item.product_wage }}</b>
+                </td>
+
+                <td>
+                  <b class="text-danger">{{
+                    $formatSoTien(item.giahientai)
+                  }}</b>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="5" class="text-center"><b>Tổng</b></td>
+
+                <td>
+                  <b class="text-primary text-right">
+                    {{
+                      $formatSoTien(
+                        raw_hoadon.bill_listsanpham.reduce(
+                          (sum, item) => sum + (item.product_wage || 0),
+                          0
+                        )
+                      )
+                    }}</b
+                  >
+                </td>
+                <td>
+                  <b class="text-primary text-right">
+                    {{
+                      $formatSoTien(
+                        raw_hoadon.bill_listsanpham.reduce(
+                          (sum, item) => sum + (item.giahientai || 0),
+                          0
+                        )
+                      )
+                    }}</b
+                  >
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </b-col>
+
+        <b-col cols="12">
+          <b-row>
+            <b-col
+              cols="6"
+              v-for="(item, index) in raw_hoadon.bill_listsanpham"
+              :key="index"
+            >
+              <b-card
+                :title="
+                  '#' +
+                  (index + 1) +
+                  '_' +
+                  $store.state.config.sanpham_optionCatalog.find(
+                    (i) => i.value === item.product_catalog
+                  ).text +
+                  '-' +
+                  item.product_barcode
+                "
+                :img-src="item.product_image_url"
+                :img-alt="item.product_barcode"
+                img-top
+                class="mb-2"
+              >
+                <b-card-text>
+                  <b-row>
+                    <b-col cols="6">
+                      <table class="table table-sm">
+                        <tr>
+                          <td>TL.Tổng</td>
+                          <td>
+                            <b class="text-danger">{{
+                              $formatSoVang(item.product_total_weight).fullStr
+                            }}</b>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>TL.Hột</td>
+                          <td>
+                            <b class="text-danger">{{
+                              $formatSoVang(item.product_stone_weight).fullStr
+                            }}</b>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>TL.Vang2</td>
+                          <td>
+                            <b class="text-danger">{{
+                              $formatSoVang(item.product_gold_weight).fullStr
+                            }}</b>
+                          </td>
+                        </tr>
+                      </table>
+                    </b-col>
+                    <b-col cols="6">
+                      <table class="table table-sm">
+                        <tr>
+                          <td>Loại vàng</td>
+                          <td>
+                            <b>{{ item.product_type }}</b>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Giá vàng</td>
+                          <td>
+                            <b>{{ item.price.sellingPrice }}</b>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Tiền công</td>
+                          <td>
+                            <b>{{ item.product_wage }}</b>
+                          </td>
+                        </tr>
+                      </table>
+                    </b-col>
+                    <b-col cols="12">
+                      <div class="text-center text-primary">
+                        Tính :
+                        {{
+                          `${$formatSoVang(item.product_gold_weight).fullStr}x${
+                            item.price.sellingPrice
+                          }+${item.product_wage}=${$formatSoTien(
+                            item.giahientai
+                          )}`
+                        }}
+                      </div>
+                    </b-col>
+                  </b-row>
+                </b-card-text>
+              </b-card>
+            </b-col>
+          </b-row>
+        </b-col>
+      </b-row>
+    </b-modal>
 
     <b-modal
       size="lg"
@@ -865,8 +1066,12 @@
               <b
                 class="myHoverProductBarcode"
                 @click="showInfoSanPham(data.item)"
-                >{{ data.item.product_barcode }}</b
               >
+                {{ data.item.product_barcode }}
+                <span>
+                  <b-badge variant="primary">{{ data.item.hoadon_id }}</b-badge>
+                </span>
+              </b>
             </template>
 
             <template #cell(propduct_type)="data">
@@ -1493,6 +1698,7 @@ export default {
       selectGioHang: [],
       showTinhToan: false,
       rawGioHang: null,
+      raw_hoadon: null,
       default_overlayproductimportprice: false,
     };
   },
@@ -2063,6 +2269,17 @@ export default {
         resolve(true);
       });
     },
+    checkHoaDon(id) {
+      this.$supabase
+        .from("hoadon")
+        .select()
+        .eq("bill_code", id)
+        .then((data) => {
+          console.log(data);
+          this.raw_hoadon = data.data[0];
+          this.$bvModal.show("modalHoaDon");
+        });
+    },
     async getGioHang() {
       this.$supabase
         .from("giohang")
@@ -2217,6 +2434,7 @@ export default {
   },
   mounted() {
     this.subBanggia();
+    this.checkHoaDon("1_10032024");
     // //
     // this.checkSanPham("md2003");
     // this.checkSanPham("md2004");
@@ -2298,6 +2516,7 @@ export default {
         if (event.key === "Enter") {
           let regexSp = /^[a-z]{2}\d+$/;
           let regexDoThe = /^=\-?\d+$/;
+          let regexHoadon = /^(\d+)_(\d{8})$/;
           let scannerInput = this.barcodeInput.replace(/[\s\n]+/g, "");
           if (
             this.isBarcodeScan(this.barcodeInput, duration) &&
@@ -2312,6 +2531,9 @@ export default {
               action = "sanpham";
             }
 
+            if (regexHoadon.test(scannerInput)) {
+              action = "hoadon";
+            }
             scannerInput = removeSpecialKeysFromString(scannerInput);
             console.log("Barcode detected:", scannerInput, action);
             this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
@@ -2326,6 +2548,12 @@ export default {
               case "sanpham":
                 {
                   this.checkSanPham(scannerInput);
+                  this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
+                }
+                break;
+              case "hoadon":
+                {
+                  this.checkHoaDon(scannerInput);
                   this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
                 }
                 break;

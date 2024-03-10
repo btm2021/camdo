@@ -1,130 +1,220 @@
 <template>
-  <b-card title="Danh sách hóa đơn">
-    <b-row no-gutters>
-      <b-col cols="3"> </b-col>
-      <b-col cols="9">
-        <b-row no-gutters>
-          <b-col cols="3">
-            <b-form-group
-              label="Hiển thị"
-              label-for="per-page-select"
-              label-cols-sm="6"
-              label-cols-md="4"
-              label-cols-lg="3"
-              label-align-sm="right"
-              label-size="sm"
-              class="mb-0"
-            >
-              <b-form-select
-                id="per-page-select"
-                v-model="perPage"
-                :options="[50, 100, 200]"
-                size="sm"
-              ></b-form-select>
-            </b-form-group>
-          </b-col>
-          <b-col cols="4"></b-col>
-          <b-col cols="4" class="mb-2">
-            <b-pagination
-              v-model="currentPage"
-              :total-rows="totalRows"
-              :per-page="perPage"
-              size="sm"
-              align="right"
-              first-number
-              last-number
-              class="my-0"
-            >
-              <template #first-text><span class="">Đầu</span></template>
-              <template #prev-text><span class="">Lùi</span></template>
-              <template #next-text><span class="">Tới</span></template>
-              <template #last-text><span class="">Cuối</span></template>
-            </b-pagination>
-          </b-col>
-          <b-col cols="12">
-            <b-table
-              bordered
-              :items="myProvider"
-              :fields="fieldsHoaDon"
-              show-empty
-              small
-              no-border-collapse
-            >
-              <template #cell(created_at)="data">
-                {{ $moment(data.value).format("DD/MM/YYYY hh:mm") }}
-              </template>
-              <template #cell(tongsotien)="data">
-                <div style="align-items: middle">
-                  {{ $formatN(data.value) }}
-                </div>
-              </template>
+  <div>
+    <b-modal id="modalImage1" hide-footer hide-header>
+      <b-img :src="imgUrl" style="width: 100%; height: 500px"> </b-img>
+    </b-modal>
+    <b-row class="mx-auto mt-2">
+      <b-col cols="3">
+        <b-calendar
+          block
+          v-model="ngaychon"
+          @context="onContext"
+          locale="vi-VN"
+          today-variant="primary"
+          selected-variant="success"
+          nav-button-variant="primary"
+          @input="changeDate()"
+        ></b-calendar>
+      </b-col>
 
-              <template #cell(product)="data">
-                <div v-for="(item, index) in data.value" :key="index">
-                  <a href="#"> {{ item.product_barcode }}</a> -{{
-                    item.product_type
-                  }}-{{ $formatSoVang(item.product_gold_weight).fullStr }}:{{
-                    $formatN(item.product_total_price || 0)
-                  }}
-                </div>
-              </template>
-            </b-table>
-          </b-col>
-        </b-row>
+      <b-col cols="9">
+        <h3 class="mx-auto">Danh sách sản phẩm đã bán {{ ngaychon }}</h3>
+        <b-overlay :show="overlayGioHang">
+          <b-table
+            bordered
+            no-border-collapse
+            class="default_tablegiohang text-center"
+            hover
+            style=""
+        
+            :items="listGioHang"
+            show-empty
+            small
+            selected-variant="success"
+            responsive
+          >
+            <template #cell(stt)="data">
+              {{ data.index + 1 }}
+            </template>
+
+            <template #cell(product_wage)="data">
+              <strong>{{ data.item.product_wage }}</strong>
+            </template>
+
+            <template #cell(giahientai)="data">
+              <strong class="text-danger">{{
+                $formatN(data.item.giahientai)
+              }}</strong>
+            </template>
+            <template #cell(product_total_weight)="data">
+              <span>{{
+                $formatSoVang(data.item.product_total_weight).fullStr
+              }}</span>
+            </template>
+            <template #cell(product_stone_weight)="data">
+              <span>{{
+                $formatSoVang(data.item.product_stone_weight).fullStr
+              }}</span>
+            </template>
+            <template #cell(product_gold_weight)="data">
+              <b class="text-primary">{{
+                $formatSoVang(data.item.product_gold_weight).fullStr
+              }}</b>
+            </template>
+
+            <template #cell(propduct_barcode)="data">
+              <strong class="text-primary">{{
+                data.item.product_barcode
+              }}</strong>
+            </template>
+
+            <template #cell(propduct_type)="data">
+              <strong class="text-primary">{{ data.item.product_type }}</strong>
+            </template>
+            <template #cell(product_catalog)="data">
+              <strong class="text-primary">
+                {{
+                  $store.state.config.sanpham_optionCatalog.find(
+                    (i) => i.value === data.item.product_catalog
+                  ).text
+                }}
+              </strong>
+            </template>
+
+            <template #cell(remove)="data">
+              <b-button variant="danger" @click="xoaSanPhamGioHang(data.item)"
+                >Xóa</b-button
+              >
+            </template>
+            <template #cell(product_image_url)="data">
+              <b-img
+                @click="showImage(data.item.product_image_url)"
+                :src="data.item.product_image_url"
+                style="width: 25px; height: 25px"
+              />
+            </template>
+          </b-table>
+          <strong
+            v-if="listGioHang && listGioHang.length > 0"
+            class="mr-auto text-danger"
+          >
+            <ul>
+              <li>
+                Tổng giá trị : {{ $formatSoTien(getTongGiaTriGioHang()) }}
+              </li>
+              <li>
+                Tổng trọng lượng :
+                {{ $formatSoVang(getTongTrongLuongGioHang()).fullStr }}
+              </li>
+              <li>
+                Tổng tiền công :
+                {{ $formatSoTien(getTongGiaTriTienCongGioHang()) }}
+              </li>
+            </ul>
+          </strong>
+
+          <strong v-else>Giỏ hàng trống</strong>
+        </b-overlay>
       </b-col>
     </b-row>
-  </b-card>
+  </div>
 </template>
 
 <script>
 export default {
-  mounted() {},
-  methods: {
-    async myProvider(ctx) {
-      let s = (ctx.currentPage - 1) * ctx.perPage;
-      let e = s + ctx.perPage;
-      let query = this.$supabase
-        .from("hoadon")
-        .select("*,product(*)")
-        .range(s, e)
-        .order("id", { ascending: ctx.sortDesc });
-      let queryCount = this.$supabase
-        .from("hoadon")
-        .select("*", { count: "exact", head: true });
-
-      let result = await query;
-      let itemCount = await queryCount;
-      console.log(result);
-      this.totalRows = itemCount.count;
-      return result.data;
-    },
-  },
   data() {
     return {
-      totalRows: 0,
-      perPage: 50,
-      listHoaDon: [],
-      fieldsHoaDon: [
-        {
-          key: "id",
-          label: "ID",
-          thClass: "tdHoaDonTable",
-          tdClass: "tdHoaDonTableCell",
-        },
-        { key: "created_at", label: "Ngày tạo", tdClass: "tdHoaDonTableCell" },
-        { key: "tongsotien", label: "Tổng tiền", tdClass: "tdHoaDonTableCell" },
-        { key: "product", label: "Sản phẩm" },
+      context: null,
+      ngaychon: this.$moment().format("YYYY-MM-DD"),
+      overlayGioHang: false,
+      fieldsGioHang: [
+        { key: "stt", label: "#" },
+        { key: "product_image_url", label: "Ảnh" },
+        { key: "product_barcode", label: "Mã" },
+        { key: "product_type", label: "Loại", sortable: true },
+        { key: "product_catalog", label: "Kiểu", sortable: true },
+        { key: "product_total_weight", label: "Tổng", sortable: true },
+        { key: "product_stone_weight", label: "Hột", sortable: true },
+        { key: "product_gold_weight", label: "Vàng", sortable: true },
+        { key: "product_wage", label: "Công", sortable: true },
+        { key: "giahientai", label: "Giá", sortable: true },
+        { key: "remove", label: "#" },
       ],
+      listGioHang: [],
+      imgUrl: null,
     };
+  },
+  mounted() {
+    this.getGioHang(this.ngaychon).then((data) => {
+      this.listGioHang = data.listsanpham;
+    });
+  },
+  methods: {
+    getTongGiaTriGioHang() {
+      let count = 0;
+      this.listGioHang.forEach((item) => {
+        count += item.giahientai;
+      });
+      return count;
+    },
+    getTongGiaTriTienCongGioHang() {
+      let count = 0;
+      this.listGioHang.forEach((item) => {
+        count += item.product_wage;
+      });
+      return count;
+    },
+    getTongTrongLuongGioHang() {
+      let count = 0;
+      this.listGioHang.forEach((item) => {
+        count += item.product_gold_weight;
+      });
+      return count;
+    },
+    showImage(url) {
+      this.imgUrl = url;
+      this.$bvModal.show("modalImage1");
+    },
+    xoaSanPhamGioHang(item) {
+      this.overlayGioHang = true;
+      this.listGioHang = this.listGioHang.filter((x) => x !== item);
+
+      this.$supabase
+        .from("giohang")
+        .update({ listsanpham: this.listGioHang })
+        .eq("created_at", this.ngaychon)
+        .then((data) => {
+          this.overlayGioHang = false;
+        });
+    },
+    changeDate() {
+      this.overlayGioHang = true;
+      this.getGioHang(this.ngaychon).then((data) => {
+        this.listGioHang = data.listsanpham;
+        this.overlayGioHang = false;
+      });
+    },
+    async getGioHang(date) {
+      return new Promise(async (resolve, reject) => {
+        this.$supabase
+          .from("hoadon")
+          .select()
+          .eq("created_at", date)
+          .then((data) => {
+            if (data.data.length > 0) {
+              resolve(data.data[0]);
+            } else {
+              resolve([]);
+            }
+          });
+      });
+    },
+    onContext(ctx) {
+      this.context = ctx;
+    },
   },
 };
 </script>
 
 <style>
-.tdHoaDonTable {
-  max-width: 10px;
-}
-.tdHoaDonTableCell {
-  vertical-align: middle;
-}
 </style>

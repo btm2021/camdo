@@ -343,7 +343,8 @@ export default async ({
     inject('getBill_code', async () => {
         return new Promise((resolve, reject) => {
             app.$supabase.from('hoadon').select('id').limit(1).order("id", { ascending: false }).then(data => {
-                if (data.data.length > 1) {
+
+                if (data.data.length >= 1) {
                     let id = parseFloat(data.data[0].id) + 1
                     resolve(`${id}_${app.$moment().format('DDMMYYYY')} `)
                 } else {
@@ -355,7 +356,6 @@ export default async ({
     inject('insertBill', async (item) => {
         return new Promise((resolve, reject) => {
             app.$supabase.from('hoadon').insert([item]).then(data => {
-
                 resolve(data.data[0])
             })
         })

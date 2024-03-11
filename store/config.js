@@ -73,7 +73,7 @@ export const getters = {
 }
 export const mutations = {
     setBanggia(state, banggia) {
-        console.log(banggia)
+
         state.banggia_vang = banggia
     },
     changeBanggia(state) {
@@ -85,6 +85,5 @@ export const mutations = {
         } else {
             state.isBangGiaChange = true;
         }
-        console.log(state.isBangGiaChange)
     }
 }

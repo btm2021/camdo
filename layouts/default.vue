@@ -1292,7 +1292,16 @@
             </tbody>
             <tfoot>
               <tr>
-                <td colspan="5" class="text-center"><b>Tổng</b></td>
+                <td colspan="5" class="text-center">
+                  <span>{{
+                    docsotien(
+                      selectGioHang.reduce(
+                        (sum, item) => sum + (item.giahientai || 0),
+                        0
+                      )
+                    )
+                  }}</span>
+                </td>
 
                 <td>
                   <b class="text-primary text-right">
@@ -1928,7 +1937,7 @@ export default {
           product_gold_weight *
             parseFloat(this.formDefault_sanpham_gia.sellingPrice) +
           product_wage_in * 100;
-        this.giahientai = result;
+        this.giahientai = Math.round(result / 1000) * 1000;
       }
     },
     getGiaNhap() {
@@ -1951,7 +1960,7 @@ export default {
       ) {
         let result =
           product_gold_weight * product_price_import + product_wage_in * 100;
-        this.giatrinhap = result;
+        this.giatrinhap = Math.round(result / 1000) * 1000;
       }
     },
 
@@ -2305,10 +2314,11 @@ export default {
       });
     },
     checkHoaDon(id) {
+      console.log(id);
       this.$supabase
         .from("hoadon")
         .select()
-        .eq("bill_code", id)
+        .eq("bill_code", String(id))
         .then((data) => {
           this.raw_hoadon = data.data[0];
           this.$bvModal.show("modalHoaDon");
@@ -2468,19 +2478,7 @@ export default {
   },
   mounted() {
     this.subBanggia();
-    // this.checkHoaDon("1_10032024");
-    // //
-    // this.checkSanPham("md2003");
-    // this.checkSanPham("md2004");
-    // this.checkSanPham("md2006");
-    // this.checkSanPham("md2008");
-    // this.checkSanPham("md2009");
-    // this.checkSanPham("md20010");
-    // this.checkSanPham("dl2011");
 
-    // this.checkSanPham("kk2066");
-    // this.$bvModal.show("default_modal_SanPham");
-    // this.checkSanPham("ve2065");
     let listDisableRouter = ["/camdo/chuocdo", "/chat"];
     var isDisable = listDisableRouter.includes(this.$nuxt.$route.fullPath);
     if (isDisable) {
@@ -2550,8 +2548,9 @@ export default {
         if (event.key === "Enter") {
           let regexSp = /^[a-z]{2}\d+$/;
           let regexDoThe = /^=\-?\d+$/;
-          let regexHoadon = /^(\d+)_(\d{8})$/;
+          let regexHoadon = /^(\d+)-(\d{8})$/;
           let scannerInput = this.barcodeInput.replace(/[\s\n]+/g, "");
+          console.log(scannerInput);
           if (
             this.isBarcodeScan(this.barcodeInput, duration) &&
             scannerInput != ""

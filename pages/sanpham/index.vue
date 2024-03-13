@@ -279,6 +279,7 @@ export default {
         const { data, error, count } = await this.$supabase
           .from("product")
           .select("*", { count: "exact" })
+          .order("id", { ascending: false })
           .range((currentPage - 1) * perPage, currentPage * perPage - 1);
 
         if (error) throw error;

@@ -758,7 +758,191 @@
         </b-col>
       </b-row>
     </b-modal>
+    <b-modal id="modal_camdo_kiemtra" size="xl" hide-footer hide-header>
+      <b-row style="min-height: 80vh">
+        <b-col cols="7">
+          Hóa đơn 77124
 
+          <b-form-input
+            v-model="camdo_kiemtra_giaythe_invoice_number"
+            type="text"
+          />
+
+          <b-table-simple
+            class="table_giaycamdo"
+            responsive
+            borderless
+            style="min-height: 600px"
+          >
+            <b-thead>
+              <b-tr>
+                <b-th colspan="2" rowspan="3">
+                  <b-img
+                    lazy
+                    src="~assets/logo.png"
+                    style="width: 100px; height: 100px; vertical-align: middle"
+                    fluid
+                  />
+                </b-th>
+                <b-th colspan="4" rowspan="2">
+                  <h3 class="text-center">Tiệm Vàng BẢO PHƯƠNG</h3>
+                </b-th>
+              </b-tr>
+              <b-tr> </b-tr>
+              <b-tr>
+                <b-th colspan="4">
+                  <div>
+                    <h3 style="float: right; color: #dc3545 !important">
+                      <span>
+                        <!-- da chuoc -->
+                        <b-badge variant="primary">Đã chuộc</b-badge>
+                      </span>
+                      <span>
+                        <b-badge variant="success">Chưa chuộc</b-badge>
+                      </span>
+                    </h3>
+                    <h2
+                      class="text-center"
+                      style="
+                        color: blue;
+                        text-decoration: underline;
+                        font-weight: bold;
+                      "
+                    >
+                      GIẤY CẦM
+                    </h2>
+                  </div>
+                </b-th>
+                <!-- <b-th><h5 class="text-center text-danger">121213</h5></b-th> -->
+              </b-tr>
+            </b-thead>
+            <b-tbody>
+              <b-tr>
+                <b-td>Tên</b-td>
+                <b-td colspan="5" style="border-bottom: 1px dotted black">
+                  <span
+                    style="color: #dc3545; font-weight: bold; font-size: 40px"
+                  >
+                  </span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td> Đồ cầm</b-td>
+                <b-td colspan="5" style="border-bottom: 1px dotted black">
+                  <span
+                    style="color: #dc3545; font-weight: bold; font-size: 24px"
+                  >
+                  </span>
+                </b-td>
+              </b-tr>
+
+              <b-tr>
+                <b-td>Tiền</b-td>
+                <b-td colspan="5" style="border-bottom: 1px dotted black">
+                  <span
+                    style="color: #dc3545; font-weight: bold; font-size: 24px"
+                  >
+                  </span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td colspan="4"></b-td>
+                <b-td>Ngày thế</b-td>
+                <b-td style="border-bottom: 1px dotted black">
+                  <span
+                    style="color: #dc3545; font-weight: bold; font-size: 24px"
+                  >
+                  </span>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td>Thông tin</b-td>
+                <b-td colspan="5">
+                  <p class="default_thongtin" style="text-align: left">
+                    Số ngày cầm :
+                    <span class="text-danger"> ngày </span>
+                    <br />
+                    Số tiền lãi :<span
+                      style="color: yellow; font-size: 50px; font-weight: 800"
+                    >
+                    </span>
+                    <span class="text-danger"> </span>
+                    <br />
+                    Số tiền tổng :
+                    <span class="text-danger">
+                      <br />
+                    </span>
+                    <span style="font-style: italic"> </span>
+                    <span style="font-style: italic"> SDT : </span>
+                  </p>
+                </b-td>
+              </b-tr>
+              <b-tr>
+                <b-td colspan="6">
+                  <b-button variant="success" @click="check_invoice()">
+                    Chuộc Đồ</b-button
+                  >
+                </b-td>
+              </b-tr>
+            </b-tbody>
+          </b-table-simple>
+        </b-col>
+        <b-col cols="1">
+          <div
+            v-if="camdo_kiemtra_status"
+            style="width: 100%; height: 100%; background-color: green"
+          ></div>
+          <div
+            v-else
+            style="width: 100%; height: 100%; background-color: red"
+          ></div>
+        </b-col>
+        <b-col cols="4">
+          Bọc đồ 77124
+
+          <b-form-input
+            v-model="camdo_kiemtra_bocdo_invoice_number"
+            type="text"
+          />
+          <br />
+          <br />
+          <b-table-simple
+            class="mt-5"
+            borderless
+            style="border: 1px solid black"
+          >
+            <b-tbody>
+              <b-tr style="background-color: rgb(121, 175, 232)">
+                <b-td>Bảo</b-td>
+                <b-td>412312</b-td>
+              </b-tr>
+
+              <b-tr
+                style="
+                  border-bottom: 1px solid black;
+                  background-color: rgb(121, 175, 232);
+                "
+              >
+                <b-td>2.200.000</b-td>
+                <b-td>22/3/2024</b-td>
+              </b-tr>
+
+              <b-tr
+                style="
+                  width: 100%;
+                  height: 200px;
+                  background-image: url('/placehold_camdo_bocdo.png');
+                  background-size:cover;
+                  background-repeat: no-repeat;
+                "
+              >
+                <b-td colspan="2"> </b-td>
+              </b-tr>
+            </b-tbody>
+          </b-table-simple>
+        </b-col>
+      </b-row>
+    </b-modal>
     <b-modal
       size="lg"
       hide-footer
@@ -1481,6 +1665,9 @@
               <b-dropdown-item href="/sanpham/them"
                 >Thêm sản phẩm</b-dropdown-item
               >
+              <b-dropdown-item href="/sanpham/intem"
+                >In tem sản phẩm</b-dropdown-item
+              >
             </b-dropdown-group>
             <b-dropdown-group id="dropdown-group-2" header="Bảng giá">
               <b-dropdown-item href="/">Bảng Giá</b-dropdown-item>
@@ -1744,9 +1931,24 @@ export default {
       rawGioHang: null,
       raw_hoadon: null,
       default_overlayproductimportprice: false,
+
+      //
+      camdo_kiemtra_status: false,
+      camdo_kiemtra_giaythe_invoice_number: null,
+      camdo_kiemtra_bocdo_invoice_number: null,
+      camdo_kiemtra: {
+        giaythe: null,
+        bocdoc: null,
+      },
     };
   },
   watch: {
+    camdo_kiemtra_giaythe_invoice_number(newVal, oldVal) {
+      this.check_camdo_kiemtra_trungnhau();
+    },
+    camdo_kiemtra_bocdo_invoice_number(newVal, oldVal) {
+      this.check_camdo_kiemtra_trungnhau();
+    },
     selectGioHang(newVal, oldVal) {
       this.getBarcode();
       if (newVal.length >= 1) {
@@ -1853,6 +2055,19 @@ export default {
   components: {},
   computed: {},
   methods: {
+    check_camdo_kiemtra_trungnhau() {
+      if (
+        parseInt(this.camdo_kiemtra_bocdo_invoice_number) ==
+        parseInt(this.camdo_kiemtra_giaythe_invoice_number)
+      ) {
+        this.camdo_kiemtra_status = true;
+      } else {
+        this.camdo_kiemtra_status = false;
+      }
+    },
+    check_camdo_kiemtra(id) {
+      this.$bvModal.show("modal_camdo_kiemtra");
+    },
     getBarcode() {
       this.$getBill_code().then((data) => {
         // console.log(data);
@@ -1879,6 +2094,8 @@ export default {
         giohang_id: this.rawGioHang.id,
       };
       this.$insertBill(billObject).then((data) => {
+        //update sanpham
+
         let hoadon = data;
         //hide sidebar,clear select
         this.$refs.default_tablegiohang.clearSelected();
@@ -2370,6 +2587,7 @@ export default {
             .from("giohang")
             .update({ listsanpham: dataGioHang })
             .eq("id", idGioHang);
+          //edit sản phẩm
 
           this.$bvToast.toast(
             `Thêm sản phẩm ${item.product_barcode} vào giỏ hàng ngày ${currentDay} `,
@@ -2477,6 +2695,7 @@ export default {
     },
   },
   mounted() {
+   // this.check_camdo_kiemtra(1111);
     this.subBanggia();
 
     let listDisableRouter = ["/camdo/chuocdo", "/chat"];

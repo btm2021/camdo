@@ -413,8 +413,8 @@
 export default {
   data() {
     return {
-      ngaybatdau: this.$moment("2024-03-10").format("YYYY-MM-DD"),
-      ngayketthuc: this.$moment("2024-03-10").format("YYYY-MM-DD"),
+      ngaybatdau: this.$moment().format("YYYY-MM-DD"),
+      ngayketthuc: this.$moment().format("YYYY-MM-DD"),
       context: null,
       ngaychon: this.$moment().format("YYYY-MM-DD"),
       overlayGioHang: false,

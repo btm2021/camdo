@@ -23,48 +23,7 @@
     <b-container class="mt-5">
       <b-overlay :show="overlayListInovice">
         <b-row>
-          <b-col cols="3" v-for="(invoice, index) in listInvoice" :key="index">
-            <b-card class="mt-3" header="Form Data Result" no-body>
-              <template #header>
-                <table
-                  style="
-                    width: 100%;
-                    height: 100%;
-                    color: blue;
-
-                    font-weight: bold;
-                    font-size: normalize;
-                  "
-                >
-                  <tr>
-                    <td style="text-align: left">
-                      {{ invoice.customer_name }}
-                    </td>
-                    <td style="text-align: right; color: red">
-                      {{ invoice.invoice_number }}
-                    </td>
-                    <td rowspan="2">
-                      <b-badge
-                        class="ml-2"
-                        variant="danger"
-                        style="cursor: pointer"
-                        >X</b-badge
-                      >
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td style="text-align: left">
-                      {{ formatN(invoice.invoice_money) }}
-                    </td>
-                    <td style="text-align: right">
-                      {{ getNgay(invoice.invoice_date_create) }}
-                    </td>
-                  </tr>
-                </table>
-              </template>
-            </b-card>
-          </b-col>
+     
         </b-row></b-overlay
       >
     </b-container>
@@ -73,6 +32,7 @@
   
   <script>
 export default {
+  layout:'thanhly',
   data() {
     return {
       overlayListInovice: false,

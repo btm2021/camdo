@@ -197,6 +197,13 @@ export default {
       }
     },
     async intemSingle() {
+
+      if (this.selected.length > 0) {
+        this.$pl_sanpham_intem(this, this.selected);
+        this.selected = [];
+      } else {
+        alert("Không có gì để in");
+      }
       // if (this.selected.length > 0) {
       //   let list_tem = this.selected.map((item) => {
       //     return {

@@ -39,7 +39,7 @@ export default {
   */
   buildModules: [
     ['nuxt-supabase', {
-      supabaseUrl: 'https://ajsrzteoovahabndebyp.supabase.co',
+      supabaseUrl: `https://spbp.trinhminhbao.workers.dev`,
       supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqc3J6dGVvb3ZhaGFibmRlYnlwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwNDY4NjI1OCwiZXhwIjoyMDIwMjYyMjU4fQ.Q0lBT-HTcMLxLGpKgJ_-vz-prKH43nV9czOtm2HvMzU'
     }],
   ],

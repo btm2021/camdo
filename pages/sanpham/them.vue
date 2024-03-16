@@ -200,7 +200,7 @@
                       </ValidationProvider>
 
                       <ValidationProvider
-                        rules="required|min_value:0|max_value:10000|numeric"
+                        rules="required|min_value:0|max_value:100000000|numeric"
                         v-slot="{ errors, valid, failedRules }"
                       >
                         <b-form-group
@@ -236,7 +236,7 @@
                         ></b-form-input
                       ></b-form-group>
                       <ValidationProvider
-                        rules="required|min_value:10|max_value:1000000|numeric"
+                        rules="required|min_value:10|max_value:100000000|numeric"
                         v-slot="{ errors, valid, failedRules }"
                       >
                         <b-form-group

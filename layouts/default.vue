@@ -1,7 +1,7 @@
 <template>
   <div>
-    <b-modal no-stacking ref="modal_camdo" id="modal_camdo" class="default_modal_camdo" title="Cầm đồ - Hóa đơn " hide-footer
-      size="lg" hide-header>
+    <b-modal no-stacking ref="modal_camdo" id="modal_camdo" class="default_modal_camdo" title="Cầm đồ - Hóa đơn "
+      hide-footer size="lg" hide-header>
       <b-overlay :show="overlayCamDo">
         <b-table-simple v-if="tempCheckDothe" class="table_giaycamdo" responsive borderless style="min-height: 600px">
           <b-thead>
@@ -147,7 +147,8 @@
         </b-table-simple>
       </b-overlay>
     </b-modal>
-    <b-modal no-stacking id="modal_sanpham" size="lg" hide-footer @hidden="closeModalSanPham" title="Thông tin sản phẩm">
+    <b-modal no-stacking id="modal_sanpham" size="lg" hide-footer @hidden="closeModalSanPham"
+      title="Thông tin sản phẩm">
       <b-overlay :show="overlaySanPham">
         <b-row v-if="itemFromScanner">
           <b-col cols="6">
@@ -418,8 +419,8 @@
     <b-modal no-stacking id="modalImage" hide-footer hide-header>
       <b-img lazy :src="imgUrl" style="width: 100%; height: 500px"> </b-img>
     </b-modal>
-    <b-modal scrollable no-stacking :title="raw_hoadon ? 'Hóa đơn #' + raw_hoadon.bill_code : ''" size="lg" id="modalHoaDon"
-      hide-footer>
+    <b-modal scrollable no-stacking :title="raw_hoadon ? 'Hóa đơn #' + raw_hoadon.bill_code : ''" size="lg"
+      id="modalHoaDon" hide-footer>
       <b-row v-if="raw_hoadon">
         <b-col cols="12">
           <b-table-simple fixed bordered small outlined responsive>
@@ -793,26 +794,26 @@
                 <tr>
                   <td>Ngày thế</td>
                   <td> {{
-          $moment(camdo_kiemtra_bocdo.invoice_date_create).format(
-            "DD/MM/YYYY"
-          )
-        }}</td>
+        $moment(camdo_kiemtra_bocdo.invoice_date_create).format(
+          "DD/MM/YYYY"
+        )
+      }}</td>
 
                 </tr>
                 <tr>
                   <td>Số ngày thế </td>
-                  <td class="text-danger">  {{
-        $moment().diff(
-          $moment(camdo_kiemtra_bocdo.invoice_date_create),
-          "days"
-        )
-      }}
+                  <td class="text-danger"> {{
+          $moment().diff(
+            $moment(camdo_kiemtra_bocdo.invoice_date_create),
+            "days"
+          )
+        }}
                     ngày </td>
 
                 </tr>
                 <tr>
                   <td>Tiền lãi : </td>
-                  <td class="text-danger">  {{ $formatN(getTienLai(camdo_kiemtra_bocdo)) }} </td>
+                  <td class="text-danger"> {{ $formatN(getTienLai(camdo_kiemtra_bocdo)) }} </td>
 
                 </tr>
               </table>
@@ -824,7 +825,7 @@
         </b-col>
       </b-row>
     </b-modal>
-    <b-modal size="lg" no-stacking hide-footer  id="default_modal_SanPham" title="Tạo nhanh sản phẩm">
+    <b-modal size="lg" no-stacking hide-footer id="default_modal_SanPham" title="Tạo nhanh sản phẩm">
       <b-form>
         <b-form-row>
           <b-col cols="12">
@@ -1248,17 +1249,17 @@
           $formatSoTien(
             selectGioHang.reduce(
               (sum, item) => sum + (item.product_wage || 0),
-                    0
-                    )
-                    )
-                    }}</b>
+              0
+            )
+          )
+        }}</b>
                 </td>
                 <td>
                   <b class="text-primary text-right">
                     {{
-                    $formatSoTien(
-                    selectGioHang.reduce(
-                    (sum, item) => sum + (item.giahientai || 0),
+          $formatSoTien(
+            selectGioHang.reduce(
+              (sum, item) => sum + (item.giahientai || 0),
                     0
                     )
                     )
@@ -1774,13 +1775,13 @@ export default {
   components: {},
   computed: {},
   methods: {
-    reset_camdo_kiemtra(){
-      if(!this.camdo_kiemtra_giaythe_danhan){
-        this.camdo_kiemtra_bocdo =null;
-        this.camdo_kiemtra_giaythe=null
-        this.camdo_kiemtra_bocdo_invoice_number=null;
-        this.camdo_kiemtra_giaythe_invoice_number=null;
-        this.camdo_kiemtra_status=true;
+    reset_camdo_kiemtra() {
+      if (!this.camdo_kiemtra_giaythe_danhan) {
+        this.camdo_kiemtra_bocdo = null;
+        this.camdo_kiemtra_giaythe = null
+        this.camdo_kiemtra_bocdo_invoice_number = null;
+        this.camdo_kiemtra_giaythe_invoice_number = null;
+        this.camdo_kiemtra_status = true;
         this.camdo_kiemtra_giaythe_danhan = false
       }
     },
@@ -1795,14 +1796,14 @@ export default {
             this.camdo_kiemtra_bocdo = data.data[0]
             this.camdo_kiemtra_bocdo_invoice_number = data.data[0].invoice_number
             this.check_camdo_kiemtra_trungnhau();
-            if(this.camdo_kiemtra_status){
+            if (this.camdo_kiemtra_status) {
               //chuoc
-              this.tempCheckDothe=this.camdo_kiemtra_bocdo
+              this.tempCheckDothe = this.camdo_kiemtra_bocdo
               this.check_invoice_auto()
             }
             this.camdo_kiemtra_giaythe_danhan = false
             this.$bvModal.show("modal_camdo_kiemtra");
-            
+
           }
 
         })
@@ -2338,10 +2339,10 @@ export default {
       let dataGioHangHienTai = await this.$supabase
         .from("giohang")
         .select()
-        .eq("created_at", currentDay);
+        .gte("created_at", currentDay);
 
       if (dataGioHangHienTai.data.length > 0) {
-        let dataGioHang = dataGioHangHienTai.data[0].listsanpham;
+        let dataGioHang = (dataGioHangHienTai.data[0].listsanpham);
         let idGioHang = dataGioHangHienTai.data[0].id;
 
         let isItemExist = dataGioHang.find((i) => i.id === item.id);
@@ -2378,7 +2379,7 @@ export default {
       } else {
         //tạo mới giỏ hàng cho ngày nay
         let { data, error } = await this.$supabase.from("giohang").insert({
-          listsanpham: JSON.stringify([]),
+          listsanpham: []
         });
         this.insertGioHang(item);
       }
@@ -2416,6 +2417,13 @@ export default {
       this.$bvModal.show("modal_sanpham");
     },
     getCamDo() { },
+    subGioHang() {
+      console.log('sub giohang')
+      this.$supabase.from('giohang').on("UPDATE", (payload) => {
+          console.log('payload',payload)
+        })
+        .subscribe();
+    },
     subBanggia() {
       // láy bảng giá hiện tại và thêm vào store.banggia_vang
       this.$supabase
@@ -2423,11 +2431,13 @@ export default {
         .select("*")
         .then((data) => {
           //có bảng giá
+        
           this.$store.commit("config/setBanggia", data.data);
         });
       this.$supabase
         .from("banggia")
         .on("UPDATE", (payload) => {
+          console.log('co bang gia')
           this.$supabase
             .from("banggia")
             .select("*")
@@ -2442,7 +2452,7 @@ export default {
   },
   mounted() {
     this.subBanggia();
-
+this.subGioHang();
     let listDisableRouter = ["/camdo/chuocdo", "/chat"];
     var isDisable = listDisableRouter.includes(this.$nuxt.$route.fullPath);
     if (isDisable) {

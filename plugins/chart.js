@@ -3,9 +3,11 @@ import Vue from 'vue'
 import VueApexCharts from 'vue-apexcharts'
 //pubnub
 import PubNubVue from 'pubnub-vue';
+var subKey = 'sub-c-3cf6eee4-50b5-4e2a-93f4-b436d2df5dc1'
+var pubKey = 'pub-c-c240aec8-669a-459d-a117-879a175dda7e'
 Vue.use(PubNubVue, {
-    subscribeKey: 'sub-c-1db3ee38-8f0e-11eb-968e-467c259650fa',
-    publishKey: 'pub-c-2ecffcb0-ec4c-44c3-a88a-6f19b13057c3'
+    subscribeKey: subKey,
+    publishKey: pubKey
 });
 
 Vue.use(VueApexCharts)

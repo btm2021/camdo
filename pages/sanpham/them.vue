@@ -212,7 +212,12 @@
         <b-card>
           <template #header>
             <div class="mb-0">
+              <b-row>
+                <b-col cols="6"></b-col>
+                <b-col cols="6"></b-col>
+              </b-row>
               <span>Số sản phẩm đã nhập</span>
+              <b-button size="sm" variant="primary" @click="intemSingle">In Tem toàn bộ</b-button>
             </div>
           </template>
           <b-card-body style="padding: 0px; margin: 0px">
@@ -235,7 +240,7 @@
                   optionCatalog.find(
                     (x) => x.value == data.item.product_catalog
                   ).text
-                  }}</span>
+                }}</span>
               </template>
             </b-table>
           </b-card-body>
@@ -435,6 +440,36 @@ export default {
     };
   },
   methods: {
+    async intemSingle() {
+
+      if (this.productList.length > 0) {
+        let myarr = this.productList.map(item => {
+          return {
+            id: item.id,
+            ncc: item.nhacungcap.name,
+            ncc_diachi: item.nhacungcap.address,
+            tccs: item.nhacungcap.tccs,
+            ten: item.name,
+            kihieu: item.kihieu.short,
+            klt: item.klt,
+            klv: item.klv,
+            klh: item.klh,
+            cong: item.cong,
+            hamluongvang: item.banggia.code,
+            maso: item.maso
+          }
+        })
+
+        this.$pl_sanpham_intem(this, myarr).then(data => {
+          this.productList = [];
+          alert('Chờ máy in ra rồi bấm OK')
+          window.location.reload()
+        })
+
+      } else {
+        alert("Không có gì để in");
+      }
+    },
     //rotale
     rotationLeft() {
       this.rotationAngle -= 10;
@@ -606,8 +641,8 @@ export default {
             this.formSanPham.anhsanpham = anhmacdinh.default_picture
           }
           // this.formSanPham.anhsanpham = this.formSanPham.maso;
-          let giatrinhap = parseFloat(this.formSanPham.klv)*parseFloat(this.formSanPham.giavangnhap)+(parseFloat(this.formSanPham.giacongnhap*1000))
-       
+          let giatrinhap = parseFloat(this.formSanPham.klv) * parseFloat(this.formSanPham.giavangnhap) + (parseFloat(this.formSanPham.giacongnhap * 1000))
+
           let objectInsert = {
             name: this.formSanPham.name,
             klt: parseFloat(this.formSanPham.klt),
@@ -629,7 +664,7 @@ export default {
           let product = await this.$supabase
             .from("sanpham")
             .insert(objectInsert)
-            .select();
+            .select("*,kieusanpham(*),banggia(*),nhacungcap(*),kihieu(*)");
           this.productList.push(product.data[0]);
           this.resetForm();
           this.dataReady = true;

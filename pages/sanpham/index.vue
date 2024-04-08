@@ -1,144 +1,76 @@
 <template>
   <div class="mt-2">
-    <b-row no-gutters>
-      <b-input style="margin: 20px; text-align: center"></b-input>
+     <b-row no-gutters>
+
       <b-col cols="12" style="font-size: 13px">
         <b-card no-body>
           <div>
-            <b-table
-              style="min-height: 600px"
-              responsive
-              :per-page="perPage"
-              :current-page="currentPage"
-              bordered
-              no-border-collapse
-              sticky-header="500px"
-              ref="my_table"
-              show-empty
-              select-mode="single"
-              selectable
-              head-row-variant="success"
-              :items="myProvider"
-              class="mytable text-center w-auto"
-              striped
-              small
-              :fields="fieldsSanPham"
-              @filtered="onFiltered"
-            >
-              <template #cell(product_total_price)="data">
-                {{ $formatN(data.value) }}
-              </template>
+            <b-overlay>
 
-              <!-- Template cho trường product_wage -->
-              <template #cell(product_wage)="data">
-                {{ $formatN(data.value) }}
-              </template>
+              <b-table style="min-height: 600px" responsive :per-page="perPage" :current-page="currentPage" bordered
+                no-border-collapse sticky-header="800px" ref="my_table" show-empty select-mode="single" selectable
+                head-row-variant="success" :items="listData" class="mytable text-center w-auto" striped :busy="spBusy"
+                :fields="fieldSp" small>
+                <template #table-busy>
+                  <div class="text-center text-danger my-2">
+                    <b-spinner class="align-middle"></b-spinner>
+                    <strong>Loading...</strong>
+                  </div>
+                </template>
+                <template #cell(maso)="data">
+                  <b-badge variant="success">{{ data.value }}</b-badge>
+                </template>
+                <template #cell(banggia.code)="data">
+                  <b-badge variant="warning">{{ data.value }}</b-badge>
+                </template>
+                <template #cell(klt)="data">
+                  <code>{{ $formatSoVang(data.value).fullStr }}</code>
+                </template>
+                <template #cell(klh)="data">
+                  <code>{{ $formatSoVang(data.value).fullStr }}</code>
+                </template>
+                <template #cell(klv)="data">
+                  <code>{{ $formatSoVang(data.value).fullStr }}</code>
+                </template>
+                <template #cell(cong)="data">
+                  <span class="text-primary">{{ data.value }}</span>
+                </template>
+                <template #cell(giatrinhap)="data">
+                  <span class="text-primary">{{ $formatN(data.value) }}</span>
+                </template>
+                <template #cell(tool)="data">
+                  <b-button-group size="sm">
+                    <b-button variant="success">View</b-button>
+                    <b-button variant="warning" >Edit</b-button>
+                    <b-button variant="danger" @click="deleteItem(data.item.id)">Delete</b-button>
+                  </b-button-group>
+                </template>
+                <template #cell(product_intem)="data">
+                  <b-form-checkbox v-model="data.value" @change="changeInTem(data.item.id, data.value)" switch>
 
-              <template #cell(product_total_weight)="data">
-                {{ $formatSoVang(data.value).fullStr }}
-              </template>
-              <!-- Template cho trường product_gold_weight -->
-              <template #cell(product_gold_weight)="data">
-                {{ $formatSoVang(data.value).fullStr }}
-              </template>
+                  </b-form-checkbox>
+                </template>
 
-              <!-- Template cho trường product_stone_weight -->
-              <template #cell(product_stone_weight)="data">
-                {{ $formatSoVang(data.value).fullStr }}
-              </template>
 
-              <!-- Template cho trường product_image_url -->
+              </b-table>
 
-              <!-- Template cho trường created_at -->
-              <template #cell(created_at)="data">
-                {{ $moment(data.value).format("DD/MM/YYYY") }}
-              </template>
+              <div class="pagination-container" style="position: absolute; bottom: 0; width: 100%">
+                <b-select v-model="perPage" class="per-page-selector">
+                  <option value="20">20 mục/trang</option>
+                  <option value="50">50 mục/trang</option>
+                  <option value="100">100 mục/trang</option>
+                  <!-- Thêm các giá trị khác tùy theo nhu cầu -->
+                </b-select>
 
-              <!-- Template cho trường product_type -->
-              <template #cell(product_type)="data">
-                {{ data.value }}
-              </template>
-
-              <!-- Template cho trường product_price_import -->
-              <template #cell(product_price_import)="data">
-                {{ data.value }}
-              </template>
-
-              <!-- Template cho trường product_price_export -->
-              <template #cell(product_price_export)="data">
-                {{ data.value }}
-              </template>
-
-              <!-- Template cho trường product_barcode -->
-              <template #cell(product_barcode)="data">
-                {{ data.value }}
-                <br />
-                <img
-                  class="imgSanPham"
-                  :src="data.item.product_image_url"
-                  alt="Product Image"
-                  style="width: 50px; height: auto"
-                  v-b-tooltip.html
-                  :title="'<img src=' + data.item.product_image_url + '></img>'"
-                />
-              </template>
-
-              <!-- Template cho trường product_catalog -->
-              <template #cell(product_catalog)="data">
-                {{ data.value }}
-              </template>
-
-              <!-- Template cho trường product_status -->
-              <template #cell(product_status)="data">
-                {{ data.value }}
-              </template>
-
-              <!-- Template cho trường product_sell_date -->
-              <template #cell(product_sell_date)="data">
-                {{ data.value }}
-              </template>
-
-              <!-- Template cho trường product_total_price -->
-
-              <!-- Template cho trường product_image_name -->
-              <template #cell(product_image_name)="data">
-                {{ data.value }}
-              </template>
-
-              <!-- Template cho trường edit_at -->
-              <template #cell(edit_at)="data">
-                {{ data.value }}
-              </template>
-
-              <!-- Template cho trường product_import_type -->
-              <template #cell(product_import_type)="data">
-                {{ data.value }}
-              </template>
-            </b-table>
-
-            <div
-              class="pagination-container"
-              style="position: absolute; bottom: 0; width: 100%"
-            >
-              <b-select v-model="perPage" class="per-page-selector">
-                <option value="20">20 mục/trang</option>
-                <option value="50">50 mục/trang</option>
-                <option value="100">100 mục/trang</option>
-                <!-- Thêm các giá trị khác tùy theo nhu cầu -->
-              </b-select>
-
-              <!-- b-pagination -->
-              <b-pagination
-                v-model="currentPage"
-                :total-rows="totalRows"
-                :per-page="perPage"
-                aria-controls="my-table"
-              ></b-pagination>
-            </div>
+                <!-- b-pagination -->
+                <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage"
+                  aria-controls="my-table"></b-pagination>
+              </div>
+            </b-overlay>
           </div>
         </b-card>
       </b-col>
-    </b-row>
+      </b-row>
   </div>
 </template>
 
@@ -148,107 +80,23 @@ export default {
   components: { cellEdit },
   data() {
     return {
-      showEditPopover: false,
-      popoverTarget: "",
-      editItem: {},
-      editType: "",
+      isChange: false,
+      spBusy: false,
+      fieldSp: [
 
-      filter: {
-        product_barcode: null,
-        product_wage: null,
-        product_type: null,
-        product_catalog: null,
-        product_total_weight: null,
-        product_gold_weight: null,
-        product_stone_weight: null,
-        product_price_import: null,
-        product_price_export: null,
-        product_sell_date: null,
-        product_total_price: null,
-      },
-      fieldsSanPham: [
-        {
-          key: "product_barcode",
-          label: "Mã",
-          thClass: "myTdClass",
-          stickyColumn: true,
-        },
-        {
-          key: "product_wage",
-          label: "Tiền Công",
-          sortable: true,
-          thClass: "myTdClass",
-        },
+        { "key": "maso", "label": "Mã" },
+        { "key": "name", "label": "Tên" },
+        { "key": "banggia.code", "label": "Hàm lượng" },
+        { "key": "klt", "label": "KLT" },
+        { "key": "klh", "label": "KLH" },
+        { "key": "klv", "label": "KLV" },
+        { "key": "product_intem", "label": "In Tem" },
 
-        {
-          key: "product_type",
-          label: "Loại Vàng",
-          sortable: true,
-          thClass: "myTdClass",
-        },
-        {
-          key: "product_catalog",
-          label: "Kiểu dáng",
-          sortable: true,
-          thClass: "myTdClass",
-          formatter: (val) => {
-            let r = this.$store.state.config.sanpham_optionCatalog.find(
-              (i) => i.value === val
-            );
-            return r.text;
-          },
-        },
-        {
-          key: "product_total_weight",
-          label: "TL.Tổng",
-          sortable: true,
-          editable: false,
-          thClass: "myTdClass",
-        },
-        {
-          key: "product_gold_weight",
-          label: "TL.Vàng",
-          sortable: true,
-          thClass: "myTdClass",
-        },
-        {
-          key: "product_stone_weight",
-          label: "TL.Hột",
-          sortable: true,
-          thClass: "myTdClass",
-        },
-        {
-          key: "product_price_import",
-          label: "Giá Vàng Nhập",
-          sortable: true,
-          thClass: "myTdClass",
-        },
-        {
-          key: "product_price_export",
-          label: "Price Export",
-          sortable: true,
-          thClass: "myTdClass",
-        },
+        { "key": "cong", "label": "Công" },
 
-        {
-          key: "product_sell_date",
-          label: "Sell Date",
-          sortable: true,
-          thClass: "myTdClass",
-        },
-        {
-          key: "product_total_price",
-          label: "Total Price",
-          thClass: "myTdClass",
-        },
-
-        {
-          key: "product_import_type",
-          label: "Import Type",
-          sortable: true,
-
-          thClass: "myTdClass",
-        },
+        { "key": "nhacungcap.short", "label": "Chành" },
+        { "key": "giatrinhap", "label": "Giá nhập" },
+        { "key": "tool", "label": "#" },
       ],
       currentPage: 1, // Trang hiện tại
       perPage: 50, // Số dòng mỗi trang
@@ -256,42 +104,46 @@ export default {
       tooltipData: null,
       tempEdit: null,
       isZoomed: false,
+      listData: []
     };
   },
 
   methods: {
-    updateItem() {
-      // Logic cập nhật thông tin item vào danh sách hoặc database
-      this.showEditPopover = false;
+    async changeInTem(id, value) {
+      this.spBusy = true;
+      const { data, error } = await this.$supabase
+        .from('sanpham')
+        .update({ product_intem: value })
+        .eq('id', id)
+      this.getData()
+      this.spBusy = false
     },
-    toggleEdit(item) {
-      if (item.editable) {
-        item.editable = false;
-      } else {
-        item.editable = true;
-      }
-      console.log(item);
-    },
-    async myProvider(ctx) {
+    async getData() {
+      this.spBusy = true;
       const { currentPage, perPage } = this;
 
       try {
         const { data, error, count } = await this.$supabase
-          .from("product")
-          .select("*", { count: "exact" })
+          .from("sanpham")
+          .select("*,kieusanpham(*),banggia(*),nhacungcap(*),kihieu(*)", { count: "exact" })
           .order("id", { ascending: false })
           .range((currentPage - 1) * perPage, currentPage * perPage - 1);
 
-        if (error) throw error;
-        data.forEach((element) => {
-          element.editable = false;
-        });
+        this.spBusy = false;
         this.totalRows = count;
-        return data;
+        this.listData = data
       } catch (error) {
         console.error("Error loading data:", error);
         return [];
       }
+    },
+    async deleteItem(id) {
+      this.spBusy = true;
+      const { data, error } = await this.$supabase
+        .from('sanpham').delete()
+        .eq('id', id)
+      this.getData()
+      this.spBusy = false
     },
     onFiltered(filteredItems) {
       // Cập nhật tổng số dòng dựa trên kết quả lọc
@@ -299,6 +151,9 @@ export default {
       this.currentPage = 1;
     },
   },
+  mounted() {
+    this.getData()
+  }
 };
 </script>
 <style>
@@ -320,12 +175,14 @@ export default {
 }
 
 .per-page-selector {
-  width: auto; /* Điều chỉnh chiều rộng nếu cần */
+  width: auto;
+  /* Điều chỉnh chiều rộng nếu cần */
 }
 
 ::v-deep td:hover {
   /* Các styles của bạn ở đây */
-  background-color: wheat; /* Ví dụ: thay đổi màu nền khi hover */
+  background-color: wheat;
+  /* Ví dụ: thay đổi màu nền khi hover */
   cursor: cell;
 }
 </style>

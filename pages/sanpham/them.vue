@@ -28,7 +28,7 @@
               </div>
             </template>
             <b-form>
-              <b-form-group style="padding: 0px !important" label="Nhập nâng cao:(sẽ giữ lại các mục)">
+              <b-form-group style="display:none;padding: 0px !important" label="Nhập nâng cao:(sẽ giữ lại các mục)">
                 <b-form-checkbox-group v-model="inputConfig">
                   <b-form-checkbox value="id_kieusanpham">Kiểu SP</b-form-checkbox>
                   <b-form-checkbox value="cong">Tiền Công</b-form-checkbox>

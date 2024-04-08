@@ -601,7 +601,7 @@ export default {
             const canvas = document.getElementById("canvas");
             const imageData = canvas.toDataURL("image/webp", 0.5);
             let uploadResult = await this.$uploadPicture(fileName, imageData);
-            this.formSanPham.anhsanpham = `https://pub-0b1ce08c730c44808fd2b5edcfbf8fe0.r2.dev/${uploadResult.data.Key}`;
+            this.formSanPham.anhsanpham = `https://pub-91065b58011a4fbca1134c0087aa4350.r2.dev/${uploadResult.data.Key}`;
           } else {
             this.formSanPham.anhsanpham = anhmacdinh.default_picture
           }

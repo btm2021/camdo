@@ -1,8 +1,8 @@
 import { config, Endpoint, S3 } from 'aws-sdk';
 import Vue from 'vue';
 
-const CELLAR_ADDON_KEY_ID = '93b3602cc2ccfebd1cca7d57f3e89e6b';
-const CELLAR_ADDON_KEY_SECRET = 'ed9bfa82cc205cd8f5e37f516924bd936f40256ee4650abcfdff0856b484ef0a';
+const CELLAR_ADDON_KEY_ID = '62e4c957f0069bcb02b970341b0e1fb3';
+const CELLAR_ADDON_KEY_SECRET = 'e9fc7ca5e335b5e9a0b823d5858b66c727fffb6a59390d7803318f04f735d21c';
 const CELLAR_ADDON_HOST = 'https://ceae6cba88ca971c49cdddb22ec35499.r2.cloudflarestorage.com';
 
 

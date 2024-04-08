@@ -1,338 +1,210 @@
 <template>
   <div>
     <b-row no-gutters>
-      <b-modal
-        no-close-on-backdrop
-        no-close-on-esc
-        hide-footer
-        id="modal_nhansanpham"
-        title="Nhân sản phẩm"
-      >
-        <b-overlay :show="nhanOverlay">
-          <template #overlay>
-            <div style="width: 100%">
-              <b-progress
-                style="width: 200px; height: 50px"
-                :value="solannhanCount"
-                :max="solannhan"
-                show-progress
-                animated
-                show-value
-              ></b-progress>
-            </div>
-          </template>
-          <ValidationObserver v-slot="{ invalid }" ref="formNhanSanPham">
-            <b-form @submit.prevent="nhansanpham">
-              <ValidationProvider
-                rules="required|min_value:0|max_value:100|numeric"
-                v-slot="{ errors, valid, failedRules }"
-              >
-                <b-form-group
-                  label="Số lần nhân"
-                  :description="'Số sản phẩm được nhân : ' + solannhan"
-                >
-                  <b-form-input
-                    :state="valid"
-                    v-model="solannhan"
-                    type="number"
-                    step="1"
-                    min="0"
-                    max="100"
-                  >
-                  </b-form-input>
-                </b-form-group>
-
-                <b-button type="submit" variant="primary">Nhân</b-button>
-              </ValidationProvider>
-            </b-form>
-          </ValidationObserver>
-        </b-overlay>
-      </b-modal>
       <b-col cols="6">
-        <b-overlay :show="insertOverlay">
-          <b-card style="margin: 0px">
+        <b-overlay :show="!dataReady">
+          <b-card>
             <template #header>
               <div class="mb-0">
-                <b-form-checkbox
-                  name="check-button"
-                  v-model="inputMode"
-                  @change="changeInputMode"
-                  switch
-                >
-                  Chế độ nhập
-                  <b>{{ inputMode ? "Nhập Nhanh" : "Nhập Thường" }}</b>
-                  <span v-if="inputMode">(Lấy kết quả từ cân)</span>
-                </b-form-checkbox>
+                <b-form>
+                  <b-row>
+                    <b-col cols="6"> <b-form-checkbox name="check-button" v-model="inputMode" switch
+                        @change="changeInputMode">
+                        Chế độ nhập :
+                        <b>{{ inputMode ? " Nhập Nhanh" : " Nhập Thường" }}</b>
+                        <span v-if="inputMode">(Lấy kết quả từ cân)</span>
+                      </b-form-checkbox></b-col>
+                    <b-col cols="6">
+
+                      <b-form-checkbox name="check-button" v-model="cameraMode" switch @change="toggleCamera">
+                        Trạng thái Camera :
+                        <b> {{ cameraMode ? "Đang Bật" : " Đang tắt" }}</b>
+                        <span v-if="cameraMode">(Lấy ảnh)</span>
+                      </b-form-checkbox>
+                    </b-col>
+                  </b-row>
+
+                </b-form>
               </div>
             </template>
-            <b-card-body style="padding: 0px !important">
-              <b-form-group
-                style="padding: 0px !important"
-                label="Nhập nâng cao:(sẽ giữ lại các mục)"
-              >
+            <b-form>
+              <b-form-group style="padding: 0px !important" label="Nhập nâng cao:(sẽ giữ lại các mục)">
                 <b-form-checkbox-group v-model="inputConfig">
-                  <b-form-checkbox value="product_catalog"
-                    >Kiểu dáng SP</b-form-checkbox
-                  >
-                  <b-form-checkbox value="product_wage"
-                    >Tiền Công</b-form-checkbox
-                  >
-                  <b-form-checkbox value="product_import_type"
-                    >Nguồn gốc</b-form-checkbox
-                  >
-                  <b-form-checkbox value="product_type"
-                    >Loại Vàng</b-form-checkbox
-                  >
+                  <b-form-checkbox value="id_kieusanpham">Kiểu SP</b-form-checkbox>
+                  <b-form-checkbox value="cong">Tiền Công</b-form-checkbox>
+                  <b-form-checkbox value="id_nhacungcap">Nhà cung cấp</b-form-checkbox>
+                  <b-form-checkbox value="id_hamluongvang">Hàm lượng Vàng</b-form-checkbox>
                 </b-form-checkbox-group>
               </b-form-group>
-              <ValidationObserver v-slot="{ invalid }" ref="formThem">
-                <b-form @submit.prevent="insertSanPham">
-                  <b-form-row>
-                    <b-col cols="6">
-                      <b-form-row>
-                        <b-col cols="6">
-                          <ValidationProvider
-                            rules="required"
-                            v-slot="{ errors, valid, failedRules }"
-                          >
-                            <b-form-group
-                              label="Kiểu dáng  sản phẩm"
-                              :description="
-                                valid ? 'KDáng:' + form.product_catalog : ''
-                              "
-                            >
-                              <b-form-select
-                                :state="valid"
-                                @change="changeCatalog"
-                                v-model="form.product_catalog"
-                                :options="optionCatalog"
-                              ></b-form-select>
-                              <b-form-invalid-feedback>
-                                Chọn loại sản phẩm
-                              </b-form-invalid-feedback>
-                            </b-form-group>
-                          </ValidationProvider>
-                        </b-col>
-                        <b-col cols="6">
-                          <ValidationProvider rules="required">
-                            <b-form-group
-                              label="Nguồn Sản phẩm"
-                              :description="
-                                form.product_import_type
-                                  ? 'Nhập chành'
-                                  : 'Nhập nội bộ '
-                              "
-                            >
-                              <b-form-checkbox
-                                switch
-                                size="lg"
-                                v-model="form.product_import_type"
-                              >
-                              </b-form-checkbox>
-                            </b-form-group>
-                          </ValidationProvider>
-                        </b-col>
-                      </b-form-row>
+            </b-form>
+            <ValidationObserver ref="veeForm" v-slot="{ invalid }">
+              <b-form ref="bformSanPham" @submit.prevent="insertSanPham">
+                <b-row>
+                  <b-col cols="4">
+                    <ValidationProvider rules="required" v-slot="{ errors, valid, failedRules }">
+                      <b-form-group :state="valid" label="Kiểu SP:" :description="valid
+                        ? 'ID Kiểu SP:' + formSanPham.id_kieusanpham
+                        : ''
+                        ">
+                        <b-form-select :state="valid" :options="list_option.kieusanpham" required
+                          v-model="formSanPham.id_kieusanpham"></b-form-select>
+                        <b-form-invalid-feedback>
+                          Chọn loại sản phẩm
+                        </b-form-invalid-feedback>
+                      </b-form-group>
+                    </ValidationProvider>
+                  </b-col>
 
-                      <ValidationProvider
-                        rules="required|min_value:0|max_value:10000|numeric"
-                        v-slot="{ errors, valid, failedRules }"
-                      >
-                        <b-form-group
-                          label="Trọng lượng đá:"
-                          :description="
-                            valid
-                              ? 'Trọng lượng đá : ' +
-                                $formatSoVang(form.product_stone_weight).fullStr
-                              : ''
-                          "
-                        >
-                          <b-form-input
-                            v-model="form.product_stone_weight"
-                            type="number"
-                            autocomplete="off"
-                            :state="valid"
-                          ></b-form-input>
-                    
+                  <b-col cols="4">
+                    <ValidationProvider rules="required" v-slot="{ errors, valid, failedRules }">
+                      <b-form-group label="Nhà cung cấp:" :description="valid
+                        ? 'ID Nhà cung cấp:' + formSanPham.id_nhacungcap
+                        : ''
+                        ">
+                        <b-form-select :state="valid" :options="list_option.nhacungcap" required
+                          v-model="formSanPham.id_nhacungcap"></b-form-select>
+                        <b-form-invalid-feedback>
+                          Chọn nhà cung cấp
+                        </b-form-invalid-feedback>
+                      </b-form-group>
+                    </ValidationProvider>
+                  </b-col>
+                  <b-col cols="4">
+                    <ValidationProvider rules="required" v-slot="{ errors, valid, failedRules }">
+                      <b-form-group label="Hàm Lượng Vàng:" :description="valid
+                        ? 'ID Hàm lượng vàng :' +
+                        formSanPham.id_hamluongvang
+                        : ''
+                        ">
+                        <b-form-select :state="valid" :options="list_option.hamluongvang" required
+                          v-model="formSanPham.id_hamluongvang"></b-form-select>
+                        <b-form-invalid-feedback>
+                          Chọn hàm lượng vàng
+                        </b-form-invalid-feedback>
+                      </b-form-group>
+                    </ValidationProvider>
+                  </b-col>
 
-                        </b-form-group>
-                      </ValidationProvider>
+                  <b-col cols="4">
+                    <ValidationProvider rules="required" v-slot="{ errors, valid, failedRules }">
+                      <b-form-group label="Kí hiệu:" :description="valid
+                        ? 'ID Hàm lượng vàng :' + formSanPham.id_kihieu
+                        : ''
+                        ">
+                        <b-form-select :state="valid" :options="list_option.kihieu" required
+                          v-model="formSanPham.id_kihieu"></b-form-select>
+                        <b-form-invalid-feedback>
+                          Chọn kí hiệu sản phẩm
+                        </b-form-invalid-feedback>
+                      </b-form-group>
+                    </ValidationProvider>
+                  </b-col>
+                  <b-col cols="4">
+                    <b-form-group label="Mã sản phẩm">
+                      <b-overlay :show="overlay.maso">
+                        <b-form-input disabled autocomplete="off" v-model="formSanPham.maso"></b-form-input>
+                      </b-overlay>
+                    </b-form-group>
+                  </b-col>
+                  <b-col cols="4">
+                    <b-form-group label="Tên sản phẩm">
+                      <b-overlay :show="overlay.name">
+                        <b-form-input disabled autocomplete="off" v-model="formSanPham.name"></b-form-input></b-overlay>
+                    </b-form-group>
+                  </b-col>
+                </b-row>
+                <b-row>
+                  <b-col cols="5">
+                    <ValidationProvider rules="required|min_value:0|max_value:10000|numeric"
+                      v-slot="{ errors, valid, failedRules }">
+                      <b-form-group label="Tiền công" :description="valid
+                        ? 'Tiền công : ' +
+                        $formatN(parseInt(formSanPham.cong || 0))
+                        : ''
+                        ">
+                        <b-form-input required min="0" max="10000" type="number" :state="valid" autocomplete="off"
+                          v-model="formSanPham.cong">
+                        </b-form-input>
+                        <b-form-invalid-feedback>
+                          Nhập sai tiền công
+                        </b-form-invalid-feedback>
+                      </b-form-group>
+                    </ValidationProvider>
+                    <ValidationProvider rules="required|min_value:0|max_value:10000|numeric"
+                      v-slot="{ errors, valid, failedRules }">
+                      <b-form-group label="TL.Hột" :description="valid
+                        ? 'Trọng lượng đá : ' +
+                        $formatSoVang(formSanPham.klh).fullStr
+                        : ''
+                        ">
+                        <b-form-input autocomplete="off" v-model="formSanPham.klh" type="number"
+                          :state="valid"></b-form-input>
+                        <b-form-invalid-feedback>
+                          Xin nhập đúng trọng lượng HỘT
+                        </b-form-invalid-feedback>
+                      </b-form-group>
+                    </ValidationProvider>
 
-                      <ValidationProvider
-                        rules="required"
-                        v-slot="{ errors, valid, failedRules }"
-                      >
-                        <b-form-group label="Loại vàng">
-                          <b-form-select
-                            @change="loaiVangChange"
-                            :state="valid"
-                            v-model="form.product_type"
-                            :options="optionLoaiVang"
-                          ></b-form-select>
-                          <b-form-invalid-feedback>
-                            Nhập sai loại vàng
-                          </b-form-invalid-feedback>
-                        </b-form-group>
-                      </ValidationProvider>
-                      <ValidationProvider
-                        rules="required|min_value:0|max_value:10000|numeric"
-                        v-slot="{ errors, valid, failedRules }"
-                      >
-                        <b-form-group
-                          label="Tiền công:"
-                          :description="
-                            valid
-                              ? 'Tiền công : ' +
-                                $formatN(parseInt(form.product_wage || 0))
-                              : ''
-                          "
-                        >
-                          <b-form-input
-                            v-model="form.product_wage"
-                            type="number"
-                            autocomplete="off"
-                            :state="valid"
-                          ></b-form-input>
-                          <b-form-invalid-feedback>
-                            Nhập sai tiền công
-                          </b-form-invalid-feedback>
-                        </b-form-group>
-                      </ValidationProvider>
+                    <ValidationProvider rules="required|min_value:0|max_value:100000|numeric"
+                      v-slot="{ errors, valid, failedRules }">
+                      <b-form-group label="TL.Tổng" :description="valid
+                        ? 'Trọng lượng tổng : ' +
+                        $formatSoVang(formSanPham.klt).fullStr
+                        : ''
+                        ">
+                        <b-form-input autocomplete="off" v-model="formSanPham.klt" type="number"
+                          :state="valid"></b-form-input>
+                        <b-form-invalid-feedback>
+                          Xin nhập đúng trọng lượng TỔNG
+                        </b-form-invalid-feedback>
+                      </b-form-group>
+                    </ValidationProvider>
+                    <ValidationProvider rules="required|min_value:10|max_value:100000|numeric"
+                      v-slot="{ errors, valid, failedRules }">
+                      <b-form-group label="TL.Vàng" :description="valid
+                        ? 'Trọng lượng vàng : ' +
+                        $formatSoVang(formSanPham.klv).fullStr
+                        : ''
+                        ">
+                        <b-form-input v-model="formSanPham.klv" autocomplete="off" type="number"
+                          :state="valid"></b-form-input>
+                        <b-form-invalid-feedback>
+                          Xin nhập đúng trọng lượng VÀNG
+                        </b-form-invalid-feedback>
+                      </b-form-group>
+                    </ValidationProvider>
+                  </b-col>
+                  <b-col cols="7">
 
-                      <ValidationProvider
-                        rules="required|min_value:0|max_value:100000000|numeric"
-                        v-slot="{ errors, valid, failedRules }"
-                      >
-                        <b-form-group
-                          label="Trọng lượng tổng:"
-                          :description="
-                            valid
-                              ? 'Trọng lượng tổng : ' +
-                                $formatSoVang(form.product_total_weight).fullStr
-                              : ''
-                          "
-                        >
-                          <b-form-input
-                            v-model="form.product_total_weight"
-                            type="number"
-                            autocomplete="off"
-                            :state="valid"
-                          ></b-form-input>
-                          <b-form-invalid-feedback>
-                            Nhập sai trọng lượng
-                          </b-form-invalid-feedback>
-                        </b-form-group>
-                      </ValidationProvider>
-                    </b-col>
-                    <b-col cols="6">
-                      <b-form-group
-                        label="Mã sản phẩm"
-                        :description="'Mã sản phẩm : ' + form.product_barcode"
-                      >
-                        <b-form-input
-                          disabled
-                          v-model="form.product_barcode"
-                          type="text"
-                        ></b-form-input
-                      ></b-form-group>
-                      <ValidationProvider
-                        rules="required|min_value:10|max_value:100000000|numeric"
-                        v-slot="{ errors, valid, failedRules }"
-                      >
-                        <b-form-group
-                          label="Trọng lượng vàng"
-                          :description="
-                            valid
-                              ? 'Trọng lượng vàng ' +
-                                $formatSoVang(form.product_gold_weight).fullStr
-                              : ''
-                          "
-                        >
-                          <b-form-input
-                            disabled
-                            v-model="form.product_gold_weight"
-                            type="text"
-                            :state="valid"
-                          ></b-form-input>
-                          <b-form-invalid-feedback>
-                            Nhập sai trọng lượng
-                          </b-form-invalid-feedback>
-                        </b-form-group>
-                      </ValidationProvider>
-                      <div style="max-width: 100%; position: relative">
-                        <video
-                          ref="camera"
-                          autoplay
-                          width="100%"
-                          id="cameraDiv"
-                        ></video>
+                    <div style="max-width: 100%; position: relative">
+                      <video ref="camera" autoplay width="100%" id="cameraDiv"></video>
 
-                        <div
-                          id="topLeftControls"
-                          style="position: absolute; top: 5px; left: 5px"
-                        >
-                          <b-button
-                            variant="warning"
-                            @click="rotationLeft"
-                            id="rotateLeft"
-                          >
-                            -
-                          </b-button>
-                        </div>
-                        <div
-                          id="topRightControls"
-                          style="position: absolute; top: 5px; right: 5px"
-                        >
-                          <b-button
-                            variant="warning"
-                            @click="rotationRight"
-                            id="rotateRight"
-                          >
-                            +
-                          </b-button>
-                        </div>
-                        <div
-                          id="bottomLeftControls"
-                          style="position: absolute; bottom: 10px; left: 5px"
-                        >
-                          <b-button
-                            variant="warning"
-                            id="flipHorizontal"
-                            @click="flipHoz"
-                          >
-                            D
-                          </b-button>
-                        </div>
-                        <div
-                          id="bottomRightControls"
-                          style="position: absolute; bottom: 10px; right: 5px"
-                        >
-                          <b-button
-                            variant="warning"
-                            @click="flipVert"
-                            id="flipVertical"
-                            >N</b-button
-                          >
-                        </div>
-
-                        <canvas
-                          v-if="$refs.camera"
-                          style="display: none"
-                          id="canvas"
-                          ref="canvas"
-                          :width="getWidth"
-                          :height="getHeight"
-                        ></canvas>
+                      <div id="topLeftControls" style="position: absolute; top: 5px; left: 5px">
+                        <b-button variant="warning" id="rotateLeft" @click="rotationLeft">
+                          -
+                        </b-button>
                       </div>
-                    </b-col>
-                  </b-form-row>
+                      <div id="topRightControls" style="position: absolute; top: 5px; right: 5px">
+                        <b-button variant="warning" id="rotateRight" @click="rotationRight">
+                          +
+                        </b-button>
+                      </div>
+                      <div id="bottomLeftControls" style="position: absolute; bottom: 10px; left: 5px">
+                        <b-button variant="warning" id="flipHorizontal" @click="flipHoz">
+                          D
+                        </b-button>
+                      </div>
+                      <div id="bottomRightControls" style="position: absolute; bottom: 10px; right: 5px">
+                        <b-button variant="warning" id="flipVertical" @click="flipVert">N</b-button>
+                      </div>
 
-                  <b-button type="submit" variant="primary"
-                    >Thêm sản phẩm</b-button
-                  >
-                </b-form>
-              </ValidationObserver>
-            </b-card-body>
+                      <canvas v-if="$refs.camera" style="display: none" id="canvas" ref="canvas"></canvas>
+                    </div>
+                    <b-button type="submit" block variant="primary">Thêm</b-button>
+                  </b-col>
+                </b-row>
+              </b-form>
+            </ValidationObserver>
           </b-card>
         </b-overlay>
       </b-col>
@@ -341,51 +213,21 @@
           <template #header>
             <div class="mb-0">
               <span>Số sản phẩm đã nhập</span>
-              <b-button variant="primary" size="sm" @click="inTemSelect"
-                >In Tem Toàn Bộ</b-button
-              >
-              <b-button
-                variant="success"
-                size="sm"
-                @click="show_modal_nhansanpham"
-                >Nhân sản phẩm</b-button
-              >
             </div>
           </template>
           <b-card-body style="padding: 0px; margin: 0px">
-            <b-table
-              responsive
-              small
-              hover
-              selectable
-              select-mode="single"
-              show-empty
-              striped
-              :items="productList"
-              @row-selected="onRowSelected"
-              class="text-center"
-              :fields="fieldsSanPham"
-            >
+            <b-table responsive small hover selectable select-mode="single" show-empty striped :items="productList"
+              @row-selected="onRowSelected" class="text-center" :fields="fieldsSanPham">
               <template #cell(stt)="data">
                 {{ data.index + 1 }}
               </template>
               <template #cell(tool)="data">
-                <b-button variant="danger" @click="deleteItem(data.item)"
-                  >X</b-button
-                >
+                <b-button variant="danger" @click="deleteItem(data.item)">X</b-button>
               </template>
               <template #cell(product_image_url)="data">
                 <div>
-                  <b-img
-                    thumbnail
-                    rounded
-                    v-zoom-on-hover
-                    center
-                    :src="data.item.product_image_url"
-                    fluid
-                    height="100"
-                    width="100"
-                  ></b-img>
+                  <b-img thumbnail rounded v-zoom-on-hover center :src="data.item.anhsanpham" fluid height="100"
+                    width="100"></b-img>
                 </div>
               </template>
               <template #cell(product_catalog)="data">
@@ -393,7 +235,7 @@
                   optionCatalog.find(
                     (x) => x.value == data.item.product_catalog
                   ).text
-                }}</span>
+                  }}</span>
               </template>
             </b-table>
           </b-card-body>
@@ -419,37 +261,112 @@ export default {
     ValidationObserver,
   },
   computed: {
-    getWidth() {
-      return this.$refs.camera.clientWidth;
+    id_kieusanpham() {
+      return this.formSanPham.id_kieusanpham;
     },
-    getHeight() {
-      return this.$refs.camera.clientHeight;
+    klt() {
+      return this.formSanPham.klt;
+    },
+    klh() {
+      return this.formSanPham.klh;
+    },
+    ncc() {
+      return this.formSanPham.id_nhacungcap;
+    },
+    cong() {
+      return this.formSanPham.cong;
+    },
+    _hamluongvang() {
+      return this.formSanPham.id_hamluongvang;
     },
   },
   watch: {
-    "form.product_total_weight": function (newVal, oldVal) {
-      this.updateGoldWeight();
+    _hamluongvang(newVal, oldVal) {
+      if (newVal) {
+        let gia = this.hamluongvang.find((i) => i.id === newVal);
+        this.formSanPham.giavangnhap =
+          gia.sellingPrice - this.formSanPham.multiGiaVang;
+      }
     },
-    "form.product_stone_weight": function (newVal, oldVal) {
-      this.updateGoldWeight();
+    id_kieusanpham(newVal, oldVal) {
+      if (newVal) {
+        this.overlay.maso = true;
+        this.overlay.name = true;
+        let name = this.kieusanpham.find((i) => i.id === newVal);
+        this.formSanPham.name = name.short || "";
+        //count
+
+        this.$supabase
+          .from("sanpham")
+          .select("id")
+          .order("id", { ascending: false })
+          .limit(1)
+          .then((data) => {
+            console.log(data);
+            let maso = "";
+            if (data.data.length > 0) {
+              maso = `${name.barcode}${data.data[0].id}`;
+            } else {
+              maso = `${name.barcode}1`;
+            }
+            this.formSanPham.maso = maso;
+            this.overlay.maso = false;
+            this.overlay.name = false;
+          });
+      }
+      //tên
+    },
+    klt(newVal, oldVal) {
+      if (newVal) {
+        this.updateGoldWeight();
+      }
+    },
+    klh(newVal, oldVal) {
+      if (newVal) {
+        this.updateGoldWeight();
+      }
+    },
+    ncc(newVal, oldVal) {
+      if (newVal) {
+        let ncc = this.nhacungcap.find((i) => i.id === newVal);
+        this.formSanPham.multi = parseFloat(ncc.tiencong);
+        this.formSanPham.giacongnhap =
+          ncc.tiencong * this.formSanPham.cong || 0;
+        this.formSanPham.multiGiaVang = parseFloat(ncc.giavang);
+      }
+
+      //  this.formSanPham.giacongnhap = ncc.tiencong * this.formSanPham.cong || 0;
+      //giavangnhap
+    },
+    cong(newVal, oldVal) {
+      if (newVal) {
+        this.formSanPham.giacongnhap = newVal * this.formSanPham.multi;
+      }
     },
   },
   data() {
     return {
-      solannhanCount: 0,
-      nhanOverlay: false,
-      inputConfig: [],
-      inputMode: false,
+
+      //rotation
+      rotationAngle: 180,
+      fh: 1,
+      fd: 1,
+      //
       productList: [],
-      banggiasanpham: null,
+      inputConfig: [],
+      cameraMode: false,
+      overlay: {
+        maso: false,
+        name: false,
+      },
       fieldsSanPham: [
         { key: "stt", label: "#", tdClass: "align-middle" },
         { key: "product_image_url", label: "Avatar", tdClass: "align-middle" },
-        { key: "product_barcode", label: "Mã", tdClass: "align-middle" },
-        { key: "product_catalog", label: "Kiểu", tdClass: "align-middle" },
+        { key: "maso", label: "Mã", tdClass: "align-middle" },
+        { key: "id_kieusanpham", label: "Kiểu", tdClass: "align-middle" },
         {
           tdClass: "align-middle",
-          key: "product_total_weight",
+          key: "klt",
           label: "TL.Tổng",
           formatter: (v) => {
             return this.$formatSoVang(v).fullStr;
@@ -458,7 +375,7 @@ export default {
 
         {
           tdClass: "align-middle",
-          key: "product_stone_weight",
+          key: "klh",
           label: "TL.Hột",
           formatter: (v) => {
             return this.$formatSoVang(v).fullStr;
@@ -466,7 +383,7 @@ export default {
         },
         {
           tdClass: "align-middle",
-          key: "product_gold_weight",
+          key: "klv",
           label: "TL.Vàng",
           formatter: (v) => {
             return this.$formatSoVang(v).fullStr;
@@ -474,74 +391,54 @@ export default {
         },
         {
           tdClass: "align-middle",
-          key: "product_type",
+          key: "id_kieusanpham",
           label: "K",
         },
-        { key: "product_wage", label: "C", tdClass: "align-middle" },
+        { key: "cong", label: "C", tdClass: "align-middle" },
         { key: "Tool", label: "#", tdClass: "align-middle" },
       ],
-      form: {
-        product_image_name: null,
-        product_wage_in: null,
-        product_wage: null,
-        product_type: "610",
-        product_stone_weight: null,
-        product_total_weight: null,
-        product_gold_weight: null,
-        product_catalog: null,
-        product_barcode: null,
-        product_import_type: true,
-        product_price_import: null,
+      sanpham: {},
+      dataReady: false,
+      kihieu: null,
+      kieusanpham: null,
+      hamluongvang: null,
+      inputMode: false,
+      nhacungcap: null,
+      formSanPham: {
+        multiGiaVang: 30,
+        multi: 1,
+        name: null,
+        klt: null,
+        klh: null,
+        klv: null,
+        cong: null,
+        id_kihieu: 5,
+        id_kieusanpham: null,
+        id_hamluongvang: null,
+        id_nhacungcap: null,
+        anhsanpham: null,
+        ngayxuat: null,
+        giacongnhap: null,
+        giavangnhap: null,
+        giavangxuat: null,
+        maso: null,
+        product_intem: false,
+        chenhlech: null,
       },
-      isCameraOpen: false,
-      isPhotoTaken: false,
-      isShotPhoto: false,
-      optionLoaiVang: [
-        { text: "Vàng 9999", value: "9999" },
-        { text: "Vàng 980", value: "980" },
-        { text: "Vàng 710", value: "750" },
-        { text: "Vàng 610", value: "610" },
-      ],
-      streamCamera: null,
-      insertOverlay: false,
-      optionCatalog: [
-        { text: "NHẪN NỮ", value: "NT" },
-        { text: "NHẪN CƯỚI", value: "NC" },
-        { text: "NHẪN NAM", value: "NN" },
-        { text: "BÔNG LỚN", value: "BL" },
-        { text: "BÔNG EM BÉ", value: "BE" },
-        { text: "DÂY LỚN", value: "DL" },
-        { text: "DÂY EM BÉ", value: "DE" },
-        { text: "MẶT", value: "MD" },
-        { text: "VÒNG TRƠN", value: "VT" },
-        { text: "VÒNG KIỂU", value: "VK" },
-        { text: "VÒNG EM BÉ", value: "VE" },
-        { text: "LẮC LỚN", value: "LL" },
-        { text: "LẮC EM BÉ", value: "LE" },
-        { text: "KIỀNG 18K", value: "KT" },
-        { text: "KIỀNG CƯỚI", value: "KC" },
-        { text: "XIMEN", value: "XM" },
-        { text: "KHÁC", value: "KK" },
-      ],
-      selected: [],
-      solannhan: 1,
-      rotationAngle: 180,
-      fh: 1,
-      fd: 1,
+      selected: null,
+      list_option: {
+        kieusanpham: [],
+        kihieu: [],
+        nhacungcap: [],
+        hamluongvang: [],
+      },
     };
   },
   methods: {
+    //rotale
     rotationLeft() {
       this.rotationAngle -= 10;
       this.updateVideo();
-    },
-    inTemSelect() {
-      if (this.productList.length > 0) {
-        this.$pl_sanpham_intem(this, this.productList);
-        this.productList = [];
-      } else {
-        alert("Không có gì để in");
-      }
     },
     rotationRight() {
       this.rotationAngle += 10;
@@ -560,296 +457,8 @@ export default {
         "cameraDiv"
       ).style.transform = `rotate(${this.rotationAngle}deg) scaleX(${this.fd}) scaleY(${this.fh})`;
     },
-    async insertSingle(item) {
-      return new Promise((resolve, reject) => {
-        this.$supabase
-          .from("product")
-          .insert(item)
-          .select()
-          .then((data) => {
-            resolve(data);
-          });
-      });
-    },
-    nhansanpham() {
-      this.$refs.formNhanSanPham.validate().then(async (data) => {
-        if (data) {
-          this.nhanOverlay = true;
-          this.toggleOverlay();
-          let itemChoice = this.selected[0];
-          for (let i = 0; i < parseInt(this.solannhan); i++) {
-            //tao so san pham với thông tin giống nhau nhưng khác mã
-            this.solannhanCount++;
-            let objectInsert = {
-              product_wage: parseInt(itemChoice.product_wage),
-              product_price_import: itemChoice.product_price_import,
-              product_wage_in: itemChoice.product_wage_in,
-              product_stone_weight: parseInt(itemChoice.product_stone_weight),
-              product_total_weight: parseInt(itemChoice.product_total_weight),
-              product_gold_weight: parseInt(itemChoice.product_gold_weight),
-              product_image_url: itemChoice.product_image_url,
-              product_image_name: itemChoice.product_image_name,
-              product_catalog: itemChoice.product_catalog,
-              product_type: itemChoice.product_type,
-              product_status: true,
-              product_import_type: itemChoice.product_import_type,
-              product_barcode: await this.changeCatalogWithReturn(
-                itemChoice.product_catalog
-              ),
-            };
-            let sanpham = await this.insertSingle(objectInsert);
-            this.productList.push(sanpham.data[0]);
-          }
-          await this.changeCatalog();
-          this.toggleOverlay();
-          this.resetForm();
-          this.nhanOverlay = false;
-          this.solannhanCount = 0;
-          this.$bvModal.hide("modal_nhansanpham");
-        }
-      });
-    },
-    show_modal_nhansanpham() {
-      if (this.selected.length > 0) {
-        this.$bvModal.show("modal_nhansanpham");
-      } else {
-        alert("Vui lòng chọn ít nhất một sản phẩm để nhân");
-      }
-    },
-    onRowSelected(item) {
-      this.selected = item;
-    },
-    deleteItem(item) {
-      this.toggleOverlay();
-      this.$deletePicture(`${item.id}.webp`).then((data) => {
-        this.$supabase
-          .from("product")
-          .delete()
-          .eq("id", item.id)
-          .then((data) => {
-            this.toggleOverlay();
-            this.productList = this.productList.filter((i) => i.id != item.id);
-            this.$bvToast.toast(
-              `Xóa sản phẩm ${item.product_barcode} thành công`,
-              {
-                title: "Thông báo",
-                autoHideDelay: 1000,
-                appendToast: true,
-                variant: "primary",
-              }
-            );
-          });
-      });
-    },
-    toggleOverlay() {
-      if (this.insertOverlay) {
-        this.insertOverlay = false;
-      } else {
-        this.insertOverlay = true;
-      }
-    },
-    updateGoldWeight() {
-      this.form.product_gold_weight =
-        parseFloat(this.form.product_total_weight) -
-        parseFloat(this.form.product_stone_weight);
-    },
-
-    async changeCatalog() {
-      let lastProduct = await this.$supabase
-        .from("product")
-        .select()
-        .limit(1)
-        .order("id", { ascending: false });
-      let lastId = lastProduct.data[0].id + 1;
-      let barcode = `${String(
-        this.form.product_catalog
-      ).toLowerCase()}${lastId}`;
-      this.form.product_barcode = barcode;
-    },
-    async changeCatalogWithReturn(cat) {
-      return new Promise(async (resolve, reject) => {
-        let lastProduct = await this.$supabase
-          .from("product")
-          .select()
-          .limit(1)
-          .order("id", { ascending: false });
-        let lastId = lastProduct.data[0].id + 1;
-        let barcode = `${String(cat).toLowerCase()}${lastId}`;
-        resolve(barcode);
-      });
-    },
-    async loaiVangChange() {
-      let result = await this.$supabase
-        .from("banggia")
-        .select()
-        .eq("code", this.form.product_type);
-      this.banggiasanpham = result.data[0];
-    },
-    insertSanPham() {
-      this.$refs.formThem.validate().then(async (data) => {
-        if (data) {
-          this.toggleOverlay();
-          let lastProduct = await this.$supabase
-            .from("product")
-            .select()
-            .limit(1)
-            .order("id", { ascending: false });
-          let lastId = lastProduct.data[0].id + 1;
-          let fileName = `${lastId}`;
-          //   upload ảnh imgbb
-          //   capture
-          this.takePhoto();
-          const canvas = document.getElementById("canvas");
-          const imageData = canvas.toDataURL("image/webp", 0.5);
-          // Lấy phần dữ liệu base64 (bỏ qua phần tiêu đề)
-          const base64Image = imageData.split(",")[1];
-          let fileUpload = {
-            fileName,
-            base64Image,
-          };
-          let uploadResult = await this.$uploadPicture(fileName, imageData);
-          console.log(uploadResult);
-          this.form.product_image_name = fileName;
-
-          if (this.form.product_import_type) {
-            //chanh
-            //gia hien tai - 50
-            this.form.product_price_import =
-              this.banggiasanpham.sellingPrice - 30;
-            this.form.product_wage_in = parseInt(this.form.product_wage / 2);
-          } else {
-            //noi bo
-            //gia vang - 100
-            this.form.product_price_import =
-              this.banggiasanpham.sellingPrice - 100;
-            this.form.product_wage_in = 0;
-          }
-          let objectInsert = {
-            product_wage: parseInt(this.form.product_wage),
-            product_price_import: this.form.product_price_import,
-            product_wage_in: this.form.product_wage_in,
-            product_stone_weight: parseInt(this.form.product_stone_weight),
-            product_total_weight: parseInt(this.form.product_total_weight),
-            product_gold_weight: parseInt(this.form.product_gold_weight),
-            product_image_url: `https://pub-0b1ce08c730c44808fd2b5edcfbf8fe0.r2.dev/${fileName}.webp`,
-            product_image_name: this.form.product_image_name,
-            product_catalog: this.form.product_catalog,
-            product_type: this.form.product_type,
-            product_status: true,
-            product_import_type: this.form.product_import_type,
-            product_barcode: this.form.product_barcode,
-          };
-          let product = await this.$supabase
-            .from("product")
-            .insert(objectInsert)
-            .select();
-          this.productList.push(product.data[0]);
-
-          //reset form
-          this.toggleOverlay();
-          this.resetForm();
-        } else {
-          console.log("form sai");
-        }
-      });
-      //lấy last id
-    },
-    resetForm() {
-      let newform = {
-        product_image_name: null,
-        product_wage_in: null,
-        product_wage: null,
-        product_type: "610",
-        product_stone_weight: null,
-        product_total_weight: null,
-        product_gold_weight: null,
-        product_catalog: null,
-        product_barcode: null,
-        product_import_type: true,
-        product_price_import: null,
-      };
-      let isLoaiVang = false;
-      this.inputConfig.forEach((item) => {
-        newform[item] = this.form[item];
-        if (item === "product_catalog") {
-          isLoaiVang = true;
-        }
-      });
-      this.form = newform;
-      if (isLoaiVang) {
-        this.changeCatalog();
-      }
-    },
-    toggleCamera() {
-      this.isCameraOpen = true;
-      this.createCameraElement();
-    },
-
-    createCameraElement() {
-      try {
-        const constraints = (window.constraints = {
-          audio: false,
-          video: true,
-        });
-
-        navigator.mediaDevices
-          .getUserMedia(constraints)
-          .then((stream) => {
-            this.$refs.camera.srcObject = stream;
-          })
-          .catch((error) => {
-            console.log(error);
-            alert("May the browser didn't support or there is some errors.");
-          });
-      } catch (err) {}
-    },
-
-    takePhoto() {
-      // Lấy tham chiếu tới thẻ video và canvas
-      const videoElement = this.$refs.camera;
-      const canvasElement = document.getElementById("canvas");
-      const context = canvasElement.getContext("2d");
-
-      // Đảm bảo rằng video không phải là null và đang phát
-      if (videoElement && !videoElement.paused && !videoElement.ended) {
-        // Thiết lập kích thước của canvas bằng kích thước của video
-        canvasElement.width = videoElement.videoWidth;
-        canvasElement.height = videoElement.videoHeight;
-
-        // Xoay và lật context của canvas giống như đã làm với video
-        context.translate(canvasElement.width / 2, canvasElement.height / 2);
-        context.rotate((this.rotationAngle * Math.PI) / 180);
-        context.scale(this.fd, this.fh);
-
-        // Vẽ ảnh từ video lên canvas
-        // Điều chỉnh tọa độ và kích thước vẽ để phù hợp với biến đổi
-        context.drawImage(
-          videoElement,
-          -canvasElement.width / 2,
-          -canvasElement.height / 2,
-          canvasElement.width,
-          canvasElement.height
-        );
-
-        // Quay context trở lại trạng thái ban đầu
-        context.rotate(-(this.rotationAngle * Math.PI) / 180);
-        context.scale(1 / this.fd, 1 / this.fh);
-        context.translate(-canvasElement.width / 2, -canvasElement.height / 2);
-      } else {
-        console.error("Không thể chụp ảnh: Video không sẵn sàng.");
-      }
-    },
-    onCameraLoaded(e) {
-      console.log(e);
-    },
-    downloadImage() {
-      const download = document.getElementById("downloadPhoto");
-      const canvas = document
-        .getElementById("photoTaken")
-        .toDataURL("image/jpeg")
-        .replace("image/jpeg", "image/octet-stream");
-      download.setAttribute("href", canvas);
-    },
+    //
+    //get scale
     connectToPort() {
       if ("serial" in navigator) {
         console.log("support");
@@ -920,7 +529,7 @@ export default {
               let d = this.extractFloatValue(line) * 10000;
               // Làm gì đó với dòng dữ liệu (line)
               let roundedValue = this.customRound(d);
-              this.form.product_total_weight = roundedValue;
+              this.formSanPham.klt = roundedValue;
             });
           }
         } finally {
@@ -932,17 +541,267 @@ export default {
         console.error("Error reading data:", error);
       }
     },
+    //
+    resetForm() {
+      let newform = {
+        multi: 1,
+        multiGiaVang: 30,
+        name: null,
+        klt: null,
+        klh: null,
+        klv: null,
+        cong: null,
+        id_kihieu: 5,
+        id_kieusanpham: null,
+        id_hamluongvang: null,
+        id_nhacungcap: null,
+        anhsanpham: null,
+        ngayxuat: null,
+        giacongnhap: null,
+        giavangnhap: null,
+        giavangxuat: null,
+        maso: null,
+        product_intem: false,
+        chenhlech: false,
+      };
+      this.inputConfig.forEach((item) => {
+        newform[item] = this.formSanPham[item];
+      });
+      this.formSanPham = newform;
+    },
+    onRowSelected(item) {
+      this.selected = item;
+    },
+    deleteItem(item) {
+      this.$deletePicture(`${item.maso}.webp`).then((data) => {
+        this.$supabase
+          .from("sanpham")
+          .delete()
+          .eq("id", item.id)
+          .then((data) => {
+            this.productList = this.productList.filter((i) => i.id != item.id);
+            this.$bvToast.toast(`Xóa sản phẩm ${item.maso} thành công`, {
+              title: "Thông báo",
+              autoHideDelay: 1000,
+              appendToast: true,
+              variant: "primary",
+            });
+          });
+      });
+    },
+    insertSanPham() {
+      this.$refs.veeForm.validate().then(async (success) => {
+        if (success) {
+          this.dataReady = false;
+          let fileName = this.formSanPham.maso;
+          let anhmacdinh = this.kieusanpham.find(i => i.id === this.formSanPham.id_kieusanpham)
+
+          if (this.cameraMode) {
+            this.takePhoto();
+            const canvas = document.getElementById("canvas");
+            const imageData = canvas.toDataURL("image/webp", 0.5);
+            let uploadResult = await this.$uploadPicture(fileName, imageData);
+            this.formSanPham.anhsanpham = `https://pub-0b1ce08c730c44808fd2b5edcfbf8fe0.r2.dev/${uploadResult.data.Key}`;
+          } else {
+            this.formSanPham.anhsanpham = anhmacdinh.default_picture
+          }
+          // this.formSanPham.anhsanpham = this.formSanPham.maso;
+          let giatrinhap = parseFloat(this.formSanPham.klv)*parseFloat(this.formSanPham.giavangnhap)+(parseFloat(this.formSanPham.giacongnhap*1000))
+       
+          let objectInsert = {
+            name: this.formSanPham.name,
+            klt: parseFloat(this.formSanPham.klt),
+            klh: parseFloat(this.formSanPham.klh),
+            klv: parseFloat(this.formSanPham.klv),
+            cong: parseInt(this.formSanPham.cong),
+            id_kihieu: parseInt(this.formSanPham.id_kihieu),
+            id_kieusanpham: parseInt(this.formSanPham.id_kieusanpham),
+            id_hamluongvang: parseInt(this.formSanPham.id_hamluongvang),
+            id_nhacungcap: parseInt(this.formSanPham.id_nhacungcap),
+            anhsanpham: this.formSanPham.anhsanpham,
+            giacongnhap: parseInt(this.formSanPham.giacongnhap || 0),
+            giavangnhap: parseInt(this.formSanPham.giavangnhap || 0),
+            maso: this.formSanPham.maso,
+            product_intem: false,
+            giatrinhap
+          };
+          console.log(objectInsert)
+          let product = await this.$supabase
+            .from("sanpham")
+            .insert(objectInsert)
+            .select();
+          this.productList.push(product.data[0]);
+          this.resetForm();
+          this.dataReady = true;
+        }
+      });
+    },
+    updateGoldWeight() {
+      let klt = parseFloat(this.formSanPham.klt || 0);
+      let klh = parseFloat(this.formSanPham.klh || 0);
+      let klv = klt - klh;
+      this.formSanPham.klv = klv;
+    },
+    async getOption_kieusanpham() {
+      return new Promise((resolve, reject) => {
+        this.$supabase
+          .from("kieusanpham")
+          .select()
+          .then((data) => {
+            resolve(data.data);
+          });
+      });
+    },
+    async getOption_kihieu() {
+      return new Promise((resolve, reject) => {
+        this.$supabase
+          .from("kihieu")
+          .select()
+          .then((data) => {
+            resolve(data.data);
+          });
+      });
+    },
+    async getOption_nhacungcap() {
+      return new Promise((resolve, reject) => {
+        this.$supabase
+          .from("nhacungcap")
+          .select()
+          .then((data) => {
+            resolve(data.data);
+          });
+      });
+    },
+    async getOption_banggia() {
+      return new Promise((resolve, reject) => {
+        this.$supabase
+          .from("banggia")
+          .select()
+          .then((data) => {
+            resolve(data.data);
+          });
+      });
+    },
+    async init() {
+      this.dataReady = false;
+      this.kihieu = await this.getOption_kihieu();
+      this.list_option.kihieu = this.kihieu.map((item) => {
+        return {
+          value: item.id,
+          text: item.short,
+        };
+      });
+      this.kieusanpham = await this.getOption_kieusanpham();
+
+      this.list_option.kieusanpham = this.kieusanpham.map((item) => {
+        return {
+          value: item.id,
+          text: item.short,
+        };
+      });
+
+      this.hamluongvang = await this.getOption_banggia();
+      this.list_option.hamluongvang = this.hamluongvang.map((item) => {
+        return {
+          value: item.id,
+          text: item.code,
+        };
+      });
+
+      this.nhacungcap = await this.getOption_nhacungcap();
+      this.list_option.nhacungcap = this.nhacungcap.map((item) => {
+        return {
+          value: item.id,
+          text: item.short,
+        };
+      });
+
+      this.dataReady = true;
+    },
+    //camera
+
+    toggleCamera() {
+      if (this.cameraMode) {
+
+        this.isCameraOpen = true;
+        this.createCameraElement();
+      } else {
+        window.location.reload()
+      }
+    },
+
+    createCameraElement() {
+      try {
+        const constraints = (window.constraints = {
+          audio: false,
+          video: true,
+        });
+
+        navigator.mediaDevices
+          .getUserMedia(constraints)
+          .then((stream) => {
+            this.$refs.camera.srcObject = stream;
+          })
+          .catch((error) => {
+            console.log(error);
+            alert("May the browser didn't support or there is some errors.");
+          });
+      } catch (err) { }
+    },
+
+    takePhoto() {
+      // Lấy tham chiếu tới thẻ video và canvas
+      const videoElement = this.$refs.camera;
+      const canvasElement = document.getElementById("canvas");
+      const context = canvasElement.getContext("2d");
+
+      // Đảm bảo rằng video không phải là null và đang phát
+      if (videoElement && !videoElement.paused && !videoElement.ended) {
+        // Thiết lập kích thước của canvas bằng kích thước của video
+        canvasElement.width = videoElement.videoWidth;
+        canvasElement.height = videoElement.videoHeight;
+
+        // Xoay và lật context của canvas giống như đã làm với video
+        context.translate(canvasElement.width / 2, canvasElement.height / 2);
+        context.rotate((this.rotationAngle * Math.PI) / 180);
+        context.scale(this.fd, this.fh);
+
+        // Vẽ ảnh từ video lên canvas
+        // Điều chỉnh tọa độ và kích thước vẽ để phù hợp với biến đổi
+        context.drawImage(
+          videoElement,
+          -canvasElement.width / 2,
+          -canvasElement.height / 2,
+          canvasElement.width,
+          canvasElement.height
+        );
+
+        // Quay context trở lại trạng thái ban đầu
+        context.rotate(-(this.rotationAngle * Math.PI) / 180);
+        context.scale(1 / this.fd, 1 / this.fh);
+        context.translate(-canvasElement.width / 2, -canvasElement.height / 2);
+      } else {
+        console.error("Không thể chụp ảnh: Video không sẵn sàng.");
+      }
+    },
+    onCameraLoaded(e) {
+      console.log(e);
+    },
+    downloadImage() {
+      const download = document.getElementById("downloadPhoto");
+      const canvas = document
+        .getElementById("photoTaken")
+        .toDataURL("image/jpeg")
+        .replace("image/jpeg", "image/octet-stream");
+      download.setAttribute("href", canvas);
+    },
+    //end camera
   },
   mounted() {
-    //console.log("hello port");
-    //  alert("Vui lòng kiểm tra chế độ nhập, nhập nâng cao");
-    this.toggleCamera();
-    this.loaiVangChange();
+    this.init();
     this.updateVideo();
-    //  this.connectToPort();
   },
 };
 </script>
 
-<style>
-</style>
+<style></style>

@@ -507,7 +507,7 @@ export default {
         const reader = port.readable.getReader();
         let receivedData = "";
         let decoder = new TextDecoder();
-
+        console.log("asd")
         try {
           while (true) {
             const { value, done } = await reader.read();

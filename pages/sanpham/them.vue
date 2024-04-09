@@ -293,31 +293,70 @@ export default {
           gia.sellingPrice - this.formSanPham.multiGiaVang;
       }
     },
-    id_kieusanpham(newVal, oldVal) {
+    async id_kieusanpham(newVal, oldVal) {
       if (newVal) {
         this.overlay.maso = true;
         this.overlay.name = true;
         let name = this.kieusanpham.find((i) => i.id === newVal);
         this.formSanPham.name = name.short || "";
         //count
+        let countLastId = 0;
+        let notValid = true;
+        do {
 
-        this.$supabase
-          .from("sanpham")
-          .select("id")
-          .order("id", { ascending: false })
-          .limit(1)
-          .then((data) => {
-            console.log(data);
-            let maso = "";
-            if (data.data.length > 0) {
-              maso = `${name.barcode}${data.data[0].id}`;
-            } else {
-              maso = `${name.barcode}1`;
-            }
-            this.formSanPham.maso = maso;
+          let lastItem = await this.$supabase.from("sanpham").select("id").order("id", { ascending: false }).limit(1)
+          let lastId = parseInt(lastItem.data[0].id) + countLastId
+          let maso = `${name.barcode}${lastId}`;
+
+          let isExits = await this.$supabase.from('sanpham').select('*', { count: 'exact', head: true }).eq('maso', maso)
+          let isExitsTemp = await this.$supabase.from('temp_maso').select('*', { count: 'exact', head: true }).eq('maso', maso)
+          //kiểm tra, nếu cả 2 đều không trùng mới gọi là đúng
+          console.log(isExits.count,isExitsTemp.count,maso)
+          if (isExits.count == 0 && isExitsTemp.count == 0) {
+
+            console.log('không trùng')
+            //tạo 1 temp
+            let temp_maso = await this.$supabase.from("temp_maso").insert({
+              maso,
+              so: lastId
+            }).select("*")
+
+            this.temp_maso = temp_maso.data[0];
+            console.log(this.temp_maso)
+            this.formSanPham.maso = maso
             this.overlay.maso = false;
             this.overlay.name = false;
-          });
+            notValid = false;
+          } else {
+            //1 trong 2 trùng, tăng lastId
+            countLastId++;
+          }
+        } while (notValid)
+        // this.$supabase
+        //   .from("sanpham")
+        //   .select("id")
+        //   .order("id", { ascending: false })
+        //   .limit(1)
+        //   .then(async (data) => {
+        //     let isValid = false;
+        //     do {
+        //       let maso = "";
+        //       if (data.data.length > 0) {
+        //         maso = `${name.barcode}${data.data[0].id}`;
+        //       } else {
+        //         maso = `${name.barcode}1`;
+        //       }
+        //       let isExits = await this.$supabase.from('sanpham').select('*', { count: 'exact', head: true }).eq('maso', maso)
+        //       if(isExits.count<0){
+        //       isValid=true
+        //       }
+        //     } while (isValid)
+
+
+        //     this.formSanPham.maso = maso;
+        //     this.overlay.maso = false;
+        //     this.overlay.name = false;
+        //   });
       }
       //tên
     },
@@ -351,7 +390,7 @@ export default {
   },
   data() {
     return {
-
+      temp_maso: null,
       //rotation
       rotationAngle: 180,
       fh: 1,
@@ -440,6 +479,19 @@ export default {
     };
   },
   methods: {
+    async getMaSo(barcode, id) {
+      return new Promise((resolve, reject) => {
+        this.$supabase
+          .from("sanpham")
+          .select("id")
+          .order("id", { ascending: false })
+          .limit(1)
+          .then(async (data) => {
+
+          })
+
+      })
+    },
     async intemSingle() {
 
       if (this.productList.length > 0) {
@@ -666,6 +718,9 @@ export default {
             .insert(objectInsert)
             .select("*,kieusanpham(*),banggia(*),nhacungcap(*),kihieu(*)");
           this.productList.push(product.data[0]);
+          //xóa temp_maso
+          await this.$supabase.from('temp_maso').delete().eq('id',this.temp_maso.id)
+          console.log('xoa temp maso')
           this.resetForm();
           this.dataReady = true;
         }

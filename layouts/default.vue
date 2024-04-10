@@ -945,286 +945,7 @@
         </b-col>
       </b-row>
     </b-modal>
-    <b-modal
-      size="lg"
-      no-stacking
-      hide-footer
-      id="default_modal_SanPham"
-      title="Tạo nhanh sản phẩm"
-    >
-      <b-form>
-        <b-form-row>
-          <b-col cols="12">
-            <b-row>
-              <b-col cols="4">
-                <b-overlay :show="default_overlaySanPham">
-                  <b-form-group label="Kiểu SP">
-                    <b-form-select
-                      v-model="product_catalog"
-                      :options="this.$store.state.config.sanpham_optionCatalog"
-                    ></b-form-select>
-                  </b-form-group>
-                </b-overlay>
-              </b-col>
-              <b-col cols="4">
-                <b-overlay :show="default_overlayproductimportprice">
-                  <b-form-group label="Loại vàng">
-                    <b-form-select
-                      v-model="product_type"
-                      :options="this.$store.state.config.sanpham_optionLoaiVang"
-                    ></b-form-select>
-                  </b-form-group>
-                </b-overlay>
-              </b-col>
-              <b-col cols="4">
-                <b-form-group
-                  label="Nguồn SP"
-                  :description="product_import_type ? 'Chành' : 'Nội bộ '"
-                >
-                  <b-form-checkbox
-                    switch
-                    size="lg"
-                    v-model="product_import_type"
-                  >
-                  </b-form-checkbox>
-                </b-form-group>
-              </b-col>
-            </b-row>
-          </b-col>
-          <b-col cols="12">
-            <b-row>
-              <b-col cols="4">
-                <b-form-group label="Trọng Lượng Tổng">
-                  <b-form-input
-                    autocomplete="off"
-                    v-model="product_total_weight"
-                    required
-                  ></b-form-input>
-                </b-form-group>
-                <b-form-group label="Tiền công">
-                  <b-form-input
-                    autocomplete="off"
-                    v-model="product_wage"
-                    required
-                  ></b-form-input>
-                </b-form-group>
-              </b-col>
 
-              <b-col cols="4">
-                <b-form-group label="Trọng lượng hột">
-                  <b-form-input
-                    id="input-1"
-                    autocomplete="off"
-                    v-model="product_stone_weight"
-                    required
-                  ></b-form-input>
-                </b-form-group>
-                <b-form-group label="Mã sản phẩm">
-                  <b-form-input
-                    disabled
-                    class="text-danger"
-                    v-model="product_barcode"
-                    required
-                  ></b-form-input>
-                </b-form-group>
-              </b-col>
-              <b-col cols="4">
-                <b-form-group label="Trọng lượng Vàng">
-                  <b-form-input
-                    disabled
-                    v-model="product_gold_weight"
-                    required
-                  ></b-form-input>
-                </b-form-group>
-                <b-form-group>
-                  <b-button
-                    class="mt-2"
-                    @click="default_insertSanPham('taomoithemvaogio')"
-                    variant="primary"
-                    block
-                    >Tạo mới,thêm vào giỏ</b-button
-                  >
-                  <b-button
-                    class="mt-2"
-                    @click="default_insertSanPham('taomoiintem')"
-                    variant="success"
-                    block
-                    >Tạo mới,In Tem</b-button
-                  >
-                </b-form-group>
-              </b-col>
-            </b-row>
-            <b-row no-gutters>
-              <b-col cols="6">
-                <b-table-simple small hover bordered responsive fixed>
-                  <b-tbody>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Trọng Lượng Tổng</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value text-warning">
-                          {{ $formatSoVang(product_total_weight).fullStr }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Trọng Lượng Vàng</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value text-warning">
-                          {{ $formatSoVang(product_gold_weight).fullStr }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Trọng Lượng hột</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value">
-                          {{ $formatSoVang(product_stone_weight).fullStr }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Tiền công nhập</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value">
-                          {{ product_wage_in }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <div class="title">Tiền công xuất</div>
-                      </b-td>
-                      <b-td>
-                        <div class="value text-danger text-bold">
-                          <span class="blink">👉</span>
-                          {{ product_wage }}
-                          <span class="blink">👈</span>
-                        </div>
-                      </b-td>
-                    </b-tr>
-
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Chành Nhập</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value">
-                          <b-badge variant="warning" v-if="product_import_type"
-                            >Chành SG</b-badge
-                          >
-                          <b-badge variant="primary" v-else
-                            >Hàng Nội Bộ</b-badge
-                          >
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Giá Vàng Nhập</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value">
-                          {{ product_price_import }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                  </b-tbody>
-                </b-table-simple>
-              </b-col>
-              <b-col cols="6">
-                <b-table-simple small hover bordered responsive fixed>
-                  <b-tbody>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Mã sản phẩm</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value text-success bd-highlight">
-                          {{ product_barcode }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Ngày Nhập</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value">
-                          <span class="text-primary">
-                            {{ $moment().format("DD/MM/YYYY") }}</span
-                          >
-                        </div>
-                      </b-td>
-                    </b-tr>
-
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Kiểu dáng sản phẩm</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value">
-                          <b-badge variant="success">
-                            {{ product_catalog }}</b-badge
-                          >
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Loại Vàng</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value text-danger">
-                          {{ product_type }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Giá nhập </span>
-                      </b-td>
-                      <b-td>
-                        <div class="value">
-                          {{ $formatN(giatrinhap) }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Giá hiện tại</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value text-warning">
-                          {{ $formatN(giahientai) }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Lệch</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value">
-                          {{ $formatN(giahientai - giatrinhap) }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                  </b-tbody>
-                </b-table-simple>
-              </b-col>
-            </b-row>
-          </b-col>
-        </b-form-row>
-      </b-form>
-    </b-modal>
     <b-sidebar
       ref="sidebargiohang"
       width="900px"
@@ -1309,9 +1030,6 @@
               >
             </b-col>
             <b-col cols="8" class="text-right">
-              <b-button variant="success" v-b-modal.default_modal_SanPham
-                >Tạo nhanh sản phẩm</b-button
-              >
               <strong
                 v-if="listGioHang.length > 0"
                 class="mr-auto text-danger text-right"
@@ -1360,12 +1078,11 @@
                 </b-form-group>
               </b-col>
               <b-col cols="6">
-                <b-form-group label="Mã bill:" description=".">
+                <b-form-group label="Địa chỉ:" description=".">
                   <b-form-input
                     autocomplete="off"
-                    v-model="bill.bill_code"
+                    v-model="bill.diachia"
                     type="text"
-                    disabled
                   ></b-form-input>
                 </b-form-group>
                 <b-form-group label="Tên khách:" description=".">
@@ -1563,7 +1280,9 @@
         <div
           class="d-flextext-light bg-warning align-items-center px-3 py-2 text-left"
         >
-          <b-button variant="danger" @click="inhoadon()">In Giấy</b-button>
+          <b-button variant="primary" @click="inhoadon()"
+            >Tạo hóa đơn và In Giấy</b-button
+          >
           Giá :
           <strong class="mr-auto text-danger">
             {{
@@ -1666,11 +1385,11 @@
           <b-nav-item-dropdown text="Thống kê">
             <b-dropdown-group
               id="dropdown-group-1"
-              header="Sản phẩm"
+              header="Các mục"
               style="width: 300px"
             >
               <b-dropdown-item href="/thongke/ngay">Theo ngày</b-dropdown-item>
-              <b-dropdown-item-button>Sản phẩm</b-dropdown-item-button>
+              <b-dropdown-item href="/thongke/sanpham">Sản phẩm</b-dropdown-item>
               <b-dropdown-item href="/thongke/camdo">Cầm đồ</b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>
@@ -2087,24 +1806,27 @@ export default {
       });
     },
 
-    inhoadon() {
+    async inhoadon() {
       //tạo hóa đơn
       //gửi link ve client in
       //client
+      let bill_code = this.$getBill_code();
       let billObject = {
-        bill_totalmoney: this.selectGioHang.reduce(
+        tongtien: this.selectGioHang.reduce(
           (sum, item) => sum + (item.giahientai || 0),
           0
         ),
-        bill_listsanpham: this.selectGioHang,
-        bill_realmoney_get: parseFloat(this.bill.bill_realmoney_get),
-        customer_name: this.bill.customer_name,
-        billDetail: this.bill.bill_detail,
-        bill_code: this.bill.bill_code,
-        bill_comment: this.bill.bill_comment,
-        bill_print: false,
-        giohang_id: this.rawGioHang.id,
+        thucnhan: this.bill.bill_realmoney_get,
+        tenkhach: this.bill.tenkhach,
+        diachi: this.bill.diachi,
+        sodienthoai: this.bill.sodienthoai,
+        bill_code,
+        isPrint: false,
+        id_giohang: this.rawGioHang.id,
       };
+      let hoadon_ban = await this.$insertBill(billObject);
+      //update sản phẩm bằng bill code
+
       this.$insertBill(billObject).then((data) => {
         //update sanpham
 
@@ -2240,7 +1962,6 @@ export default {
           centered: true,
         })
         .then((value) => {
-          console.log("aaaaa");
           let ngaythanhli = document.getElementById("modal_thanhly_date").value;
           let isValid = this.checkRegexDate(ngaythanhli);
           if (isValid === false) {
@@ -2566,11 +2287,12 @@ export default {
           let d = data.data;
           d = d.map((item) => {
             //lấy ra giá hiện tại
-            let giahientai = parseInt(
-              (parseInt(item.klv) * parseInt(item.banggia.sellingPrice) +
-                parseInt(item.cong) * 1000) /
-                1000
-            )*1000;
+            let giahientai =
+              parseInt(
+                (parseInt(item.klv) * parseInt(item.banggia.sellingPrice) +
+                  parseInt(item.cong) * 1000) /
+                  1000
+              ) * 1000;
 
             return {
               ...item,

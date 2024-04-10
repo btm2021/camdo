@@ -198,10 +198,7 @@ export default {
 <style scoped>
 /*	Reset & General
 ---------------------------------------------------------------------- */
-* {
-  margin: 0px;
-  padding: 0px;
-}
+
 body {
   background: #ecf1f5;
   font: 14px "Open Sans", sans-serif;

@@ -267,7 +267,7 @@ export default async ({
     inject('getBill_code', async () => {
         return new Promise((resolve, reject) => {
             //lấy bill_code dựa trên ngày hôm nay
-            app.$supabase.from('hoadon').select('id,bill_code')
+            app.$supabase.from('hoadon_ban').select('id,bill_code')
                 .gte('created_at', app.$moment().format('YYYY-MM-DD'))
                 .lte('created_at', app.$moment().add(1, "days").format("YYYY-MM-DD"))
                 .limit(1).order("id", { ascending: false }).then(data => {
@@ -284,7 +284,7 @@ export default async ({
     })
     inject('insertBill', async (item) => {
         return new Promise((resolve, reject) => {
-            app.$supabase.from('hoadon').insert([item]).then(data => {
+            app.$supabase.from('hoadon_ban').insert([item]).select().then(data => {
                 resolve(data.data[0])
             })
         })

@@ -63,9 +63,6 @@
                   <code>{{ $formatSoTien(data.value) }}</code>
                 </template>
                 <template #cell(tool)="data">
-                  <b-button variant="primary" @click="inHoaDon(data.item)"
-                    >In Hóa Đơn</b-button
-                  >
                   <b-button variant="danger" @click="deleteItem(data.item)"
                     >Delete</b-button
                   >
@@ -80,57 +77,211 @@
                 </template>
                 <template #row-details="row">
                   <b-card title="Danh sách sản phẩm trong hóa đơn">
-                    <b-table
-                      :items="row.item.sanpham"
-                      :fields="fieldSanpham"
-                      small
-                      hover
-                      responsive
-                    >
-                      <template #cell(klt)="data">
-                        <span class="text-primary font-weight-bold">
-                          {{ $formatSoVang(data.value).fullStr }}
-                        </span>
-                      </template>
-                      <template #cell(anhsanpham)="data">
-                        <b-img-lazy
-                          :src="data.value"
-                          style="width: 50px; height: 50px"
-                        />
-                      </template>
-                      <template #cell(klh)="data">
-                        <span class="text-primary font-weight-bold">
-                          {{ $formatSoVang(data.value).fullStr }}
-                        </span>
-                      </template>
-                      <template #cell(tool)="data">
-                        <b-button
-                          variant="danger"
-                          @click="deleteSpInHoaDon(data.item, row.item)"
-                          >Xóa khỏi hóa đơn</b-button
+                    <b-row>
+                      <b-col cols="12">
+                        <table
+                          class="table table-sm table-bordered table-hover"
+                          style="width: 100%"
                         >
-                      </template>
-                      <template #cell(created_at)="data">
-                        <span class="text-primary font-weight-bold">
-                          {{ $moment(data.value).format("DD/MM/YYYY") }}
-                        </span>
-                      </template>
-                      <template #cell(klv)="data">
-                        <span class="text-danger font-weight-bold">
-                          {{ $formatSoVang(data.value).fullStr }}
-                        </span>
-                      </template>
-                      <template #cell(giatrixuat)="data">
-                        <span class="text-danger font-weight-bold">
-                          {{ $formatSoTien(data.value) }}
-                        </span>
-                      </template>
-                      <template #cell(maso)="data">
-                        <span class="text-warning font-weight-bold">
-                          {{ data.value }}
-                        </span>
-                      </template>
-                    </b-table>
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Loại</th>
+                              <th>GiáV</th>
+                              <th>TL.Vàng</th>
+                              <th>Kiểu</th>
+                              <th>Công</th>
+                              <th>Giá</th>
+
+                              <th>Tool</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(item, index) in row.item.bill_listsanpham"
+                              :key="index"
+                            >
+                              <td>
+                                <b>{{ index + 1 }}</b>
+                              </td>
+                              <td>
+                                <b
+                                  @click="showInfoSanPham(item)"
+                                  class="myHoverProductBarcode"
+                                >
+                                  {{
+                                    $store.state.config.sanpham_optionCatalog.find(
+                                      (i) => i.value === item.product_catalog
+                                    ).text
+                                  }}</b
+                                >
+                              </td>
+
+                              <td>
+                                <b class="text-danger">{{
+                                  item.price.sellingPrice
+                                }}</b>
+                              </td>
+
+                              <td>
+                                <b class="text-danger">{{
+                                  $formatSoVang(item.product_gold_weight)
+                                    .fullStr
+                                }}</b>
+                              </td>
+
+                              <td>
+                                <b>{{ item.product_type }}</b>
+                              </td>
+
+                              <td>
+                                <b>{{ item.product_wage }}</b>
+                              </td>
+
+                              <td>
+                                <b class="text-danger">{{
+                                  $formatSoTien(item.giahientai)
+                                }}</b>
+                              </td>
+                              <td>
+                                <b-button
+                                  variant="danger"
+                                  @click="xoasanphamhoadon(item, row.item)"
+                                  >Xóa</b-button
+                                >
+                              </td>
+                            </tr>
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <td colspan="5" class="text-center">
+                                <b>Tổng</b>
+                              </td>
+
+                              <td>
+                                <b class="text-primary text-right">
+                                  {{
+                                    $formatSoTien(
+                                      row.item.bill_listsanpham.reduce(
+                                        (sum, item) =>
+                                          sum + (item.product_wage || 0),
+                                        0
+                                      )
+                                    )
+                                  }}</b
+                                >
+                              </td>
+                              <td>
+                                <b class="text-primary text-right">
+                                  {{
+                                    $formatSoTien(
+                                      row.item.bill_listsanpham.reduce(
+                                        (sum, item) =>
+                                          sum + (item.giahientai || 0),
+                                        0
+                                      )
+                                    )
+                                  }}</b
+                                >
+                              </td>
+                            </tr>
+                          </tfoot>
+                        </table>
+                      </b-col>
+                      <b-col
+                        cols="6"
+                        v-for="(item, index) in row.item.bill_listsanpham"
+                        :key="index"
+                      >
+                        <b-card
+                          :title="
+                            '#' +
+                            (index + 1) +
+                            '_' +
+                            $store.state.config.sanpham_optionCatalog.find(
+                              (i) => i.value === item.product_catalog
+                            ).text +
+                            '-' +
+                            item.product_barcode
+                          "
+                          :img-src="item.product_image_url"
+                          :img-alt="item.product_barcode"
+                          img-top
+                          class="mb-2"
+                        >
+                          <b-card-text>
+                            <b-row>
+                              <b-col cols="6">
+                                <table class="table table-sm">
+                                  <tr>
+                                    <td>Trọng lượng Tổng</td>
+                                    <td>
+                                      <b class="text-danger">{{
+                                        $formatSoVang(item.product_total_weight)
+                                          .fullStr
+                                      }}</b>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Trọng lượng hột</td>
+                                    <td>
+                                      <b class="text-danger">{{
+                                        $formatSoVang(item.product_stone_weight)
+                                          .fullStr
+                                      }}</b>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Trọng lượng đá</td>
+                                    <td>
+                                      <b class="text-danger">{{
+                                        $formatSoVang(item.product_gold_weight)
+                                          .fullStr
+                                      }}</b>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </b-col>
+                              <b-col cols="6">
+                                <table class="table table-sm">
+                                  <tr>
+                                    <td>Loại vàng</td>
+                                    <td>
+                                      <b>{{ item.product_type }}</b>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Giá vàng</td>
+                                    <td>
+                                      <b>{{ item.price.sellingPrice }}</b>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Tiền công</td>
+                                    <td>
+                                      <b>{{ item.product_wage }}</b>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </b-col>
+                              <b-col cols="12">
+                                <div class="text-center text-primary">
+                                  Tính :
+                                  {{
+                                    `${
+                                      $formatSoVang(item.product_gold_weight)
+                                        .fullStr
+                                    }x${item.price.sellingPrice}+${
+                                      item.product_wage
+                                    }=${$formatSoTien(item.giahientai)}`
+                                  }}
+                                </div>
+                              </b-col>
+                            </b-row>
+                          </b-card-text>
+                        </b-card>
+                      </b-col>
+                    </b-row>
                   </b-card>
                 </template>
               </b-table>
@@ -300,22 +451,6 @@ export default {
 
         { key: "tool", label: "#" },
       ],
-      fieldSanpham: [
-        { key: "anhsanpham", label: "Ảnh" },
-        { key: "name", label: "Sp" },
-
-        { key: "maso", label: "Mã số" },
-        { key: "klt", label: "KLT" },
-        { key: "klh", label: "KLH" },
-        { key: "klv", label: "KLV" },
-        { key: "cong", label: "Công" },
-
-        { key: "giatrixuat", label: "Giá xuất" },
-
-        { key: "created_at", label: "Ngày nhập" },
-
-        { key: "tool", label: "#" },
-      ],
       fieldsGioHang: [
         { key: "stt", label: "#" },
         { key: "product_image_url", label: "Ảnh" },
@@ -345,33 +480,9 @@ export default {
     });
   },
   methods: {
-    async deleteSpInHoaDon(item, hoadon) {
-      this.overlayGioHang = true;
-      await this.$supabase
-        .from("sanpham")
-        .update({ id_hoadonban: null })
-        .eq("id", item.id);
-      if (hoadon.somon == 1) {
-        //xóa luôn hoadon
-        await this.$supabase
-          .from("hoadon_ban")
-          .delete()
-          .eq("id", hoadon.id);
-      } else {
-        await this.$supabase
-          .from("hoadon_ban")
-          .update({ somon: hoadon.somon - 1 })
-          .eq("id", hoadon.id);
-      }
-
-      this.getHoaDon(this.ngaybatdau, this.ngayketthuc).then((data) => {
-        this.listhoadon = data;
-      });
-      this.overlayGioHang = false;
-    },
     async deleteItem(item) {
       //xoa item sp có refe
-      this.overlayGioHang = true;
+      this.overlayGioHang=true;
       for (let i = 0; i < item.sanpham.length; i++) {
         await this.$supabase
           .from("sanpham")

@@ -1370,6 +1370,11 @@
               </b-dropdown-item>
               <b-dropdown-item href="/hoadon/">Hóa đơn</b-dropdown-item>
             </b-dropdown-group>
+            <b-dropdown-group id="dropdown-group-1" header="Hóa đơn nhập">
+              <b-dropdown-item href="/hoadon/hoadonnhap"
+                >Hóa đơn Nhập Hàng</b-dropdown-item
+              >
+            </b-dropdown-group>
           </b-nav-item-dropdown>
         </b-navbar-nav>
 
@@ -1380,6 +1385,9 @@
               header="Sản phẩm"
               style="width: 300px"
             >
+              <b-dropdown-item href="/tool/nhacungcap"
+                >Nhà cung cấp</b-dropdown-item
+              >
               <b-dropdown-item href="/tv">Bảng giá</b-dropdown-item>
               <b-dropdown-item href="/tool/cannuoc">Cân Nước</b-dropdown-item>
               <b-dropdown-item-button>Đặt đồ</b-dropdown-item-button>

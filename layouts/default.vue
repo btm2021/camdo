@@ -2532,7 +2532,7 @@ export default {
         .select("*")
         .gte("created_at", currentDay);
 
-      if (dataGioHangHienTai.data.length > 0) {
+      if (dataGioHangHienTai.data && dataGioHangHienTai.data.length > 0) {
         console.log("Đã có giỏ hàng");
         this.id_giohang = dataGioHangHienTai.data[0].id;
       } else {
@@ -2549,6 +2549,7 @@ export default {
     await this.checkGioHangHomNay();
     this.subBanggia();
     // this.subGioHang();
+
     let listDisableRouter = ["/camdo/chuocdo", "/chat"];
     var isDisable = listDisableRouter.includes(this.$nuxt.$route.fullPath);
     if (isDisable) {

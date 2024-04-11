@@ -1,16 +1,40 @@
 <template>
   <div class="mt-2">
-     <b-row no-gutters>
-
+    <b-row no-gutters>
       <b-col cols="12" style="font-size: 13px">
         <b-card no-body>
           <div>
             <b-overlay>
-
-              <b-table style="min-height: 600px" responsive :per-page="perPage" :current-page="currentPage" bordered
-                no-border-collapse sticky-header="800px" ref="my_table" show-empty select-mode="single" selectable
-                head-row-variant="success" :items="listData" class="mytable text-center w-auto" striped :busy="spBusy"
-                :fields="fieldSp" small>
+              <b-input
+                block
+                class="mx-auto mb-2 mt-2 text-center font-weight-bold"
+                size="lg"
+                v-model="searchInput"
+                type="search"
+                autocomplete="off"
+                style="width: 80%; text-transform: uppercase"
+                @change="searchSP"
+              ></b-input>
+              <b-table
+                style="min-height: 600px"
+                responsive
+                :per-page="perPage"
+                :current-page="currentPage"
+                bordered
+                no-border-collapse
+                sticky-header="800px"
+                ref="my_table"
+                show-empty
+                select-mode="single"
+                selectable
+                head-row-variant="success"
+                :items="listData"
+                class="mytable text-center w-auto"
+                striped
+                :busy="spBusy"
+                :fields="fieldSp"
+                small
+              >
                 <template #table-busy>
                   <div class="text-center text-danger my-2">
                     <b-spinner class="align-middle"></b-spinner>
@@ -41,20 +65,26 @@
                 <template #cell(tool)="data">
                   <b-button-group size="sm">
                     <b-button variant="success">View</b-button>
-                    <b-button variant="warning" >Edit</b-button>
-                    <b-button variant="danger" @click="deleteItem(data.item.id)">Delete</b-button>
+                    <b-button variant="warning">Edit</b-button>
+                    <b-button variant="danger" @click="deleteItem(data.item.id)"
+                      >Delete</b-button
+                    >
                   </b-button-group>
                 </template>
                 <template #cell(product_intem)="data">
-                  <b-form-checkbox v-model="data.value" @change="changeInTem(data.item.id, data.value)" switch>
-
+                  <b-form-checkbox
+                    v-model="data.value"
+                    @change="changeInTem(data.item.id, data.value)"
+                    switch
+                  >
                   </b-form-checkbox>
                 </template>
-
-
               </b-table>
 
-              <div class="pagination-container" style="position: absolute; bottom: 0; width: 100%">
+              <div
+                class="pagination-container"
+                style="position: absolute; bottom: 0; width: 100%"
+              >
                 <b-select v-model="perPage" class="per-page-selector">
                   <option value="20">20 mục/trang</option>
                   <option value="50">50 mục/trang</option>
@@ -63,14 +93,18 @@
                 </b-select>
 
                 <!-- b-pagination -->
-                <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage"
-                  aria-controls="my-table"></b-pagination>
+                <b-pagination
+                  v-model="currentPage"
+                  :total-rows="totalRows"
+                  :per-page="perPage"
+                  aria-controls="my-table"
+                ></b-pagination>
               </div>
             </b-overlay>
           </div>
         </b-card>
       </b-col>
-      </b-row>
+    </b-row>
   </div>
 </template>
 
@@ -83,20 +117,19 @@ export default {
       isChange: false,
       spBusy: false,
       fieldSp: [
+        { key: "maso", label: "Mã" },
+        { key: "name", label: "Tên" },
+        { key: "banggia.code", label: "Hàm lượng" },
+        { key: "klt", label: "KLT" },
+        { key: "klh", label: "KLH" },
+        { key: "klv", label: "KLV" },
+        { key: "product_intem", label: "In Tem" },
 
-        { "key": "maso", "label": "Mã" },
-        { "key": "name", "label": "Tên" },
-        { "key": "banggia.code", "label": "Hàm lượng" },
-        { "key": "klt", "label": "KLT" },
-        { "key": "klh", "label": "KLH" },
-        { "key": "klv", "label": "KLV" },
-        { "key": "product_intem", "label": "In Tem" },
+        { key: "cong", label: "Công" },
 
-        { "key": "cong", "label": "Công" },
-
-        { "key": "nhacungcap.short", "label": "Chành" },
-        { "key": "giatrinhap", "label": "Giá nhập" },
-        { "key": "tool", "label": "#" },
+        { key: "nhacungcap.short", label: "Chành" },
+        { key: "giatrinhap", label: "Giá nhập" },
+        { key: "tool", label: "#" },
       ],
       currentPage: 1, // Trang hiện tại
       perPage: 50, // Số dòng mỗi trang
@@ -104,19 +137,24 @@ export default {
       tooltipData: null,
       tempEdit: null,
       isZoomed: false,
-      listData: []
+      listData: [],
+      searchInput: '',
     };
   },
 
   methods: {
+    searchSP() {
+      console.log(this.searchInput);
+      this.getData();
+    },
     async changeInTem(id, value) {
       this.spBusy = true;
       const { data, error } = await this.$supabase
-        .from('sanpham')
+        .from("sanpham")
         .update({ product_intem: value })
-        .eq('id', id)
-      this.getData()
-      this.spBusy = false
+        .eq("id", id);
+      this.getData();
+      this.spBusy = false;
     },
     async getData() {
       this.spBusy = true;
@@ -125,13 +163,16 @@ export default {
       try {
         const { data, error, count } = await this.$supabase
           .from("sanpham")
-          .select("*,kieusanpham(*),banggia(*),nhacungcap(*),kihieu(*)", { count: "exact" })
+          .select("*,kieusanpham(*),banggia(*),nhacungcap(*),kihieu(*)", {
+            count: "exact",
+          })
           .order("id", { ascending: false })
+          .like("maso", `%${String(this.searchInput).toUpperCase()}%`)
           .range((currentPage - 1) * perPage, currentPage * perPage - 1);
 
         this.spBusy = false;
         this.totalRows = count;
-        this.listData = data
+        this.listData = data;
       } catch (error) {
         console.error("Error loading data:", error);
         return [];
@@ -140,10 +181,11 @@ export default {
     async deleteItem(id) {
       this.spBusy = true;
       const { data, error } = await this.$supabase
-        .from('sanpham').delete()
-        .eq('id', id)
-      this.getData()
-      this.spBusy = false
+        .from("sanpham")
+        .delete()
+        .eq("id", id);
+      this.getData();
+      this.spBusy = false;
     },
     onFiltered(filteredItems) {
       // Cập nhật tổng số dòng dựa trên kết quả lọc
@@ -152,8 +194,8 @@ export default {
     },
   },
   mounted() {
-    this.getData()
-  }
+    this.getData();
+  },
 };
 </script>
 <style>

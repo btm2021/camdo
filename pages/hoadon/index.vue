@@ -87,6 +87,9 @@
                       hover
                       responsive
                     >
+                      <template #cell(stt)="data">
+                        <b>{{ data.index + 1 }}</b>
+                      </template>
                       <template #cell(klt)="data">
                         <span class="text-primary font-weight-bold">
                           {{ $formatSoVang(data.value).fullStr }}
@@ -137,137 +140,63 @@
             </b-overlay></b-tab
           >
           <b-tab title="Danh sách sản phẩm">
-            <b-row>
-              <b-col cols="3" class="mx-auto mb-3">
-                <b-form-select
-                  v-model="filter.product_catalog"
-                  :options="$store.state.config.sanpham_optionCatalog_view"
-                ></b-form-select>
-              </b-col>
-              <b-col cols="3" class="mx-auto mb-3">
-                <b-form-select
-                  v-model="filter.product_type"
-                  :options="$store.state.config.sanpham_optionLoaiVang_view"
-                ></b-form-select>
-              </b-col>
-              <b-col cols="2" class="mx-auto mb-3">
-                <b-input
-                  v-model="filter.product_barcode"
-                  block
-                  class="text-center text-danger"
-                ></b-input>
-              </b-col>
-              <b-col cols="2" class="mx-auto mb-3">
-                <b-input
-                  v-model="filter.product_barcode"
-                  block
-                  class="text-center text-danger"
-                ></b-input>
-              </b-col>
-              <b-col cols="2" class="mx-auto mb-3">
-                <b-input
-                  v-model="filter.product_barcode"
-                  block
-                  class="text-center text-danger"
-                ></b-input>
-              </b-col>
-            </b-row>
-
             <b-table
               bordered
               no-border-collapse
               class="default_tablegiohang text-center"
               hover
+              :fields="fieldSanpham"
               :items="listsanpham"
               show-empty
               small
-              :fields="fieldsGioHang"
               selected-variant="success"
               responsive
             >
               <template #cell(stt)="data">
-                {{ data.index + 1 }}
+                <b>{{ data.index + 1 }}</b>
               </template>
-              <template #cell(price)="data">
-                {{ data.item.price.sellingPrice }}
+              <template #cell(klt)="data">
+                <span class="text-primary font-weight-bold">
+                  {{ $formatSoVang(data.value).fullStr }}
+                </span>
               </template>
-              <template #cell(product_wage)="data">
-                <strong>{{ data.item.product_wage }}</strong>
-              </template>
-
-              <template #cell(giahientai)="data">
-                <strong class="text-danger">{{
-                  $formatN(data.item.giahientai)
-                }}</strong>
-              </template>
-
-              <template #cell(tool)="data">
-                <b-button variant="danger" @click="deleteItem(data.item.id)"
-                  >Delete</b-button
-                >
-              </template>
-
-              <template #cell(product_total_weight)="data">
-                <span>{{
-                  $formatSoVang(data.item.product_total_weight).fullStr
-                }}</span>
-              </template>
-
-              <template #cell(product_stone_weight)="data">
-                <span>{{
-                  $formatSoVang(data.item.product_stone_weight).fullStr
-                }}</span>
-              </template>
-
-              <template #cell(product_gold_weight)="data">
-                <b class="text-primary">{{
-                  $formatSoVang(data.item.product_gold_weight).fullStr
-                }}</b>
-              </template>
-
-              <template #cell(product_barcode)="data">
-                <b
-                  class="myHoverProductBarcode"
-                  @click="showInfoSanPham(data.item)"
-                >
-                  {{ data.item.product_barcode }}
-                  <span>
-                    <b-badge variant="primary">{{
-                      data.item.hoadon_id
-                    }}</b-badge>
-                  </span>
-                </b>
-              </template>
-
-              <template #cell(propduct_type)="data">
-                <strong class="text-primary">{{
-                  data.item.product_type
-                }}</strong>
-              </template>
-
-              <template #cell(product_catalog)="data">
-                <strong class="text-primary">
-                  {{
-                    $store.state.config.sanpham_optionCatalog.find(
-                      (i) => i.value === data.item.product_catalog
-                    ).text
-                  }}
-                </strong>
-              </template>
-
-              <template #cell(remove)="data">
-                <b-button variant="danger" @click="xoaSanPhamGioHang(data.item)"
-                  >Xóa</b-button
-                >
-              </template>
-
-              <template #cell(product_image_url)="data">
-                <b-img
-                  lazy
-                  @click="showImage(data.item.product_image_url)"
-                  :src="data.item.product_image_url"
-                  style="width: 25px; height: 25px"
+              <template #cell(anhsanpham)="data">
+                <b-img-lazy
+                  :src="data.value"
+                  style="width: 50px; height: 50px"
                 />
+              </template>
+              <template #cell(klh)="data">
+                <span class="text-primary font-weight-bold">
+                  {{ $formatSoVang(data.value).fullStr }}
+                </span>
+              </template>
+              <template #cell(tool)="data">
+                <b-button
+                  variant="danger"
+                  @click="deleteSpInHoaDon(data.item, row.item)"
+                  >Xóa khỏi hóa đơn</b-button
+                >
+              </template>
+              <template #cell(created_at)="data">
+                <span class="text-primary font-weight-bold">
+                  {{ $moment(data.value).format("DD/MM/YYYY") }}
+                </span>
+              </template>
+              <template #cell(klv)="data">
+                <span class="text-danger font-weight-bold">
+                  {{ $formatSoVang(data.value).fullStr }}
+                </span>
+              </template>
+              <template #cell(giatrixuat)="data">
+                <span class="text-danger font-weight-bold">
+                  {{ $formatSoTien(data.value) }}
+                </span>
+              </template>
+              <template #cell(maso)="data">
+                <span class="text-warning font-weight-bold">
+                  {{ data.value }}
+                </span>
               </template>
             </b-table>
           </b-tab>
@@ -301,6 +230,7 @@ export default {
         { key: "tool", label: "#" },
       ],
       fieldSanpham: [
+        { key: "stt", label: "#" },
         { key: "anhsanpham", label: "Ảnh" },
         { key: "name", label: "Sp" },
 
@@ -349,14 +279,11 @@ export default {
       this.overlayGioHang = true;
       await this.$supabase
         .from("sanpham")
-        .update({ id_hoadonban: null })
+        .update({ id_hoadonban: null, daban: false })
         .eq("id", item.id);
       if (hoadon.somon == 1) {
         //xóa luôn hoadon
-        await this.$supabase
-          .from("hoadon_ban")
-          .delete()
-          .eq("id", hoadon.id);
+        await this.$supabase.from("hoadon_ban").delete().eq("id", hoadon.id);
       } else {
         await this.$supabase
           .from("hoadon_ban")
@@ -375,7 +302,7 @@ export default {
       for (let i = 0; i < item.sanpham.length; i++) {
         await this.$supabase
           .from("sanpham")
-          .update({ id_hoadonban: null })
+          .update({ id_hoadonban: null, daban: false })
           .eq("id", item.sanpham[i].id);
       }
       //xoa
@@ -460,6 +387,18 @@ export default {
     },
     onContext(ctx) {
       this.context = ctx;
+    },
+  },
+  watch: {
+    listhoadon(newVal, oldVal) {
+      console.log(newVal);
+      let allSp = [];
+      newVal.map((i) => {
+        i.sanpham.map((item) => {
+          allSp.push(item);
+        });
+      });
+      this.listsanpham = allSp;
     },
   },
 };

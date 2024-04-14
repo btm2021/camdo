@@ -2626,13 +2626,13 @@ export default {
 
         // Kiểm tra khi phím Enter được nhấn
         if (event.key === "Enter") {
-          let regexSp = /^[a-z]{2}\d+$/;
+          let regexSp = /^[a-zA-Z]{2}\d+$/;
           let regexDoThe = /^=\-?\d+$/;
           let regexHoadon = /^(\d+)-(\d{8})$/;
           let regexGiayCamDo = /^-{1}\d{6}$/;
           let scannerInput = this.barcodeInput.replace(/[\s\n]+/g, "");
           scannerInput = removeSpecialKeysFromString(scannerInput);
-
+         
           if (
             this.isBarcodeScan(this.barcodeInput, duration) &&
             scannerInput != ""

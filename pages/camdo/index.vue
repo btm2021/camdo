@@ -1,214 +1,96 @@
 <template>
   <div>
     <b-overlay :show="!dataReady">
-      <b-modal
-        ref="modal_edit"
-        id="modal_edit"
-        title="Chỉnh sửa hợp đồng"
-        hide-footer
-        no-close-on-backdrop
-        no-close-on-esc
-        size="lg"
-        @ok="edit_invoice()"
-        @cancel="itemEdit = null"
-      >
+      <b-modal ref="modal_edit" id="modal_edit" title="Chỉnh sửa hợp đồng" hide-footer no-close-on-backdrop
+        no-close-on-esc size="lg" @ok="edit_invoice()" @cancel="itemEdit = null">
         <div v-if="itemEdit">
           <b-row>
             <b-col cols="4">
               <b-form-group label="Tên khách:" description="Tên khách">
-                <b-form-input
-                  autocomplete="off"
-                  style="text-transform: uppercase"
-                  :disabled="itemEdit.invoice_status ? true : false"
-                  autocapitalize
-                  v-model="itemEdit.customer_name"
-                  type="text"
-                  :state="editState.customer_name"
-                  :placeholder="itemEdit.customer_name"
-                ></b-form-input>
+                <b-form-input autocomplete="off" style="text-transform: uppercase"
+                  :disabled="itemEdit.invoice_status ? true : false" autocapitalize v-model="itemEdit.customer_name"
+                  type="text" :state="editState.customer_name" :placeholder="itemEdit.customer_name"></b-form-input>
               </b-form-group>
               <b-form-group label="Mã số:">
-                <b-form-input
-                  autocomplete="off"
-                  :disabled="itemEdit.invoice_status ? true : false"
-                  autocapitalize
-                  v-model="itemEdit.invoice_number"
-                  :state="editState.invoice_number"
-                  type="text"
-                  @change="checkMaSo"
-                ></b-form-input>
+                <b-form-input autocomplete="off" :disabled="itemEdit.invoice_status ? true : false" autocapitalize
+                  v-model="itemEdit.invoice_number" :state="editState.invoice_number" type="text"
+                  @change="checkMaSo"></b-form-input>
               </b-form-group>
-              <b-form-group
-                id="input-group-3"
-                label="Phân loại:"
-                label-for="input-3"
-              >
-                <b-form-select
-                  v-model="itemEdit.invoice_type"
-                  :options="['BÌNH THƯỜNG', 'MẤT GIẤY', 'THANH LÝ']"
-                  :disabled="itemEdit.invoice_status ? true : false"
-                  required
-                ></b-form-select>
+              <b-form-group id="input-group-3" label="Phân loại:" label-for="input-3">
+                <b-form-select v-model="itemEdit.invoice_type" :options="['BÌNH THƯỜNG', 'MẤT GIẤY', 'THANH LÝ']"
+                  :disabled="itemEdit.invoice_status ? true : false" required></b-form-select>
               </b-form-group>
-              <b-form-group
-                id="input-group-3"
-                label="Loại lưu:"
-                label-for="input-3"
-              >
-                <b-form-select
-                  v-model="itemEdit.invoice_store"
-                  :options="[
-                    'BỊCH KÉO MIỆNG',
-                    'HỘP TRÁI BÍ TO',
-                    'HỘP TRÁI BÍ TRUNG',
-                    'HỘP TRÁI BÍ NHỎ',
-                    'HỘP HỒNG TRONG TO',
-                    'HỘP HỒNG DẸP',
-                    'HỘP NHUNG KIỀNG',
-                    'HỘP NHUNG DẸP',
-                    'HỘP KIỀNG',
-                    'KHÁC',
-                  ]"
-                  :disabled="itemEdit.invoice_status ? true : false"
-                  required
-                ></b-form-select>
+              <b-form-group id="input-group-3" label="Loại lưu:" label-for="input-3">
+                <b-form-select v-model="itemEdit.invoice_store" :options="[
+                  'BỊCH KÉO MIỆNG',
+                  'HỘP TRÁI BÍ TO',
+                  'HỘP TRÁI BÍ TRUNG',
+                  'HỘP TRÁI BÍ NHỎ',
+                  'HỘP HỒNG TRONG TO',
+                  'HỘP HỒNG DẸP',
+                  'HỘP NHUNG KIỀNG',
+                  'HỘP NHUNG DẸP',
+                  'HỘP KIỀNG',
+                  'KHÁC',
+                ]" :disabled="itemEdit.invoice_status ? true : false" required></b-form-select>
               </b-form-group>
-              <b-form-group
-                id="input-group-3"
-                label="Nơi lưu:"
-                label-for="input-3"
-              >
-                <b-form-select
-                  v-model="itemEdit.invoice_store_type"
-                  :options="['KHAY', 'KÉT', 'KHÁC']"
-                  required
-                ></b-form-select>
+              <b-form-group id="input-group-3" label="Nơi lưu:" label-for="input-3">
+                <b-form-select v-model="itemEdit.invoice_store_type" :options="['KHAY', 'KÉT', 'KHÁC']"
+                  required></b-form-select>
               </b-form-group>
               <b-form-group label="Comment">
-                <b-form-textarea
-                  id="textarea"
-                  :disabled="itemEdit.invoice_status ? true : false"
-                  v-model="itemEdit.invoice_comment"
-                  rows="3"
-                  max-rows="6"
-                ></b-form-textarea>
+                <b-form-textarea id="textarea" :disabled="itemEdit.invoice_status ? true : false"
+                  v-model="itemEdit.invoice_comment" rows="3" max-rows="6"></b-form-textarea>
               </b-form-group>
             </b-col>
             <b-col cols="4">
-              <b-form-group
-                label="Số tiền"
-                :description="formatN(itemEdit.invoice_money)"
-              >
-                <b-form-input
-                  autocomplete="off"
-                  :disabled="itemEdit.invoice_status ? true : false"
-                  autocapitalize
-                  v-model="itemEdit.invoice_money"
-                  type="number"
-                  :state="editState.invoice_money"
-                  :placeholder="formatN(itemEdit.invoice_money)"
-                ></b-form-input>
+              <b-form-group label="Số tiền" :description="formatN(itemEdit.invoice_money)">
+                <b-form-input autocomplete="off" :disabled="itemEdit.invoice_status ? true : false" autocapitalize
+                  v-model="itemEdit.invoice_money" type="number" :state="editState.invoice_money"
+                  :placeholder="formatN(itemEdit.invoice_money)"></b-form-input>
               </b-form-group>
               <b-form-group label="Ngày thế">
-                <b-form-input
-                  autocomplete="off"
-                  :disabled="itemEdit.invoice_status ? true : false"
-                  autocapitalize
-                  @change="changeEditDate"
-                  v-model="itemEdit.invoice_date_create_beauty"
-                  type="text"
-                ></b-form-input>
+                <b-form-input autocomplete="off" :disabled="itemEdit.invoice_status ? true : false" autocapitalize
+                  @change="changeEditDate" v-model="itemEdit.invoice_date_create_beauty" type="text"></b-form-input>
               </b-form-group>
               <b-form-group label="Ngày lấy">
-                <b-form-input
-                  autocomplete="off"
-                  autocapitalize
-                  disabled
-                  v-model="itemEdit.invoice_date_get_beauty"
-                  :disable="true"
-                  type="text"
-                ></b-form-input>
+                <b-form-input autocomplete="off" autocapitalize disabled v-model="itemEdit.invoice_date_get_beauty"
+                  :disable="true" type="text"></b-form-input>
               </b-form-group>
 
               <b-form-group label="Sdt">
-                <b-form-input
-                  type="search"
-                  autocomplete="off"
-                  v-model="itemEdit.invoice_phone"
-                ></b-form-input>
+                <b-form-input type="search" autocomplete="off" v-model="itemEdit.invoice_phone"></b-form-input>
               </b-form-group>
 
               <b-form-group label="Món">
-                <b-form-tags
-                  remove-on-delete
-                  tag-variant="primary"
-                  :value="getTag(itemEdit.invoice_tag)"
-                  ref="itemEditInvoiceTag"
-                ></b-form-tags>
+                <b-form-tags remove-on-delete tag-variant="primary" :value="getTag(itemEdit.invoice_tag)"
+                  ref="itemEditInvoiceTag"></b-form-tags>
               </b-form-group>
-              <b-form-group
-                id="input-group-3"
-                label="Loại thế:"
-                label-for="input-3"
-              >
-                <b-form-select
-                  v-model="itemEdit.invoice_cat"
-                  :options="['THẾ MỚI', 'ĐÓNG LÃI', 'KHÁC']"
-                  :disabled="itemEdit.invoice_status ? true : false"
-                  required
-                ></b-form-select>
+              <b-form-group id="input-group-3" label="Loại thế:" label-for="input-3">
+                <b-form-select v-model="itemEdit.invoice_cat" :options="['THẾ MỚI', 'ĐÓNG LÃI', 'KHÁC']"
+                  :disabled="itemEdit.invoice_status ? true : false" required></b-form-select>
               </b-form-group>
             </b-col>
             <b-col cols="4">
               <b-form-group>
-                <b-button
-                  @click="intemSingle"
-                  block
-                  variant="primary"
-                  :disabled="itemEdit.invoice_status ? true : false"
-                  >In giấy</b-button
-                >
-                <b-button
-                  @click="edit_invoice()"
-                  block
-                  variant="primary"
-                  :disabled="itemEdit.invoice_status ? true : false"
-                  >Chỉnh giấy</b-button
-                >
-                <b-button
-                  block
-                  variant="success"
-                  @click="check_invoice()"
-                  :disabled="itemEdit.invoice_status ? true : false"
-                  >Chuộc đồ</b-button
-                >
-                <b-button
-                  block
-                  variant="warning"
-                  @click="sell_invoice()"
-                  :disabled="itemEdit.invoice_status ? true : false"
-                  >Thanh Lý</b-button
-                >
+                <b-button @click="intemSingle" block variant="primary"
+                  :disabled="itemEdit.invoice_status ? true : false">In giấy</b-button>
+                <b-button @click="edit_invoice()" block variant="primary"
+                  :disabled="itemEdit.invoice_status ? true : false">Chỉnh giấy</b-button>
+                <b-button block variant="success" @click="check_invoice()"
+                  :disabled="itemEdit.invoice_status ? true : false">Chuộc đồ</b-button>
+                <b-button block variant="warning" @click="sell_invoice()"
+                  :disabled="itemEdit.invoice_status ? true : false">Thanh Lý</b-button>
 
-                <b-button
-                  block
-                  variant="danger"
-                  @click="lost_invoice()"
-                  :disabled="itemEdit.invoice_status ? true : false"
-                  >Mất giấy</b-button
-                >
-                <b-button block variant="danger" @click="delete_invoice()"
-                  >Xóa Giấy</b-button
-                >
+                <b-button block variant="danger" @click="lost_invoice()"
+                  :disabled="itemEdit.invoice_status ? true : false">Mất giấy</b-button>
+                <b-button block variant="danger" @click="delete_invoice()">Xóa Giấy</b-button>
               </b-form-group>
               <b-form-group>
                 <template #label>
                   <h5 class="text-center">Thông tin</h5>
                 </template>
-                <b-icon
-                  icon="check-square-fill"
-                  :variant="itemEdit.invoice_status ? 'primary' : 'success'"
-                ></b-icon>
+                <b-icon icon="check-square-fill" :variant="itemEdit.invoice_status ? 'primary' : 'success'"></b-icon>
                 {{ itemEdit.invoice_status ? "Đã chuộc" : "Chưa chuộc" }}
               </b-form-group>
               <b-form-group>
@@ -258,22 +140,31 @@
                 </table>
               </b-form-group>
             </b-col>
+            <b-col cols="12">
+              <div v-if="itemEdit.matgiay">
+                <h3 class="text-danger font-weiglt-bold text-center">GIẤY NÀY ĐÃ BÁO MẤT VÀ CHO CHUỘC</h3>
+
+                <b-row>
+                  <b-col cols="12">
+                    <p>{{ itemEdit.matgiay.thongtin }}</p>
+                    <p>{{ itemEdit.matgiay.thongtin }}</p>
+                  </b-col>
+                  <b-col :cols="Math.round(12 / itemEdit.matgiay.hinhanh.length)"
+                    v-for="itemMatgiay, index in itemEdit.matgiay.hinhanh" :key="index">
+                    <b-img style="width: 100px; height: 100px" :src="itemMatgiay.link" alt="Preview Image" fluid
+                      class="mb-2"></b-img>
+                  </b-col>
+                </b-row>
+              </div>
+            </b-col>
           </b-row>
         </div>
       </b-modal>
       <div>
         <b-row>
           <b-col cols="12" class="mb-0">
-            <b-table-simple
-              small
-              class="mb-0"
-              style="margin-bottom: 0px !important"
-            >
-              <b-thead
-                head-variant="light"
-                class="text-center"
-                style="margin-bottom: 0px !important"
-              >
+            <b-table-simple small class="mb-0" style="margin-bottom: 0px !important">
+              <b-thead head-variant="light" class="text-center" style="margin-bottom: 0px !important">
                 <b-tr>
                   <b-th>Mã</b-th>
                   <b-th>Tên</b-th>
@@ -292,155 +183,62 @@
               <b-tbody>
                 <b-tr>
                   <b-td>
-                    <b-input
-                      class="filter_input"
-                      style="text-transform: uppercase; text-align: center"
-                      v-model="filter_ma"
-                      autocomplete="off"
-                      placeholder="Mã"
-                      type="search"
-                      @change="refreshTable()"
-                    ></b-input>
+                    <b-input class="filter_input" style="text-transform: uppercase; text-align: center"
+                      v-model="filter_ma" autocomplete="off" placeholder="Mã" type="search"
+                      @change="refreshTable()"></b-input>
                   </b-td>
                   <b-td>
-                    <b-input
-                      class="filter_input"
-                      style="text-transform: uppercase; text-align: center"
-                      v-model="filter_ten"
-                      autocomplete="off"
-                      placeholder="Tên"
-                      type="search"
-                      @change="refreshTable()"
-                    ></b-input>
+                    <b-input class="filter_input" style="text-transform: uppercase; text-align: center"
+                      v-model="filter_ten" autocomplete="off" placeholder="Tên" type="search"
+                      @change="refreshTable()"></b-input>
                   </b-td>
-                  <b-td
-                    ><b-input
-                      class="filter_input"
-                      style="text-transform: uppercase; text-align: center"
-                      v-model="filter_ngaycam_start"
-                      autocomplete="off"
-                      type="search"
-                      placeholder="Ngày Đầu"
-                      @change="refreshTable()"
-                    ></b-input
-                  ></b-td>
+                  <b-td><b-input class="filter_input" style="text-transform: uppercase; text-align: center"
+                      v-model="filter_ngaycam_start" autocomplete="off" type="search" placeholder="Ngày Đầu"
+                      @change="refreshTable()"></b-input></b-td>
                   <b-td>
-                    <b-input
-                      type="search"
-                      autocomplete="off"
-                      class="filter_input"
-                      placeholder="Ngày End"
-                      v-model="filter_ngaycam_end"
-                      @change="refreshTable()"
-                    ></b-input
-                  ></b-td>
+                    <b-input type="search" autocomplete="off" class="filter_input" placeholder="Ngày End"
+                      v-model="filter_ngaycam_end" @change="refreshTable()"></b-input></b-td>
                   <b-td>
-                    <b-input
-                      type="search"
-                      class="filter_input"
-                      autocomplete="off"
-                      placeholder="Tiền Đầu"
-                      v-model="filter_sotien_start"
-                      @change="refreshTable()"
-                    ></b-input
-                  ></b-td>
+                    <b-input type="search" class="filter_input" autocomplete="off" placeholder="Tiền Đầu"
+                      v-model="filter_sotien_start" @change="refreshTable()"></b-input></b-td>
                   <b-td>
-                    <b-input
-                      class="filter_input"
-                      type="search"
-                      autocomplete="off"
-                      placeholder="Tiền End"
-                      v-model="filter_sotien_end"
-                      @change="refreshTable()"
-                    ></b-input>
+                    <b-input class="filter_input" type="search" autocomplete="off" placeholder="Tiền End"
+                      v-model="filter_sotien_end" @change="refreshTable()"></b-input>
                   </b-td>
                   <b-td>
-                    <b-form-select
-                      v-model="filter_invoice_type"
-                      class="filter_input"
-                      :options="option_filter_type"
-                      @change="refreshTable()"
-                    ></b-form-select
-                  ></b-td>
+                    <b-form-select v-model="filter_invoice_type" class="filter_input" :options="option_filter_type"
+                      @change="refreshTable()"></b-form-select></b-td>
                   <b-td>
-                    <b-form-select
-                      v-model="filter_status"
-                      class="filter_input"
-                      :options="option_filter_status"
-                      @change="refreshTable()"
-                    ></b-form-select
-                  ></b-td>
+                    <b-form-select v-model="filter_status" class="filter_input" :options="option_filter_status"
+                      @change="refreshTable()"></b-form-select></b-td>
                   <b-td>
-                    <b-form-select
-                      v-model="filter_invoice_store"
-                      @change="refreshTable()"
-                      class="filter_input"
-                      :options="option_filter_store"
-                    ></b-form-select
-                  ></b-td>
+                    <b-form-select v-model="filter_invoice_store" @change="refreshTable()" class="filter_input"
+                      :options="option_filter_store"></b-form-select></b-td>
                   <b-td>
-                    <b-form-select
-                      v-model="filter_invoice_store_type"
-                      @change="refreshTable()"
-                      class="filter_input"
-                      :options="option_filter_store_type"
-                    ></b-form-select
-                  ></b-td>
+                    <b-form-select v-model="filter_invoice_store_type" @change="refreshTable()" class="filter_input"
+                      :options="option_filter_store_type"></b-form-select></b-td>
                   <b-td>
-                    <b-form-select
-                      v-model="filter_invoice_cat"
-                      @change="refreshTable()"
-                      class="filter_input"
-                      :options="option_filter_cat"
-                    ></b-form-select
-                  ></b-td>
+                    <b-form-select v-model="filter_invoice_cat" @change="refreshTable()" class="filter_input"
+                      :options="option_filter_cat"></b-form-select></b-td>
                   <b-td>
-                    <b-form-tags
-                      class="filter_input"
-                      remove-on-delete
-                      placeholder="loại sản phẩm"
-                      tag-variant="primary"
-                      @input="refreshTable()"
-                      v-model="filter_invoice_tag"
-                    ></b-form-tags>
-                  </b-td> </b-tr
-              ></b-tbody>
+                    <b-form-tags class="filter_input" remove-on-delete placeholder="loại sản phẩm" tag-variant="primary"
+                      @input="refreshTable()" v-model="filter_invoice_tag"></b-form-tags>
+                  </b-td> </b-tr></b-tbody>
             </b-table-simple>
           </b-col>
         </b-row>
 
         <b-row class="">
           <b-col cols="3">
-            <b-form-group
-              label="Hiển thị"
-              label-for="per-page-select"
-              label-cols-sm="6"
-              label-cols-md="4"
-              label-cols-lg="3"
-              label-align-sm="right"
-              label-size="sm"
-              class="mb-0"
-            >
-              <b-form-select
-                id="per-page-select"
-                v-model="perPage"
-                :options="[50, 100, 200]"
-                size="sm"
-              ></b-form-select>
+            <b-form-group label="Hiển thị" label-for="per-page-select" label-cols-sm="6" label-cols-md="4"
+              label-cols-lg="3" label-align-sm="right" label-size="sm" class="mb-0">
+              <b-form-select id="per-page-select" v-model="perPage" :options="[50, 100, 200]" size="sm"></b-form-select>
             </b-form-group>
           </b-col>
           <b-col cols="4"></b-col>
           <b-col cols="4" class="mb-2">
-            <b-pagination
-              v-model="currentPage"
-              :total-rows="totalRows"
-              :per-page="perPage"
-              size="sm"
-              align="right"
-              first-number
-              last-number
-              class="my-0"
-            >
+            <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" size="sm" align="right"
+              first-number last-number class="my-0">
               <template #first-text><span class="">Đầu</span></template>
               <template #prev-text><span class="">Lùi</span></template>
               <template #next-text><span class="">Tới</span></template>
@@ -448,36 +246,17 @@
             </b-pagination>
           </b-col>
           <b-col cols="12" class="min-vw-100">
-            <b-table
-              style="min-height: 400px"
-              class="my_table align-middle w-auto"
-              responsive
-              :per-page="perPage"
-              :current-page="currentPage"
-              bordered
-              no-border-collapse
-              ref="my_table"
-              :busy="tableOverlay"
-              :items="myProvider"
-              show-empty
-              select-mode="single"
-              selectable
-              head-row-variant="success"
-              :fields="tableField"
-              @row-dblclicked="
+            <b-table style="min-height: 400px" class="my_table align-middle w-auto" responsive :per-page="perPage"
+              :current-page="currentPage" bordered no-border-collapse ref="my_table" :busy="tableOverlay"
+              :items="myProvider" show-empty select-mode="single" selectable head-row-variant="success"
+              :fields="tableField" @row-dblclicked="
                 cellClick(arguments[0], arguments[1], arguments[2])
-              "
-            >
+                ">
               <template #cell(index)="data">
                 {{ data.index + 1 }}
               </template>
               <template #cell(invoice_tag)="data">
-                <b-badge
-                  v-for="(item, index) in data.value"
-                  :key="index"
-                  variant="primary"
-                  >{{ item }}</b-badge
-                >
+                <b-badge v-for="(item, index) in data.value" :key="index" variant="primary">{{ item }}</b-badge>
               </template>
               <template #cell(invoice_money)="data">
                 <div class="textLeft">{{ data.value }}</div>
@@ -498,70 +277,36 @@
                 </span>
               </template>
               <template #cell(invoice_count)="data">
-                <div
-                  class=""
-                  v-b-tooltip.hover
-                  :title="
-                    data.value < 90
-                      ? 'Thời gian thế dưới 3 tháng, an toàn'
-                      : data.value > 90 && data.value < 180
-                      ? 'Thời gian thế 3-6 tháng, lưu ý'
-                      : 'Thời gian thế trên 6 tháng, nguy hiểm'
-                  "
-                >
-                  <span
-                    v-if="data.item.invoice_status"
-                    style="text-align: left !important"
-                  >
-                    <b-icon
-                      icon="backspace-reverse-fill"
-                      variant="primary"
-                    ></b-icon>
+                <div class="" v-b-tooltip.hover :title="data.value < 90
+                  ? 'Thời gian thế dưới 3 tháng, an toàn'
+                  : data.value > 90 && data.value < 180
+                    ? 'Thời gian thế 3-6 tháng, lưu ý'
+                    : 'Thời gian thế trên 6 tháng, nguy hiểm'
+                  ">
+                  <span v-if="data.item.invoice_status" style="text-align: left !important">
+                    <b-icon icon="backspace-reverse-fill" variant="primary"></b-icon>
                   </span>
 
                   <span v-else>
-                    <b-icon
-                      icon="backspace-reverse-fill"
-                      variant="success"
-                    ></b-icon>
+                    <b-icon icon="backspace-reverse-fill" variant="success"></b-icon>
                   </span>
                   {{ data.value }}
 
-                  <b-icon
-                    v-if="data.value < 90"
-                    icon="exclamation-circle-fill"
-                    variant="success"
-                  ></b-icon>
-                  <b-icon
-                    v-if="data.value > 90 && data.value < 180"
-                    icon="exclamation-circle-fill"
-                    variant="warning"
-                  ></b-icon>
-                  <b-icon
-                    v-if="data.value > 180"
-                    icon="exclamation-circle-fill"
-                    variant="danger"
-                  ></b-icon>
+                  <b-icon v-if="data.value < 90" icon="exclamation-circle-fill" variant="success"></b-icon>
+                  <b-icon v-if="data.value > 90 && data.value < 180" icon="exclamation-circle-fill"
+                    variant="warning"></b-icon>
+                  <b-icon v-if="data.value > 180" icon="exclamation-circle-fill" variant="danger"></b-icon>
                 </div>
               </template>
               <template #cell(tool)="data">
                 <!-- `data.value` is the value after formatted by the Formatter -->
-                <b-button
-                  size="sm"
-                  variant="primary"
-                  @click="deleteItem(data.item.id)"
-                  >Xóa</b-button
-                >
+                <b-button size="sm" variant="primary" @click="deleteItem(data.item.id)">Xóa</b-button>
               </template>
               <template #cell(invoice_status)="data">
                 <div>
                   <span>
-                    <b-form-checkbox
-                      @change="toggleStatus(data.item)"
-                      v-model="data.item.invoice_status"
-                      switch
-                      v-show="data.item.invoice_status"
-                    >
+                    <b-form-checkbox @change="toggleStatus(data.item)" v-model="data.item.invoice_status" switch
+                      v-show="data.item.invoice_status">
                     </b-form-checkbox>
                   </span>
                   <span v-if="data.item.invoice_status">
@@ -576,11 +321,7 @@
               </template>
               <template #cell(invoice_label)="data">
                 <!-- `data.value` is the value after formatted by the Formatter -->
-                <b-form-checkbox
-                  v-model="data.item.invoice_label"
-                  @change="toggleInTem(data.item)"
-                  switch
-                >
+                <b-form-checkbox v-model="data.item.invoice_label" @change="toggleInTem(data.item)" switch>
                   <span v-if="data.item.invoice_label">
                     <!-- da chuoc -->
                     <b-badge variant="primary">Đã In</b-badge>
@@ -975,7 +716,7 @@ export default {
         alert("Vui lòng kiểm tra các trường");
       }
     },
-    intem() {},
+    intem() { },
     intemSingle() {
       let list_tem = [];
       list_tem.push({
@@ -1466,7 +1207,7 @@ export default {
           .select("*", { count: "exact", head: true });
         let query = this.$supabase
           .from("invoice")
-          .select("*")
+          .select("*,matgiay(*,hinhanh(*))")
           .range(s, e)
           .order(sortBy, { ascending: ctx.sortDesc });
         if (this.filter_ten && this.filter_ten.length > 1) {
@@ -1656,33 +1397,41 @@ body {
   height: 100vh;
   min-height: 100vh;
 }
+
 .my_table tr td {
   text-align: left;
   text-align: center !important;
   padding: 1px !important;
   margin: 0 !important;
 }
+
 .tdIndex {
   text-align: center !important;
 }
+
 .textLeft {
   text-align: left !important;
 }
+
 .myThClass {
   min-width: 200px !important;
   text-align: center;
 }
+
 .myThClass20percent {
   min-width: 20% !important;
   text-align: center;
 }
+
 .myThClass500px {
   min-width: 300px !important;
   text-align: center;
 }
+
 .filter_input {
   margin: 3px;
 }
+
 .my_table td:hover {
   cursor: cell;
   background-color: antiquewhite;

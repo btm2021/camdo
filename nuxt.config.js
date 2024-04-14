@@ -88,8 +88,6 @@ export default {
         config.devtool = "inline-source-map"
     }
   },
-  server: {
-    host: '0' // default: localhost
-  }
+  
 
 }

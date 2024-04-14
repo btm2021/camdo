@@ -170,7 +170,9 @@
                   >
                 </p>
               </b-td>
+              
             </b-tr>
+        
             <b-tr>
               <b-td colspan="6">
                 <b-button variant="success" @click="check_invoice()">
@@ -1335,8 +1337,8 @@
               <b-dropdown-item href="/camdo/intem"
                 >In tem bọc cầm đồ</b-dropdown-item
               >
-              <b-dropdown-item href="/camdo/chuocdo"
-                >Đánh dấu chuộc</b-dropdown-item
+              <b-dropdown-item href="/camdo/matgiay"
+                >Mất giấy</b-dropdown-item
               >
               <b-dropdown-item href="/camdo/thanhly"> Thanh lý</b-dropdown-item>
             </b-dropdown-group>
@@ -2353,7 +2355,7 @@ export default {
     checkDoThe(id) {
       this.$supabase
         .from("invoice")
-        .select()
+        .select("*")
         .eq("invoice_number", id)
         .then(async (data) => {
           this.tempCheckDothe = data.data[0];

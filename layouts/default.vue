@@ -152,9 +152,9 @@
     <b-modal no-stacking id="modal_sanpham" size="xl" hide-footer @hidden="closeModalSanPham"
       title="Thông tin sản phẩm">
       <b-overlay :show="overlaySanPham">
-        <b-row v-if="itemFromScanner">
+        <b-row v-if="itemFromScanner && itemFromScanner._sotheodoi">
 
-          <b-col cols="5">
+          <b-col cols="4">
             <b-img lazy :src="itemFromScanner.anhsanpham" center fluid />
             <b-table-simple small hover bordered responsive fixed class="default_table">
               <b-tbody>
@@ -174,9 +174,10 @@
                   </b-td>
                   <b-td>
                     <div class="value text-danger">
-                      <span class="blink">👉</span>
+                      <h3>
+                    
                       {{ $formatN(itemFromScanner.giahientai || 0) }}
-                      <span class="blink">👈</span>
+                      </h3>
                     </div>
                   </b-td>
                 </b-tr>
@@ -216,7 +217,7 @@
                     </div>
                   </b-td>
                 </b-tr>
-                
+
                 <b-tr>
                   <b-td>
                     <span class="title">Ngày Bán</span>
@@ -350,19 +351,94 @@
               </b-tbody>
             </b-table-simple>
           </b-col>
-          <b-col v-if="itemFromScanner._sotheodoi" cols="3">
-            <h3>Thông tin hóa đơn nhập hàng</h3>
-            <div class="font-weight-bold border">
-
-              Thông tin Hóa đơn nhập : <a :href="'/hoadonnhap/'+itemFromScanner._sotheodoi.id">{{ itemFromScanner._sotheodoi.id }}</a><br />
-              Ngày nhập : {{ $moment(itemFromScanner._sotheodoi.created_at).format('DD/MM/YYYY') }}<br />
-              Tên khách : {{ itemFromScanner._sotheodoi.tenkhach }}<br />
-              Địa chỉ : {{ itemFromScanner._sotheodoi.diachi }}<br />
-              GhiChú : {{ itemFromScanner._sotheodoi.ghichu }}<br />
-              Khối lượng tổng : {{ itemFromScanner._sotheodoi.klt }}<br />
-              Khối lượng hột : {{ itemFromScanner._sotheodoi.klh }}<br />
-              Khối lượng vàng : {{ itemFromScanner._sotheodoi.klv }}<br />
-            </div>
+          <b-col v-if="itemFromScanner._sotheodoi" cols="4">
+            <h4 class="text-center">HÓA ĐƠN NHẬP</h4>
+            <b-table-simple small hover bordered responsive fixed>
+              <b-tbody>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Mã Hóa đơn Nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      <a :href="'/hoadon/chitiethoadonnhap?id=' + itemFromScanner._sotheodoi.id">{{
+                        itemFromScanner._sotheodoi.id }}</a>
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Ngày nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ $moment(itemFromScanner._sotheodoi.created_at).format('DD/MM/YYYY') }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Tên khách nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner._sotheodoi.tenkhach }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Địa chỉ</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner._sotheodoi.diachi }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Khối lượng tổng</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner._sotheodoi.klt }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Khối lượng Hột</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner._sotheodoi.klh }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Khối lượng Vàng nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner._sotheodoi.klv }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Ghi chú nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner._sotheodoi.ghichu }}
+                    </div>
+                  </b-td>
+                </b-tr>
+              </b-tbody>
+            </b-table-simple>
+           
           </b-col>
         </b-row>
       </b-overlay>
@@ -1112,7 +1188,7 @@
               <b-dropdown-item href="/hoadon/">Hóa đơn</b-dropdown-item>
             </b-dropdown-group>
             <b-dropdown-group id="dropdown-group-1" header="Hóa đơn nhập">
-              <b-dropdown-item href="/hoadon/hoadonnhap">Hóa đơn Nhập Hàng</b-dropdown-item>
+              <b-dropdown-item href="/hoadon/themhoadonnhap">Thêm Hóa đơn Nhập Hàng</b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -1120,6 +1196,7 @@
         <b-navbar-nav>
           <b-nav-item-dropdown text="Công cụ">
             <b-dropdown-group id="dropdown-group-1" header="Sản phẩm" style="width: 300px">
+              <b-dropdown-item href="/tool/kiemcan">Kiểm cân</b-dropdown-item>
               <b-dropdown-item href="/tool/nhacungcap">Nhà cung cấp</b-dropdown-item>
               <b-dropdown-item href="/tv">Bảng giá</b-dropdown-item>
               <b-dropdown-item href="/tool/cannuoc">Cân Nước</b-dropdown-item>

@@ -1175,6 +1175,7 @@
               <b-dropdown-item href="/sanpham/intem">In tem sản phẩm</b-dropdown-item>
             </b-dropdown-group>
             <b-dropdown-group id="dropdown-group-2" header="Bảng giá">
+              <b-dropdown-item href="/sanpham/hoadonnhap">Hóa đơn nhập</b-dropdown-item>
               <b-dropdown-item href="/">Bảng Giá</b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>

@@ -66,6 +66,7 @@
                   </b-form-invalid-feedback>
                 </b-form-group>
               </ValidationProvider>
+              
               <ValidationProvider rules="required" v-slot="{ errors, valid, failedRules }">
                 <b-form-group label="Ảnh">
                   <b-form-file v-model="files" :state="valid" placeholder="Choose files or take photos..."

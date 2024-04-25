@@ -152,7 +152,7 @@
     <b-modal no-stacking id="modal_sanpham" size="xl" hide-footer @hidden="closeModalSanPham"
       title="Thông tin sản phẩm">
       <b-overlay :show="overlaySanPham">
-        <b-row v-if="itemFromScanner && itemFromScanner._sotheodoi">
+        <b-row v-if="itemFromScanner">
 
           <b-col cols="4">
             <b-img lazy :src="itemFromScanner.anhsanpham" center fluid />
@@ -164,7 +164,7 @@
                   </b-td>
                   <b-td>
                     <div class="value">
-                      {{ $formatN(itemFromScanner._sotheodoi.thanhtien || 0) }}
+                      {{ $formatN(itemFromScanner._sotheodoi ? itemFromScanner._sotheodoi.thanhtien : 0) }}
                     </div>
                   </b-td>
                 </b-tr>
@@ -175,8 +175,8 @@
                   <b-td>
                     <div class="value text-danger">
                       <h3>
-                    
-                      {{ $formatN(itemFromScanner.giahientai || 0) }}
+
+                        {{ $formatN(itemFromScanner.giahientai || 0) }}
                       </h3>
                     </div>
                   </b-td>
@@ -344,7 +344,7 @@
                   </b-td>
                   <b-td>
                     <div class="value">
-                      {{ itemFromScanner._sotheodoi.giamua || 0 }}
+                      {{ (itemFromScanner._sotheodoi) ? itemFromScanner._sotheodoi.giamua : 0 }}
                     </div>
                   </b-td>
                 </b-tr>
@@ -438,7 +438,7 @@
                 </b-tr>
               </b-tbody>
             </b-table-simple>
-           
+
           </b-col>
         </b-row>
       </b-overlay>
@@ -867,9 +867,12 @@
       :title="'Giỏ hàng : ' + $moment().format('DD/MM/YYYY')" shadow @shown="getGioHang" @hidden="showTinhToan = false">
       <b-overlay :show="overlayGioHang">
         <div class="px-3 py-2">
-          <b-table bordered no-border-collapse class="default_tablegiohang text-center" hover ref="default_tablegiohang"
-            style="" :fields="fieldsGioHang" :items="listGioHang" show-empty small select-mode="multi" selectable
-            selected-variant="success" responsive @row-selected="onRowSelectedGioHang">
+          <b-input placeholder="Gõ tìm sản phẩm..." v-model="filterGioHang" size="xl"
+            style="color:red;font-size:xx-large;text-align: center;text-transform:uppercase;font-weight: bold;"
+            type="search" autocomplete="off" class="px-3 mb-3"></b-input>
+          <b-table :filter="filterGioHang" bordered no-border-collapse class="default_tablegiohang text-center" hover
+            ref="default_tablegiohang" style="" :fields="fieldsGioHang" :items="listGioHang" show-empty small
+            select-mode="multi" selectable selected-variant="success" responsive @row-selected="onRowSelectedGioHang">
             <template #cell(stt)="data">
               {{ data.index + 1 }}
             </template>
@@ -1226,6 +1229,12 @@
         <b-navbar-nav>
           <b-nav-item v-b-toggle.sidebargiohang>Giỏ hàng</b-nav-item>
         </b-navbar-nav>
+        <b-navbar-nav class="ml-auto">
+          <b-nav-form @submit.prevent="findItem">
+            <b-input style="text-transform: uppercase;" autocomplete="off" v-model="searchInput" size="sm"
+              type="Tìm kiếm..." class="mr-sm-2" placeholder="Search"></b-input>
+          </b-nav-form>
+        </b-navbar-nav>
       </b-collapse>
     </b-navbar>
 
@@ -1366,6 +1375,8 @@ DocTienBangChu.prototype.doc = function (SoTien) {
 export default {
   data() {
     return {
+      filterGioHang: null,
+      searchInput: null,
       id_giohang: null,
       default_overlaySanPham: false,
       formDefault_sanpham_gia: null,
@@ -1412,16 +1423,16 @@ export default {
             return val;
           },
         },
-        { key: "maso", label: "Mã" },
-        { key: "banggia.code", label: "Loại" },
-        { key: "banggia.sellingPrice", label: "GiáV" },
-        { key: "kieusanpham.short", label: "Kiểu" },
-        { key: "nhacungcap.short", label: "Chành" },
-        { key: "klt", label: "Tổng" },
-        { key: "klh", label: "Hột" },
-        { key: "klv", label: "Vàng" },
-        { key: "cong", label: "Công" },
-        { key: "giahientai", label: "Giá" },
+        { key: "maso", label: "Mã", sortable: true },
+        { key: "banggia.code", label: "Loại", sortable: true },
+        { key: "banggia.sellingPrice", label: "GiáV", sortable: true },
+        { key: "kieusanpham.short", label: "Kiểu", sortable: true },
+        { key: "nhacungcap.short", label: "Chành", sortable: true },
+        { key: "klt", label: "Tổng", sortable: true },
+        { key: "klh", label: "Hột", sortable: true },
+        { key: "klv", label: "Vàng", sortable: true },
+        { key: "cong", label: "Công", sortable: true },
+        { key: "giahientai", label: "Giá", sortable: true },
         { key: "remove", label: "Giá" },
       ],
       overlaySanPham: false,
@@ -1566,6 +1577,29 @@ export default {
   components: {},
   computed: {},
   methods: {
+    findItem() {
+      if (this.searchInput && this.searchInput != "") {
+        //SN1150 sp 
+        let input = String(this.searchInput).toUpperCase()
+        const productRegex = /^[S][A-Z][0-9]+$/;
+        //12321321 dothe
+        const itemRegex = /^[0-9]+$/;
+        //4-15042024 hóa đơn
+        const billRegex = /^\d+-\d+$/;
+        if (productRegex.test(input)) {
+
+          this.checkSanPham_search(input)
+        }
+        if (itemRegex.test(input)) {
+
+          this.checkDoThe_search(input)
+        }
+        if (billRegex.test(input)) {
+          console.log('bill')
+        }
+        this.searchInput = null
+      }
+    },
     reset_camdo_kiemtra() {
       if (!this.camdo_kiemtra_giaythe_danhan) {
         this.camdo_kiemtra_bocdo = null;
@@ -2163,6 +2197,17 @@ export default {
           this.check_invoice_auto();
         });
     },
+    checkDoThe_search(id) {
+      this.$supabase
+        .from("invoice")
+        .select("*")
+        .eq("invoice_number", id)
+        .then(async (data) => {
+          this.tempCheckDothe = data.data[0];
+          this.$bvModal.show("modal_camdo");
+          //unset
+        });
+    },
     async capnhatgiohang() {
       return new Promise((resolve, reject) => {
         console.log("cập nhật giỏ hàng...");
@@ -2265,11 +2310,12 @@ export default {
       this.$supabase
         .from("sanpham")
         .select(
-          "*,kieusanpham(*),banggia(*),nhacungcap(*),kihieu(*),hoadon_ban(*),giohangsanpham(*),sotheodoimuahang(*)"
+          "*,kieusanpham(*),banggia(*),nhacungcap(*),kihieu(*),hoadon_ban(*),giohangsanpham(*),sotheodoimuahang(*),hoadonnhap(*)"
         )
         .eq("maso", id)
         .then(async (data) => {
           let d = data.data[0];
+          console.log(d)
           //them cac truong
           //giahientai
           d.giahientai = d.klv * d.banggia.sellingPrice + d.cong * 1000;
@@ -2285,6 +2331,45 @@ export default {
           this.itemFromScanner = d;
 
           this.insertGioHang(d);
+          this.$bvModal.show("modal_sanpham");
+          // if (d) {
+          //   this.itemFromScanner = { ...d, ...a };
+          //   //  console.log(this.itemFromScanner);
+          //   this.$bvModal.show("modal_sanpham");
+          // } else {
+          //   alert("Mã sản phẩm không tồn tại");
+          // }
+        });
+    },
+    checkSanPham_search(id) {
+      //DL2083
+      id = String(id).toUpperCase();
+      //insert to gioHang
+      console.log(id);
+      this.$supabase
+        .from("sanpham")
+        .select(
+          "*,kieusanpham(*),banggia(*),nhacungcap(*),kihieu(*),hoadon_ban(*),giohangsanpham(*),sotheodoimuahang(*),hoadonnhap(*)"
+        )
+        .eq("maso", id)
+        .then(async (data) => {
+          let d = data.data[0];
+
+          //them cac truong
+          //giahientai
+          d.giahientai = d.klv * d.banggia.sellingPrice + d.cong * 1000;
+          //gialech
+          if (!d.daban) {
+            d.chenhlech = d.giahientai - d.giatrinhap;
+          }
+          if (d.sotheodoimuahang) {
+            d._sotheodoi = d.sotheodoimuahang[0]
+          } else {
+            d._sotheodoi = null
+          }
+          this.itemFromScanner = d;
+
+          //   this.insertGioHang(d);
           this.$bvModal.show("modal_sanpham");
           // if (d) {
           //   this.itemFromScanner = { ...d, ...a };

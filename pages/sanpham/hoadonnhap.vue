@@ -2,15 +2,24 @@
   <div>
     <b-card>
       <b-row>
-
-
         <b-col cols="6">
           <b-form-group label="Hóa đơn nhập">
-            <b-button href="/sanpham/taohoadonnhap" variant="primary">Tạo mới hóa đơn nhập hàng chành</b-button>
+            <b-button href="/sanpham/taohoadonnhap" variant="primary"
+              >Tạo mới hóa đơn nhập hàng chành</b-button
+            >
           </b-form-group>
           <b-overlay :show="overlay.hoadon">
-            <b-table select-mode="single" selectable selected-variant="success" small :items="listhoadon"
-              :fields="fieldsHoaDon">
+            {{ filterSanpham }}
+            <b-table
+              select-mode="single"
+              selectable
+              selected-variant="success"
+              small
+              @row-selected="onRowSelected"
+              ref="selectableTable"
+              :items="listhoadon"
+              :fields="fieldsHoaDon"
+            >
               <template #cell(ngaytao)="data">
                 <b class="text-danger">{{
                   $moment(data.value).format("DD-MM-YYYY")
@@ -25,19 +34,31 @@
               <template #row-details="row">
                 <b-card>
                   <b-row class="mb-2">
-                    <b-col cols="6" class="mt-2" v-for="(anh, index) in row.item.hinhanh" :key="index">
+                    <b-col
+                      cols="6"
+                      class="mt-2"
+                      v-for="(anh, index) in row.item.hinhanh"
+                      :key="index"
+                    >
                       <b-img lazy :src="anh.link" style="height: 300px"></b-img>
                     </b-col>
                   </b-row>
 
-                  <b-button size="sm" @click="row.toggleDetails">Ẩn chi tiết</b-button>
+                  <b-button size="sm" @click="row.toggleDetails"
+                    >Ẩn chi tiết</b-button
+                  >
                 </b-card>
               </template>
               <template #cell(nhacungcap.short)="data">
                 <b class="text-primary">{{ data.value }}</b>
               </template>
               <template #cell(tool)="data">
-                <b-button size="sm" variant="danger" @click="removeHoadon(data.item)">Delete</b-button>
+                <b-button
+                  size="sm"
+                  variant="danger"
+                  @click="removeHoadon(data.item)"
+                  >Delete</b-button
+                >
               </template>
             </b-table>
           </b-overlay>
@@ -47,30 +68,43 @@
           <b-row>
             <b-col cols="6">
               <b-form-group label="Ngày tạo sản phẩm">
-                <b-form-datepicker @input="refreshListSanPham" v-model="dayChoice"></b-form-datepicker>
+                <b-form-datepicker
+                  @input="refreshListSanPham"
+                  v-model="dayChoice"
+                ></b-form-datepicker>
               </b-form-group>
             </b-col>
             <b-col cols="6">
               <b-form-group label="Nhập sản phẩm">
-                <b-button variant="primary" @click="taohoadontuongung">Nhập hóa đơn cho sản phẩm</b-button>
+                <b-button variant="primary" @click="taohoadontuongung"
+                  >Nhập hóa đơn cho sản phẩm</b-button
+                >
               </b-form-group>
-
             </b-col>
-
           </b-row>
 
           <b-overlay :show="overlay.sanpham">
-            <b-table select-mode="single" selectable selected-variant="success" :fields="fieldSanpham" small
-              :items="listsanpham">
+            <b-table
+              select-mode="single"
+              selectable
+              :filter="filterSanpham"
+              selected-variant="success"
+              :fields="fieldSanpham"
+              small
+              :items="listsanpham"
+            >
               <template #cell(klv)="data">
                 <b class="text-danger">{{
                   $formatSoVang(data.value).fullStr
                 }}</b>
               </template>
               <template #cell(anhsanpham)="data">
-                <b-img lazy :src="data.value" style="width:50px;height: 50px;"/>
+                <b-img
+                  lazy
+                  :src="data.value"
+                  style="width: 50px; height: 50px"
+                />
               </template>
-
             </b-table>
           </b-overlay>
         </b-col>
@@ -102,12 +136,13 @@ export default {
         { key: "banggia.code", label: "Loại vàng", sortable: true },
         { key: "kieusanpham.short", label: "Kiểu", sortable: true },
         { key: "nhacungcap.short", label: "Ncc", sortable: true },
-
       ],
       overlay: {
         hoadon: true,
         sanpham: true,
       },
+      selectedChanh: null,
+      filterSanpham: null,
     };
   },
   mounted() {
@@ -122,8 +157,21 @@ export default {
     });
   },
   methods: {
+    onRowSelected(items) {
+      this.selectedChanh = items;
+      if (items.length > 0) {
+        this.filterSanpham = items[0].nhacungcap.short;
+      } else {
+        this.filterSanpham = null;
+      }
+    },
     taohoadontuongung() {
-
+      if (this.selectedChanh && this.selectedChanh.length > 0) {
+      } else {
+        alert("Vui lòng chọn 1 nhà cung cấp tương ứng");
+      }
+      //tạo hóa đơn tương ứng cho sản phẩm
+      //
     },
     shortenUUID(uuid) {
       return uuid.substring(0, 3) + "..." + uuid.substring(uuid.length - 3);
@@ -157,7 +205,6 @@ export default {
       });
     },
     refreshListSanPham() {
-
       this.overlay.sanpham = true;
       this.getlistsanpham(this.dayChoice).then((data) => {
         this.listsanpham = data;
@@ -166,18 +213,18 @@ export default {
       });
     },
     async getlistsanpham(datetime) {
-      console.log(datetime)
-      let t1 = (new Date(datetime)).toISOString()
+      console.log(datetime);
+      let t1 = new Date(datetime).toISOString();
       let date2 = new Date(datetime);
-      date2.setDate(date2.getDate() + 1) // just for example so that we do not have the same date twice
-      let t2 = date2.toISOString()
+      date2.setDate(date2.getDate() + 1); // just for example so that we do not have the same date twice
+      let t2 = date2.toISOString();
 
       return new Promise(async (resolve, reject) => {
         let result = await this.$supabase
           .from("sanpham")
           .select("*,nhacungcap(*),banggia(*),kieusanpham(*)")
           .gte("created_at", t1)
-          .lte("created_at", t2)
+          .lte("created_at", t2);
 
         resolve(result.data);
       });

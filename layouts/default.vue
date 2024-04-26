@@ -510,6 +510,94 @@
               </b-tbody>
             </b-table-simple>
           </b-col>
+          <b-col v-else-if="itemFromScanner.hoadonnhap" cols="4">
+            <h4 class="text-center">HÓA ĐƠN NHẬP CHÀNH</h4>
+            <b-table-simple small hover bordered responsive fixed>
+              <b-tbody>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Mã Hóa đơn Nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      <a
+                        :href="
+                          '/sanpham/chitiethoadonnhap?id=' +
+                          itemFromScanner.hoadonnhap.id
+                        "
+                        >{{ itemFromScanner.hoadonnhap.mahoadon }}</a
+                      >
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Ngày nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{
+                        $moment(itemFromScanner.hoadonnhap.ngaytao).format(
+                          "DD/MM/YYYY"
+                        )
+                      }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Tên nhà sản xuất nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner.hoadonnhap.nhacungcap.name }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Địa chỉ nhà cung cấp</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner.hoadonnhap.nhacungcap.address }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Mũi hiệu</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner.hoadonnhap.nhacungcap.short }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Tiêu chuẩn cơ sở</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner.hoadonnhap.nhacungcap.tccs }}
+                    </div>
+                  </b-td>
+                </b-tr>
+
+                <b-tr>
+                  <b-td>
+                    <span class="title">Ghi chú nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner.hoadonnhap.nhacungcap.ghichu }}
+                    </div>
+                  </b-td>
+                </b-tr>
+              </b-tbody>
+            </b-table-simple>
+          </b-col>
         </b-row>
       </b-overlay>
     </b-modal>
@@ -1523,14 +1611,16 @@
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
           <b-nav-form @submit.prevent="findItem">
-            <b-input
-              style="text-transform: uppercase"
-              autocomplete="off"
-              v-model="searchInput"
-              size="sm"
-              placeholder="Tìm kiếm..."
-              class="mr-sm-2"
-            ></b-input>
+            <b-overlay :show="overlay_search">
+              <b-input
+                style="text-transform: uppercase"
+                autocomplete="off"
+                v-model="searchInput"
+                size="sm"
+                placeholder="Tìm kiếm..."
+                class="mr-sm-2"
+              ></b-input>
+            </b-overlay>
           </b-nav-form>
         </b-navbar-nav>
       </b-collapse>
@@ -1760,6 +1850,7 @@ export default {
       camdo_kiemtra_giaythe: null,
       camdo_kiemtra_bocdo: null,
       camdo_kiemtra_giaythe_danhan: false,
+      overlay_search: false,
     };
   },
   watch: {
@@ -1881,6 +1972,7 @@ export default {
       return billNumber;
     },
     findItem() {
+      this.overlay_search = true;
       if (this.searchInput && this.searchInput != "") {
         //SN1150 sp
         let input = String(this.searchInput).toUpperCase();
@@ -2611,7 +2703,7 @@ export default {
       //DL2083
       id = String(id).toUpperCase();
       //insert to gioHang
-      console.log(id);
+
       this.$supabase
         .from("sanpham")
         .select(
@@ -2654,12 +2746,25 @@ export default {
       this.$supabase
         .from("sanpham")
         .select(
-          "*,kieusanpham(*),banggia(*),nhacungcap(*),kihieu(*),hoadon_ban(*),giohangsanpham(*),sotheodoimuahang(*),hoadonnhap(*)"
+          "*,kieusanpham(*),banggia(*),nhacungcap(*),kihieu(*),hoadon_ban(*),giohangsanpham(*),sotheodoimuahang(*),hoadonnhap(*,nhacungcap(*))"
         )
         .eq("maso", id)
         .then(async (data) => {
           let d = data.data[0];
-
+          if (d == undefined) {
+            this.$bvToast.toast(
+              "Có lỗi với Database, dường như dữ liệu cho sản phẩm này bị lỗi",
+              {
+                title: "Thông báo",
+                autoHideDelay: 3000,
+                appendToast: true,
+                variant: "danger",
+              }
+            );
+            this.overlay_search = false;
+            return;
+          }
+          console.log(d);
           //them cac truong
           //giahientai
           d.giahientai = d.klv * d.banggia.sellingPrice + d.cong * 1000;
@@ -2673,7 +2778,7 @@ export default {
             d._sotheodoi = null;
           }
           this.itemFromScanner = d;
-
+          this.overlay_search = false;
           //   this.insertGioHang(d);
           this.$bvModal.show("modal_sanpham");
           // if (d) {

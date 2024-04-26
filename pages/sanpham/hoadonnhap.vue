@@ -22,14 +22,15 @@
                 :fields="fieldsHoaDon"
               >
                 <template #cell(ngaytao)="data">
-                  <b class="text-danger">{{
-                    $moment(data.value).format("DD-MM-YYYY")
-                  }}</b>
+                  <b class="text-danger" @click="data.toggleDetails"
+                    >👇{{ $moment(data.value).format("DD-MM-YYYY") }}👇</b
+                  >
                 </template>
+
                 <template #cell(mahoadon)="data">
-                  <b class="text-danger" @click="data.toggleDetails">{{
-                    shortenUUID(data.value)
-                  }}</b>
+                  <a :href="'/sanpham/chitiethoadonnhap?id=' + data.item.id">
+                    <b class="text-danger">{{ shortenUUID(data.value) }}</b>
+                  </a>
                 </template>
 
                 <template #row-details="row">

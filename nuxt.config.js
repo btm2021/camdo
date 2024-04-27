@@ -40,6 +40,7 @@ export default {
   buildModules: [
     ['nuxt-supabase', {
       supabaseUrl: `https://spbp.trinhminhbao.workers.dev`,
+      //supabaseUrl:'https://ajsrzteoovahabndebyp.supabase.co',
       supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqc3J6dGVvb3ZhaGFibmRlYnlwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwNDY4NjI1OCwiZXhwIjoyMDIwMjYyMjU4fQ.Q0lBT-HTcMLxLGpKgJ_-vz-prKH43nV9czOtm2HvMzU'
     }],
   ],
@@ -55,14 +56,7 @@ export default {
 
   ],
 
-  sentry: {
-    dsn: "https://94263f6f0f79ffb7e7b1c2249a55acdb@o962567.ingest.sentry.io/4506625109262336",
-    // Performance Monitoring
-    tracesSampleRate: 1.0, //  Capture 100% of the transactions
-    // Session Replay
-    replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
-    replaysOnErrorSampleRate: 1.0,
-  },
+
   bootstrapVue: {
     icons: true
   },

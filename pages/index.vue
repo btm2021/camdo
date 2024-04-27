@@ -7,14 +7,7 @@
           <div class="text-right text-danger">
             cập nhật lúc {{ dateTimeEdit }}
           </div>
-          <b-table-simple
-            hover
-            responsive
-            striped
-            bordered
-            class="text-center"
-            style="font-size: 16px"
-          >
+          <b-table-simple hover responsive striped bordered class="text-center" style="font-size: 16px">
             <b-thead>
               <b-tr>
                 <b-th>Tên</b-th>
@@ -24,26 +17,19 @@
             </b-thead>
             <b-tbody>
               <b-tr v-for="(item, index) in giavang" :key="index">
-                <b-td
-                  ><b>{{ item.code }}</b>
+                <b-td><b>{{ item.code }}</b>
                 </b-td>
-                <b-td
-                  >{{ formatN(item.buyingPrice / 1000) }}
+                <b-td>{{ formatN(item.buyingPrice / 1000) }}
                   <span v-if="item.buyChange > 0" class="text-success">
                     ▲ <sub>{{ Math.abs(item.buyChange) / 1000 }}</sub>
                   </span>
-                  <span v-else class="text-danger"
-                    >▼ <sub>{{ Math.abs(item.buyChange) / 1000 }}</sub></span
-                  >
+                  <span v-else class="text-danger">▼ <sub>{{ Math.abs(item.buyChange) / 1000 }}</sub></span>
                 </b-td>
-                <b-td
-                  >{{ formatN(item.sellingPrice / 1000) }}
+                <b-td>{{ formatN(item.sellingPrice / 1000) }}
                   <span v-if="item.sellChange > 0" class="text-success">
                     ▲ <sub>{{ Math.abs(item.sellChange) / 1000 }}</sub>
                   </span>
-                  <span v-else class="text-danger"
-                    >▼ <sub>{{ Math.abs(item.sellChange) / 1000 }}</sub></span
-                  >
+                  <span v-else class="text-danger">▼ <sub>{{ Math.abs(item.sellChange) / 1000 }}</sub></span>
                 </b-td>
               </b-tr>
             </b-tbody>
@@ -63,14 +49,8 @@
         <div v-if="giavangnha" class="mt-3">
           <h3 class="text-center">Bảng Giá Nhà</h3>
           <div>&nbsp;</div>
-          <b-table-simple
-            hover
-            responsive
-            striped
-            bordered
-            class="text-center"
-            style="font-size: 16px; padding: 0px; margin: 0px"
-          >
+          <b-table-simple hover responsive striped bordered class="text-center"
+            style="font-size: 16px; padding: 0px; margin: 0px">
             <b-thead>
               <b-tr>
                 <b-th>Tên</b-th>
@@ -80,11 +60,8 @@
             </b-thead>
             <b-tbody>
               <b-tr v-for="(item, index) in giavangnha" :key="index">
-                <b-td
-                  ><b>{{ item.code }}</b></b-td
-                >
-                <b-td @dblclick="changePrice('buyingPrice', item)"
-                  >{{ formatN(item.buyingPrice) }}
+                <b-td><b>{{ item.code }}</b></b-td>
+                <b-td @dblclick="changePrice('buyingPrice', item)">{{ formatN(item.buyingPrice) }}
                 </b-td>
                 <b-td @dblclick="changePrice('sellingPrice', item)">{{
                   formatN(item.sellingPrice)
@@ -150,6 +127,24 @@ export default {
         support_host: "https://www.tradingview.com",
       },
     };
+  },
+  computed: {
+    isBanggiachange() {
+      return this.$store.state.config.banggia_vang
+    }
+  },
+  watch: {
+    isBanggiachange(newVal, oldVal) {
+      this.$bvToast.toast(`BẢNG GIÁ VỪA CẬP NHẬT`,
+        {
+          title: "Thông báo",
+          autoHideDelay: 3000,
+          appendToast: true,
+          variant: "danger",
+        }
+      );
+     this.getBangGia();
+    }
   },
   components: {
     VueTradingView,
@@ -263,5 +258,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

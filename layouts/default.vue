@@ -198,9 +198,9 @@
                 <b-tr>
                   <b-td colspan="2">
                     <b-button-group>
-                      <b-button :disabled="!itemFromScanner.daban" variant="danger"
+                   <   <b-button :disabled="!itemFromScanner.daban" variant="danger"
                         :href="`/sanpham/${itemFromScanner.maso}`">Sửa Sp
-                      </b-button>
+                      </b-button>>
                     </b-button-group>
                   </b-td>
                 </b-tr>
@@ -2430,7 +2430,6 @@ export default {
         .select("*")
         .then((data) => {
           //có bảng giá
-
           this.$store.commit("config/setBanggia", data.data);
         });
       this.$supabase

@@ -83,6 +83,15 @@
                   {{ $moment().lunar().format("DD/MM/YYYY") }}
                 </b-td>
               </b-tr>
+              <b-tr>
+                <b-td colspan="3">
+                  <div id="ww_f408917858fa3" v='1.3' loc='id'
+                    a='{"t":"horizontal","lang":"vi","sl_lpl":1,"ids":["wl5533"],"font":"Arial","sl_ics":"one_a","sl_sot":"celsius","cl_bkg":"image","cl_font":"#FFFFFF","cl_cloud":"#FFFFFF","cl_persp":"#81D4FA","cl_sun":"#FFC107","cl_moon":"#FFC107","cl_thund":"#FF5722"}'>
+                    <a href="https://weatherwidget.org/" id="ww_f408917858fa3_u" target="_blank">Widget weather</a>
+                  </div>
+                  <script async src="https://app2.weatherwidget.org/js/?id=ww_f408917858fa3"></script>
+                </b-td>
+              </b-tr>
             </b-tfoot>
           </b-table-simple>
         </div>

@@ -135,6 +135,7 @@ export default {
   },
   watch: {
     isBanggiachange(newVal, oldVal) {
+      console.log(newVal)
       this.$bvToast.toast(`BẢNG GIÁ VỪA CẬP NHẬT`,
         {
           title: "Thông báo",
@@ -143,7 +144,7 @@ export default {
           variant: "danger",
         }
       );
-     this.getBangGia();
+      this.getBangGia();
     }
   },
   components: {
@@ -166,9 +167,9 @@ export default {
           props: {
             type: "number",
             value:
-              type === "sellingPrice" ? item.sellingPrice : item.buyingPrice,
+              type === "sellingPrice" ? String(item.sellingPrice) : String(item.buyingPrice),
             placeholder:
-              type === "sellingPrice" ? item.sellingPrice : item.buyingPrice,
+              type === "sellingPrice" ? String(item.sellingPrice) : String(item.buyingPrice),
           },
         }),
       ]);
@@ -204,6 +205,7 @@ export default {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
     getGia() {
+      console.log("get gia mi hong", new Date())
       let urlMH =
         "https://api.allorigins.win/raw?url=https://www.mihong.vn/api/v1/gold/prices/current";
       let urlDo =
@@ -245,15 +247,37 @@ export default {
     },
   },
   mounted() {
+    this.$supabase
+      .from("banggia")
+      .on("UPDATE", (payload) => {
+        console.log("co bang gia");
+        this.$supabase
+          .from("banggia")
+          .select("*")
+          .then((data) => {
+            //có bảng giá
+            console.log("có bảng giá mới asdasdasdasdsa");
+            this.getBangGia();
+            this.$bvToast.toast(`CÓ BẢNG GIÁ MỚI`,
+              {
+                title: "Thông báo",
+                autoHideDelay: 3000,
+                appendToast: true,
+                variant: "danger",
+              }
+            );
+          });
+      })
+      .subscribe();
     this.getGia();
     this.getBangGia();
     setInterval(() => {
       this.getCurrentTime();
     }, 1000);
-    document.getElementById("fullDiv").onkeyup = (e) => {
-      console.log(e);
-      console.log("asasas11");
-    };
+    setInterval(() => {
+      this.getGia();
+    }, 1000 * 60 * 10);
+
   },
 };
 </script>

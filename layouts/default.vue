@@ -198,9 +198,11 @@
                 <b-tr>
                   <b-td colspan="2">
                     <b-button-group>
-                   <   <b-button :disabled="!itemFromScanner.daban" variant="danger"
+                    <b-button :disabled="!itemFromScanner.daban" variant="danger"
                         :href="`/sanpham/${itemFromScanner.maso}`">Sửa Sp
-                      </b-button>>
+                      </b-button>
+
+                      <b-button variant="primary">Tạo hóa đơn và in tem</b-button>
                     </b-button-group>
                   </b-td>
                 </b-tr>
@@ -2432,20 +2434,7 @@ export default {
           //có bảng giá
           this.$store.commit("config/setBanggia", data.data);
         });
-      this.$supabase
-        .from("banggia")
-        .on("UPDATE", (payload) => {
-          console.log("co bang gia");
-          this.$supabase
-            .from("banggia")
-            .select("*")
-            .then((data) => {
-              //có bảng giá
-              console.log("có bảng giá mới");
-              this.$store.commit("config/setBanggia", data.data);
-            });
-        })
-        .subscribe();
+     
     },
     async checkGioHangHomNay() {
       let currentDay = this.$moment().format("YYYY-MM-DD");

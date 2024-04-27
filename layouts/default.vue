@@ -198,11 +198,8 @@
                 <b-tr>
                   <b-td colspan="2">
                     <b-button-group>
-                    <b-button :disabled="!itemFromScanner.daban" variant="danger"
-                        :href="`/sanpham/${itemFromScanner.maso}`">Sửa Sp
-                      </b-button>
 
-                      <b-button variant="primary">Tạo hóa đơn và in tem</b-button>
+                      <!--    <b-button variant="primary">Tạo hóa đơn và in tem</b-button>-->
                     </b-button-group>
                   </b-td>
                 </b-tr>
@@ -635,7 +632,7 @@
               <b>Tổng tiền : {{ $formatSoTien(raw_hoadon.sanpham.reduce(
                 (sum, item) => sum + (item.giatrixuat || 0),
                 0
-                ))}}</b>
+              )) }}</b>
             </b-col>
           </b-row>
 
@@ -2434,7 +2431,7 @@ export default {
           //có bảng giá
           this.$store.commit("config/setBanggia", data.data);
         });
-     
+
     },
     async checkGioHangHomNay() {
       let currentDay = this.$moment().format("YYYY-MM-DD");

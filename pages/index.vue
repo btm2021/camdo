@@ -144,15 +144,7 @@ export default {
   },
   watch: {
     isBanggiachange(newVal, oldVal) {
-      console.log(newVal)
-      this.$bvToast.toast(`BẢNG GIÁ VỪA CẬP NHẬT`,
-        {
-          title: "Thông báo",
-          autoHideDelay: 3000,
-          appendToast: true,
-          variant: "danger",
-        }
-      );
+     
       this.getBangGia();
     }
   },

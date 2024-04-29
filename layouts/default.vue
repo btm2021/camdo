@@ -47,15 +47,20 @@
           </b-thead>
           <b-tbody>
             <b-tr>
-              <b-td>Khách Hàng : </b-td>
+              <b-td>Khách Hàng</b-td>
               <b-td colspan="5" style="border-bottom: 1px dotted black">
                 <span style="color: #dc3545; font-weight: bold; font-size: 40px">
                   {{ tempCheckDothe.customer_name }}
+
+
                 </span>
+                <span class="blink" style="color: yellow; font-weight: bold; font-size: 40px"
+                  v-if="tempCheckDothe.invoice_type == 'THANH LÝ'">
+                  👉 {{ tempCheckDothe.invoice_type == 'THANH LÝ' ? "(ĐÃ THANH LÝ)" : "" }} 👈</span>
               </b-td>
             </b-tr>
             <b-tr>
-              <b-td>Tên vật cầm :</b-td>
+              <b-td>Tên vật cầm</b-td>
               <b-td colspan="5" style="border-bottom: 1px dotted black">
                 <span style="color: yellow; font-weight: bold; font-size: 24px">
                   <span v-for="(item, index) in JSON.parse(
@@ -69,7 +74,7 @@
             </b-tr>
 
             <b-tr>
-              <b-td>Số tiền : </b-td>
+              <b-td>Số tiền</b-td>
               <b-td colspan="5" style="border-bottom: 1px dotted black">
                 <span style="color: yellow; font-weight: bold; font-size: 24px">
                   {{ $formatN(tempCheckDothe.invoice_money) }} ({{
@@ -1608,6 +1613,7 @@ export default {
         if (billRegex.test(input)) {
           this.checkHoaDon(input)
         }
+        this.overlay_search = false;
         this.searchInput = null;
       }
     },
@@ -2214,8 +2220,13 @@ export default {
         .select("*")
         .eq("invoice_number", id)
         .then(async (data) => {
-          this.tempCheckDothe = data.data[0];
-          this.$bvModal.show("modal_camdo");
+          if (data.data.length > 0) {
+            this.tempCheckDothe = data.data[0];
+            this.$bvModal.show("modal_camdo");
+          }else{
+            alert('Không tìm thấy Đồ Thế')
+          }
+
           //unset
         });
     },

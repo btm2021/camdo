@@ -59,8 +59,8 @@
               <b-td colspan="5" style="border-bottom: 1px dotted black">
                 <span style="color: yellow; font-weight: bold; font-size: 24px">
                   <span v-for="(item, index) in JSON.parse(
-        tempCheckDothe.invoice_tag
-      )" :key="index">
+                    tempCheckDothe.invoice_tag
+                  )" :key="index">
                     {{ item }} ,
                   </span>
                 </span>
@@ -73,8 +73,8 @@
               <b-td colspan="5" style="border-bottom: 1px dotted black">
                 <span style="color: yellow; font-weight: bold; font-size: 24px">
                   {{ $formatN(tempCheckDothe.invoice_money) }} ({{
-        docsotien(tempCheckDothe.invoice_money)
-      }})
+                    docsotien(tempCheckDothe.invoice_money)
+                  }})
                 </span>
               </b-td>
             </b-tr>
@@ -84,10 +84,10 @@
               <b-td style="border-bottom: 1px dotted black">
                 <span style="color: #dc3545; font-weight: bold; font-size: 24px">
                   {{
-          $moment(tempCheckDothe.invoice_date_create).format(
-            "DD/MM/YYYY"
-          )
-        }}
+                    $moment(tempCheckDothe.invoice_date_create).format(
+                      "DD/MM/YYYY"
+                    )
+                  }}
                 </span>
               </b-td>
             </b-tr>
@@ -98,11 +98,11 @@
                   Số ngày cầm :
                   <span class="text-danger">
                     {{
-          $moment().diff(
-            $moment(tempCheckDothe.invoice_date_create),
-            "days"
-          )
-        }}
+                      $moment().diff(
+                        $moment(tempCheckDothe.invoice_date_create),
+                        "days"
+                      )
+                    }}
                     ngày
                   </span>
                   <br />
@@ -116,18 +116,18 @@
                   Số tiền tổng :
                   <span class="text-danger">
                     {{
-        $formatN(
-          tempCheckDothe.invoice_money +
-          getTienLai(tempCheckDothe)
-        )
-      }}
+                      $formatN(
+                        tempCheckDothe.invoice_money +
+                        getTienLai(tempCheckDothe)
+                      )
+                    }}
                     (
                     {{
-          docsotien(
-            tempCheckDothe.invoice_money +
-            getTienLai(tempCheckDothe)
-          )
-        }})
+                      docsotien(
+                        tempCheckDothe.invoice_money +
+                        getTienLai(tempCheckDothe)
+                      )
+                    }})
                     <br />
                   </span>
                   <span style="font-style: italic">
@@ -137,6 +137,7 @@
                 </p>
               </b-td>
             </b-tr>
+
             <b-tr>
               <b-td colspan="6">
                 <b-button variant="success" @click="check_invoice()">
@@ -147,12 +148,12 @@
         </b-table-simple>
       </b-overlay>
     </b-modal>
-    <b-modal no-stacking id="modal_sanpham" size="lg" hide-footer @hidden="closeModalSanPham"
+    <b-modal no-stacking id="modal_sanpham" size="xl" hide-footer @hidden="closeModalSanPham"
       title="Thông tin sản phẩm">
       <b-overlay :show="overlaySanPham">
         <b-row v-if="itemFromScanner">
-          <b-col cols="6">
-            <b-img lazy v-zoom-on-hover :src="itemFromScanner.product_image_url" center fluid />
+          <b-col cols="4">
+            <b-img lazy :src="itemFromScanner.anhsanpham" center fluid />
             <b-table-simple small hover bordered responsive fixed class="default_table">
               <b-tbody>
                 <b-tr>
@@ -161,7 +162,13 @@
                   </b-td>
                   <b-td>
                     <div class="value">
-                      {{ $formatN(itemFromScanner.gianhap || 0) }}
+                      {{
+                        $formatN(
+                          itemFromScanner._sotheodoi
+                            ? itemFromScanner._sotheodoi.thanhtien
+                            : 0
+                        )
+                      }}
                     </div>
                   </b-td>
                 </b-tr>
@@ -171,9 +178,9 @@
                   </b-td>
                   <b-td>
                     <div class="value text-danger">
-                      <span class="blink">👉</span>
-                      {{ $formatN(itemFromScanner.giahientai || 0) }}
-                      <span class="blink">👈</span>
+                      <h3>
+                        {{ $formatN(itemFromScanner.giahientai || 0) }}
+                      </h3>
                     </div>
                   </b-td>
                 </b-tr>
@@ -183,86 +190,36 @@
                   </b-td>
                   <b-td>
                     <div class="value">
-                      {{ $formatN(itemFromScanner.giaxuat || 0) }}
+                      {{ $formatN(itemFromScanner.giatrixuat || 0) }}
                     </div>
                   </b-td>
                 </b-tr>
-                <b-tr>
-                  <b-td>
-                    <div class="title">Lệch</div>
-                  </b-td>
-                  <b-td>
-                    <div class="value">
-                      {{ $formatN(itemFromScanner.gialech || 0) }}
-                    </div>
-                  </b-td>
-                </b-tr>
+
                 <b-tr>
                   <b-td colspan="2">
                     <b-button-group>
-                      <b-button :disabled="!itemFromScanner.product_status" variant="danger"
-                        :href="`/sanpham/${itemFromScanner.product_barcode}`">Sửa Sp
-                      </b-button>
-                      <b-button variant="primary" @click="taohoadon">Tạo hóa đơn</b-button>
-                      <b-button :disabled="!itemFromScanner.product_status" variant="primary" @click="thanhtoan">Thanh
-                        toán</b-button>
-                      <b-button variant="success" @click="themgiohang" :disabled="!itemFromScanner.product_status &&
-        !listGioHang.find(
-          (item) => item.id == itemFromScanner.id
-        )
-        ">Thêm giỏ hàng</b-button>
-                      <b-button :disabled="!itemFromScanner.product_status" variant="danger"
-                        @click="xoaSanPhamGioHang">Xóa trong giỏ hàng</b-button>
+
+                      <!--    <b-button variant="primary">Tạo hóa đơn và in tem</b-button>-->
                     </b-button-group>
                   </b-td>
                 </b-tr>
               </b-tbody>
             </b-table-simple>
           </b-col>
-          <b-col cols="6">
+          <b-col cols="4">
             <b-table-simple small hover bordered responsive fixed>
               <b-tbody>
-                <b-tr>
-                  <b-td colspan="2">
-                    <div v-if="itemFromScanner.product_status &&
-        listGioHang.find(
-          (item) =>
-            item.product_barcode ==
-            itemFromScanner.product_barcode
-        )
-        ">
-                      <b-badge variant="success">Sản phẩm đang có trong giỏ hàng</b-badge>
-                    </div>
-                    <div v-else>
-                      <b-badge variant="danger">Sản phẩm KHÔNG có trong giỏ hàng</b-badge>
-                    </div>
-                  </b-td>
-                </b-tr>
                 <b-tr>
                   <b-td>
                     <span class="title">Mã sản phẩm</span>
                   </b-td>
                   <b-td>
                     <div class="value text-success bd-highlight">
-                      {{ itemFromScanner.product_barcode }}
+                      {{ itemFromScanner.maso }}
                     </div>
                   </b-td>
                 </b-tr>
-                <b-tr>
-                  <b-td>
-                    <span class="title">Ngày Nhập</span>
-                  </b-td>
-                  <b-td>
-                    <div class="value">
-                      <span class="text-primary">
-                        {{
-        $moment(itemFromScanner.created_at).format(
-          "DD/MM/YYYY"
-        )
-      }}</span>
-                    </div>
-                  </b-td>
-                </b-tr>
+
                 <b-tr>
                   <b-td>
                     <span class="title">Ngày Bán</span>
@@ -271,17 +228,17 @@
                     <div class="value" v-if="itemFromScanner.product_sell_date">
                       <span class="text-primary">
                         {{
-        $moment(itemFromScanner.product_sell_date).format(
-          "DD/MM/YYYY"
-        )
-      }}</span>
+                          $moment(itemFromScanner.product_sell_date).format(
+                            "DD/MM/YYYY"
+                          )
+                        }}</span>
                       -
                       {{
-          $moment(itemFromScanner.created_at).diff(
-            $moment(itemFromScanner.product_sell_date),
-            "days"
-          ) + 1
-        }}
+                        $moment(itemFromScanner.created_at).diff(
+                          $moment(itemFromScanner.ngayxuat),
+                          "days"
+                        ) + 1
+                      }}
                       ngày
                     </div>
                     <div v-else>Chưa bán</div>
@@ -294,12 +251,7 @@
                   <b-td>
                     <div class="value">
                       <b-badge variant="success">
-                        {{ itemFromScanner.product_catalog }}</b-badge>
-                      {{
-        $store.state.config.sanpham_optionCatalog.filter(
-          (i) => i.value === itemFromScanner.product_catalog
-        )[0].text
-      }}
+                        {{ itemFromScanner.kieusanpham.short }}</b-badge>
                     </div>
                   </b-td>
                 </b-tr>
@@ -309,7 +261,7 @@
                   </b-td>
                   <b-td>
                     <div class="value text-danger">
-                      {{ itemFromScanner.product_type }}
+                      {{ itemFromScanner.banggia.code }}
                     </div>
                   </b-td>
                 </b-tr>
@@ -319,10 +271,7 @@
                   </b-td>
                   <b-td>
                     <div class="value">
-                      {{
-        $formatSoVang(itemFromScanner.product_total_weight)
-          .fullStr
-      }}
+                      {{ $formatSoVang(itemFromScanner.klt).fullStr }}
                     </div>
                   </b-td>
                 </b-tr>
@@ -332,10 +281,7 @@
                   </b-td>
                   <b-td>
                     <div class="value text-warning">
-                      {{
-          $formatSoVang(itemFromScanner.product_gold_weight)
-            .fullStr
-        }}
+                      {{ $formatSoVang(itemFromScanner.klv).fullStr }}
                     </div>
                   </b-td>
                 </b-tr>
@@ -345,10 +291,7 @@
                   </b-td>
                   <b-td>
                     <div class="value">
-                      {{
-          $formatSoVang(itemFromScanner.product_stone_weight)
-            .fullStr
-        }}
+                      {{ $formatSoVang(itemFromScanner.klh).fullStr }}
                     </div>
                   </b-td>
                 </b-tr>
@@ -358,7 +301,7 @@
                   </b-td>
                   <b-td>
                     <div class="value">
-                      {{ itemFromScanner.product_wage_in }}
+                      {{ itemFromScanner.giacongnhap }}
                     </div>
                   </b-td>
                 </b-tr>
@@ -369,7 +312,7 @@
                   <b-td>
                     <div class="value text-danger text-bold">
                       <span class="blink">👉</span>
-                      {{ itemFromScanner.product_wage }}
+                      {{ itemFromScanner.cong }}
                       <span class="blink">👈</span>
                     </div>
                   </b-td>
@@ -380,7 +323,7 @@
                   </b-td>
                   <b-td>
                     <div class="value">
-                      <b-badge variant="warning" v-if="itemFromScanner.product_status">Chưa bán</b-badge>
+                      <b-badge variant="warning" v-if="itemFromScanner.daban">Chưa bán</b-badge>
                       <b-badge variant="success" v-else>Đã bán</b-badge>
                     </div>
                   </b-td>
@@ -391,8 +334,9 @@
                   </b-td>
                   <b-td>
                     <div class="value">
-                      <b-badge variant="warning" v-if="itemFromScanner.product_import_type">Chành SG</b-badge>
-                      <b-badge variant="primary" v-else>Hàng Nội Bộ</b-badge>
+                      <b-badge variant="warning">{{
+                        itemFromScanner.nhacungcap.short
+                      }}</b-badge>
                     </div>
                   </b-td>
                 </b-tr>
@@ -402,7 +346,188 @@
                   </b-td>
                   <b-td>
                     <div class="value">
-                      {{ itemFromScanner.product_price_import }}
+                      {{
+                        itemFromScanner._sotheodoi
+                          ? itemFromScanner._sotheodoi.giamua
+                          : 0
+                      }}
+                    </div>
+                  </b-td>
+                </b-tr>
+              </b-tbody>
+            </b-table-simple>
+          </b-col>
+          <b-col v-if="itemFromScanner._sotheodoi" cols="4">
+            <h4 class="text-center">HÓA ĐƠN NHẬP</h4>
+            <b-table-simple small hover bordered responsive fixed>
+              <b-tbody>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Mã Hóa đơn Nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      <a :href="'/hoadon/chitiethoadonnhap?id=' +
+                        itemFromScanner._sotheodoi.id
+                        ">{{ itemFromScanner._sotheodoi.id }}</a>
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Ngày nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{
+                        $moment(itemFromScanner._sotheodoi.created_at).format(
+                          "DD/MM/YYYY"
+                        )
+                      }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Tên khách nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner._sotheodoi.tenkhach }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Địa chỉ</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner._sotheodoi.diachi }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Khối lượng tổng</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner._sotheodoi.klt }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Khối lượng Hột</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner._sotheodoi.klh }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Khối lượng Vàng nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner._sotheodoi.klv }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Ghi chú nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner._sotheodoi.ghichu }}
+                    </div>
+                  </b-td>
+                </b-tr>
+              </b-tbody>
+            </b-table-simple>
+          </b-col>
+          <b-col v-else-if="itemFromScanner.hoadonnhap" cols="4">
+            <h4 class="text-center">HÓA ĐƠN NHẬP CHÀNH</h4>
+            <b-table-simple small hover bordered responsive fixed>
+              <b-tbody>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Mã Hóa đơn Nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      <a :href="'/sanpham/chitiethoadonnhap?id=' +
+                        itemFromScanner.hoadonnhap.id
+                        ">{{ itemFromScanner.hoadonnhap.mahoadon }}</a>
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Ngày nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{
+                        $moment(itemFromScanner.hoadonnhap.ngaytao).format(
+                          "DD/MM/YYYY"
+                        )
+                      }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Tên nhà sản xuất nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner.hoadonnhap.nhacungcap.name }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Địa chỉ nhà cung cấp</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner.hoadonnhap.nhacungcap.address }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Mũi hiệu</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner.hoadonnhap.nhacungcap.short }}
+                    </div>
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
+                    <span class="title">Tiêu chuẩn cơ sở</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner.hoadonnhap.nhacungcap.tccs }}
+                    </div>
+                  </b-td>
+                </b-tr>
+
+                <b-tr>
+                  <b-td>
+                    <span class="title">Ghi chú nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner.hoadonnhap.nhacungcap.ghichu }}
                     </div>
                   </b-td>
                 </b-tr>
@@ -430,16 +555,16 @@
 
                 <b-td>
                   <span class="text-primary">{{
-        raw_hoadon.customer_name
-      }}</span>
+                    raw_hoadon.tenkhach
+                  }}</span>
                 </b-td>
 
                 <b-td><b>Tổng tiền hóa đơn :</b></b-td>
                 <b-td>
                   <b>
                     <span class="text-danger">{{
-          $formatSoTien(raw_hoadon.bill_totalmoney)
-        }}</span></b>
+                      $formatSoTien(raw_hoadon.tongtien)
+                    }}</span></b>
                 </b-td>
               </b-tr>
               <b-tr>
@@ -447,191 +572,77 @@
                 <b-td>
                   <b>
                     <span class="text-danger">{{
-          $formatSoTien(raw_hoadon.bill_realmoney_get)
-        }}</span></b>
+                      $formatSoTien(raw_hoadon.thucnhan)
+                    }}</span></b>
                 </b-td>
 
                 <b-td><b>Số món :</b></b-td>
-                <b-td>{{ raw_hoadon.bill_listsanpham.length }}</b-td>
+                <b-td>{{ raw_hoadon.sanpham.length }}</b-td>
               </b-tr>
               <b-tr>
                 <b-td colspan="4">
-                  {{ raw_hoadon.billDetail }}
+                  Chi tiết : {{ raw_hoadon.chitiet }}
                 </b-td>
               </b-tr>
             </b-tbody>
           </b-table-simple>
         </b-col>
         <b-col cols="12">
-          <table class="table table-sm table-bordered table-hover" style="width: 100%">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Loại</th>
-                <th>GiáV</th>
-                <th>TL.Vàng</th>
-                <th>Kiểu</th>
-                <th>Công</th>
-                <th>Giá</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(item, index) in raw_hoadon.bill_listsanpham" :key="index">
-                <td>
-                  <b>{{ index + 1 }}</b>
-                </td>
-                <td>
-                  <b @click="showInfoSanPham(item)" class="myHoverProductBarcode">
-                    {{
-        $store.state.config.sanpham_optionCatalog.find(
-          (i) => i.value === item.product_catalog
-        ).text
-      }}</b>
-                </td>
+          <b-table responsive :items="raw_hoadon.sanpham" :fields="fieldSanphamhoadon">
+            <template #cell(stt)="data">
+              {{ data.index + 1 }}
+            </template>
+            <template #cell(klt)="data">
+              <span>{{ $formatSoVang(data.value).fullStr }}</span>
+            </template>
+            <template #cell(klh)="data">
+              <span>{{ $formatSoVang(data.value).fullStr }}</span>
+            </template>
+            <template #cell(klv)="data">
+              <span>{{ $formatSoVang(data.value).fullStr }}</span>
+            </template>
+            <template #cell(maso)="data">
+              <b class="myHoverProductBarcode" @click="showInfoSanPham(data.item)">
+                {{ data.item.maso }}
+                <span v-if="data.item.hoadon_ban" style="font-size: 30px">
+                  <b-badge variant="warning">{{
+                    formatBillCode(data.item.hoadon_ban.bill_code)
+                  }}</b-badge>
+                </span>
+              </b>
+            </template>
 
-                <td>
-                  <b class="text-danger">{{ item.price.sellingPrice }}</b>
-                </td>
+            <template #cell(anhsanpham)="data">
+              <b-img @click="showImage(data.value)" :src="data.item.anhsanpham" style="width: 100px; height: 100px" />
+            </template>
 
-                <td>
-                  <b class="text-danger">{{
-        $formatSoVang(item.product_gold_weight).fullStr
-      }}</b>
-                </td>
-
-                <td>
-                  <b>{{ item.product_type }}</b>
-                </td>
-
-                <td>
-                  <b>{{ item.product_wage }}</b>
-                </td>
-
-                <td>
-                  <b class="text-danger">{{
-        $formatSoTien(item.giahientai)
-      }}</b>
-                </td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="5" class="text-center"><b>Tổng</b></td>
-
-                <td>
-                  <b class="text-primary text-right">
-                    {{
-        $formatSoTien(
-          raw_hoadon.bill_listsanpham.reduce(
-            (sum, item) => sum + (item.product_wage || 0),
-            0
-          )
-        )
-      }}</b>
-                </td>
-                <td>
-                  <b class="text-primary text-right">
-                    {{
-          $formatSoTien(
-            raw_hoadon.bill_listsanpham.reduce(
-              (sum, item) => sum + (item.giahientai || 0),
-              0
-            )
-          )
-        }}</b>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+          </b-table>
         </b-col>
-
-        <b-col cols="12">
+        <b-col cols="12" class="text-center">
           <b-row>
-            <b-col cols="6" v-for="(item, index) in raw_hoadon.bill_listsanpham" :key="index">
-              <b-card :title="'#' +
-        (index + 1) +
-        '_' +
-        $store.state.config.sanpham_optionCatalog.find(
-          (i) => i.value === item.product_catalog
-        ).text +
-        '-' +
-        item.product_barcode
-        " :img-src="item.product_image_url" :img-alt="item.product_barcode" img-top class="mb-2">
-                <b-card-text>
-                  <b-row>
-                    <b-col cols="6">
-                      <table class="table table-sm">
-                        <tr>
-                          <td>TL.Tổng</td>
-                          <td>
-                            <b class="text-danger">{{
-        $formatSoVang(item.product_total_weight).fullStr
-      }}</b>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>TL.Hột</td>
-                          <td>
-                            <b class="text-danger">{{
-          $formatSoVang(item.product_stone_weight).fullStr
-        }}</b>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>TL.Vang2</td>
-                          <td>
-                            <b class="text-danger">{{
-          $formatSoVang(item.product_gold_weight).fullStr
-        }}</b>
-                          </td>
-                        </tr>
-                      </table>
-                    </b-col>
-                    <b-col cols="6">
-                      <table class="table table-sm">
-                        <tr>
-                          <td>Loại vàng</td>
-                          <td>
-                            <b>{{ item.product_type }}</b>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Giá vàng</td>
-                          <td>
-                            <b>{{ item.price.sellingPrice }}</b>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Tiền công</td>
-                          <td>
-                            <b>{{ item.product_wage }}</b>
-                          </td>
-                        </tr>
-                      </table>
-                    </b-col>
-                    <b-col cols="12">
-                      <div class="text-center text-primary">
-                        Tính :
-                        {{
-        `${$formatSoVang(item.product_gold_weight).fullStr}x${item.price.sellingPrice
-        }+${item.product_wage}=${$formatSoTien(
-          item.giahientai
-        )}`
-      }}
-                      </div>
-                    </b-col>
-                  </b-row>
-                </b-card-text>
-              </b-card>
+            <b-col cols="6">
+              <b>
+                Tổng công : {{ raw_hoadon.sanpham.reduce(
+                  (sum, item) => sum + (item.cong || 0),
+                  0
+                ) }}
+              </b>
+            </b-col>
+            <b-col cols="6">
+              <b>Tổng tiền : {{ $formatSoTien(raw_hoadon.sanpham.reduce(
+                (sum, item) => sum + (item.giatrixuat || 0),
+                0
+              )) }}</b>
             </b-col>
           </b-row>
+
         </b-col>
+
       </b-row>
     </b-modal>
     <b-modal id="modal_camdo_kiemtra" no-stacking size="xl" hide-footer hide-header @hide="reset_camdo_kiemtra">
       <b-row style="min-height: 80vh">
         <b-col cols="7">
-
           <b-table-simple v-if="camdo_kiemtra_giaythe" class="table_giaycamdo" responsive borderless
             style="min-height: 600px">
             <b-thead>
@@ -683,14 +694,13 @@
                 <b-td colspan="5" style="border-bottom: 1px dotted black">
                   <span style="color: #dc3545; font-weight: bold; font-size: 24px">
                     <span v-for="(item, index) in JSON.parse(
-        camdo_kiemtra_giaythe.invoice_tag
-      )" :key="index">
+                      camdo_kiemtra_giaythe.invoice_tag
+                    )" :key="index">
                       {{ item }} ,
                     </span>
                   </span>
                   {{ camdo_kiemtra_giaythe.invoice_store }} -
                   {{ camdo_kiemtra_giaythe.invoice_store_type }}
-
                 </b-td>
               </b-tr>
 
@@ -699,8 +709,8 @@
                 <b-td colspan="5" style="border-bottom: 1px dotted black">
                   <span style="color: #dc3545; font-weight: bold; font-size: 24px">
                     {{ $formatN(camdo_kiemtra_giaythe.invoice_money) }} ({{
-        docsotien(camdo_kiemtra_giaythe.invoice_money)
-      }})
+                      docsotien(camdo_kiemtra_giaythe.invoice_money)
+                    }})
                   </span>
                 </b-td>
               </b-tr>
@@ -708,11 +718,12 @@
                 <b-td colspan="4"></b-td>
                 <b-td>Ngày thế</b-td>
                 <b-td style="border-bottom: 1px dotted black">
-                  <span style="color: #dc3545; font-weight: bold; font-size: 24px"> {{
-          $moment(camdo_kiemtra_giaythe.invoice_date_create).format(
-            "DD/MM/YYYY"
-          )
-        }}
+                  <span style="color: #dc3545; font-weight: bold; font-size: 24px">
+                    {{
+                      $moment(camdo_kiemtra_giaythe.invoice_date_create).format(
+                        "DD/MM/YYYY"
+                      )
+                    }}
                   </span>
                 </b-td>
               </b-tr>
@@ -721,21 +732,22 @@
                 <b-td colspan="5">
                   <p class="default_thongtin" style="text-align: left">
                     Số ngày cầm :
-                    <span class="text-danger"> {{
-          $moment().diff(
-            $moment(camdo_kiemtra_giaythe.invoice_date_create),
-            "days"
-          )
-        }} ngày </span>
+                    <span class="text-danger">
+                      {{
+                        $moment().diff(
+                          $moment(camdo_kiemtra_giaythe.invoice_date_create),
+                          "days"
+                        )
+                      }}
+                      ngày
+                    </span>
                     <br />
                     Số tiền lãi :<span style="color: yellow; font-size: 50px; font-weight: 800">
                       {{ $formatN(getTienLai(camdo_kiemtra_giaythe)) }}
                     </span>
-
                   </p>
                 </b-td>
               </b-tr>
-
             </b-tbody>
           </b-table-simple>
         </b-col>
@@ -744,8 +756,12 @@
           <div v-else style="width: 100%; height: 100%; background-color: red"></div>
         </b-col>
         <b-col cols="4" class="mt-4">
-          <b-table-simple v-if="camdo_kiemtra_bocdo" class="mt-5" borderless
-            style="border: 1px solid black;color:red;font-size:25px;font-weight: bolder ">
+          <b-table-simple v-if="camdo_kiemtra_bocdo" class="mt-5" borderless style="
+              border: 1px solid black;
+              color: red;
+              font-size: 25px;
+              font-weight: bolder;
+            ">
             <b-tbody>
               <b-tr style="background-color: rgb(121, 175, 232)">
                 <b-td>{{ camdo_kiemtra_bocdo.customer_name }}</b-td>
@@ -764,7 +780,7 @@
                   width: 100%;
                   height: 200px;
                   background-image: url('/placehold_camdo_bocdo.png');
-                  background-size:cover;
+                  background-size: cover;
                   background-repeat: no-repeat;
                 ">
                 <b-td colspan="2"> </b-td>
@@ -773,355 +789,110 @@
           </b-table-simple>
 
           <div v-if="camdo_kiemtra_status && camdo_kiemtra_bocdo">
-            <h3 style="color:green;">Mã vạch khớp</h3>
+            <h3 style="color: green">Mã vạch khớp</h3>
             <div>
-              <table style="font-size:25px;font-weight: bolder;width:100%">
+              <table style="font-size: 25px; font-weight: bolder; width: 100%">
                 <tr>
                   <td>Tên</td>
-                  <td>{{ camdo_kiemtra_bocdo.customer_name }} </td>
-
+                  <td>{{ camdo_kiemtra_bocdo.customer_name }}</td>
                 </tr>
                 <tr>
                   <td>Mã</td>
-                  <td>{{ camdo_kiemtra_bocdo.invoice_number }} </td>
-
+                  <td>{{ camdo_kiemtra_bocdo.invoice_number }}</td>
                 </tr>
                 <tr>
                   <td>Tiền</td>
-                  <td>{{ $formatSoTien(camdo_kiemtra_bocdo.invoice_money) }}</td>
-
+                  <td>
+                    {{ $formatSoTien(camdo_kiemtra_bocdo.invoice_money) }}
+                  </td>
                 </tr>
                 <tr>
                   <td>Ngày thế</td>
-                  <td> {{
-        $moment(camdo_kiemtra_bocdo.invoice_date_create).format(
-          "DD/MM/YYYY"
-        )
-      }}</td>
-
+                  <td>
+                    {{
+                      $moment(camdo_kiemtra_bocdo.invoice_date_create).format(
+                        "DD/MM/YYYY"
+                      )
+                    }}
+                  </td>
                 </tr>
                 <tr>
-                  <td>Số ngày thế </td>
-                  <td class="text-danger"> {{
-          $moment().diff(
-            $moment(camdo_kiemtra_bocdo.invoice_date_create),
-            "days"
-          )
-        }}
-                    ngày </td>
-
+                  <td>Số ngày thế</td>
+                  <td class="text-danger">
+                    {{
+                      $moment().diff(
+                        $moment(camdo_kiemtra_bocdo.invoice_date_create),
+                        "days"
+                      )
+                    }}
+                    ngày
+                  </td>
                 </tr>
                 <tr>
-                  <td>Tiền lãi : </td>
-                  <td class="text-danger"> {{ $formatN(getTienLai(camdo_kiemtra_bocdo)) }} </td>
-
+                  <td>Tiền lãi :</td>
+                  <td class="text-danger">
+                    {{ $formatN(getTienLai(camdo_kiemtra_bocdo)) }}
+                  </td>
                 </tr>
               </table>
             </div>
           </div>
           <div v-else>
-            <h3 class="blink" style="color:red">Mã không khớp</h3>
+            <h3 class="blink" style="color: red">Mã không khớp</h3>
           </div>
         </b-col>
       </b-row>
     </b-modal>
-    <b-modal size="lg" no-stacking hide-footer id="default_modal_SanPham" title="Tạo nhanh sản phẩm">
-      <b-form>
-        <b-form-row>
-          <b-col cols="12">
-            <b-row>
-              <b-col cols="4">
-                <b-overlay :show="default_overlaySanPham">
-                  <b-form-group label="Kiểu SP">
-                    <b-form-select v-model="product_catalog"
-                      :options="this.$store.state.config.sanpham_optionCatalog"></b-form-select>
-                  </b-form-group>
-                </b-overlay>
-              </b-col>
-              <b-col cols="4">
-                <b-overlay :show="default_overlayproductimportprice">
-                  <b-form-group label="Loại vàng">
-                    <b-form-select v-model="product_type"
-                      :options="this.$store.state.config.sanpham_optionLoaiVang"></b-form-select>
-                  </b-form-group>
-                </b-overlay>
-              </b-col>
-              <b-col cols="4">
-                <b-form-group label="Nguồn SP" :description="product_import_type ? 'Chành' : 'Nội bộ '">
-                  <b-form-checkbox switch size="lg" v-model="product_import_type">
-                  </b-form-checkbox>
-                </b-form-group>
-              </b-col>
-            </b-row>
-          </b-col>
-          <b-col cols="12">
-            <b-row>
-              <b-col cols="4">
-                <b-form-group label="Trọng Lượng Tổng">
-                  <b-form-input autocomplete="off" v-model="product_total_weight" required></b-form-input>
-                </b-form-group>
-                <b-form-group label="Tiền công">
-                  <b-form-input autocomplete="off" v-model="product_wage" required></b-form-input>
-                </b-form-group>
-              </b-col>
 
-              <b-col cols="4">
-                <b-form-group label="Trọng lượng hột">
-                  <b-form-input id="input-1" autocomplete="off" v-model="product_stone_weight" required></b-form-input>
-                </b-form-group>
-                <b-form-group label="Mã sản phẩm">
-                  <b-form-input disabled class="text-danger" v-model="product_barcode" required></b-form-input>
-                </b-form-group>
-              </b-col>
-              <b-col cols="4">
-                <b-form-group label="Trọng lượng Vàng">
-                  <b-form-input disabled v-model="product_gold_weight" required></b-form-input>
-                </b-form-group>
-                <b-form-group>
-                  <b-button class="mt-2" @click="default_insertSanPham('taomoithemvaogio')" variant="primary" block>Tạo
-                    mới,thêm vào giỏ</b-button>
-                  <b-button class="mt-2" @click="default_insertSanPham('taomoiintem')" variant="success" block>Tạo
-                    mới,In Tem</b-button>
-                </b-form-group>
-              </b-col>
-            </b-row>
-            <b-row no-gutters>
-              <b-col cols="6">
-                <b-table-simple small hover bordered responsive fixed>
-                  <b-tbody>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Trọng Lượng Tổng</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value text-warning">
-                          {{ $formatSoVang(product_total_weight).fullStr }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Trọng Lượng Vàng</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value text-warning">
-                          {{ $formatSoVang(product_gold_weight).fullStr }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Trọng Lượng hột</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value">
-                          {{ $formatSoVang(product_stone_weight).fullStr }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Tiền công nhập</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value">
-                          {{ product_wage_in }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <div class="title">Tiền công xuất</div>
-                      </b-td>
-                      <b-td>
-                        <div class="value text-danger text-bold">
-                          <span class="blink">👉</span>
-                          {{ product_wage }}
-                          <span class="blink">👈</span>
-                        </div>
-                      </b-td>
-                    </b-tr>
-
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Chành Nhập</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value">
-                          <b-badge variant="warning" v-if="product_import_type">Chành SG</b-badge>
-                          <b-badge variant="primary" v-else>Hàng Nội Bộ</b-badge>
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Giá Vàng Nhập</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value">
-                          {{ product_price_import }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                  </b-tbody>
-                </b-table-simple>
-              </b-col>
-              <b-col cols="6">
-                <b-table-simple small hover bordered responsive fixed>
-                  <b-tbody>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Mã sản phẩm</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value text-success bd-highlight">
-                          {{ product_barcode }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Ngày Nhập</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value">
-                          <span class="text-primary">
-                            {{ $moment().format("DD/MM/YYYY") }}</span>
-                        </div>
-                      </b-td>
-                    </b-tr>
-
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Kiểu dáng sản phẩm</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value">
-                          <b-badge variant="success">
-                            {{ product_catalog }}</b-badge>
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Loại Vàng</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value text-danger">
-                          {{ product_type }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Giá nhập </span>
-                      </b-td>
-                      <b-td>
-                        <div class="value">
-                          {{ $formatN(giatrinhap) }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Giá hiện tại</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value text-warning">
-                          {{ $formatN(giahientai) }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                    <b-tr>
-                      <b-td>
-                        <span class="title">Lệch</span>
-                      </b-td>
-                      <b-td>
-                        <div class="value">
-                          {{ $formatN(giahientai - giatrinhap) }}
-                        </div>
-                      </b-td>
-                    </b-tr>
-                  </b-tbody>
-                </b-table-simple>
-              </b-col>
-            </b-row>
-          </b-col>
-        </b-form-row>
-      </b-form>
-    </b-modal>
     <b-sidebar ref="sidebargiohang" width="900px" id="sidebargiohang"
-      :title="'Giỏ hàng : ' + $moment().format('DD/MM/YYYY')" shadow @shown="getGioHang()"
-      @hidden="showTinhToan = false">
+      :title="'Giỏ hàng : ' + $moment().format('DD/MM/YYYY')" shadow @shown="getGioHang" @hidden="showTinhToan = false">
       <b-overlay :show="overlayGioHang">
         <div class="px-3 py-2">
-          <b-table bordered no-border-collapse class="default_tablegiohang" hover ref="default_tablegiohang" style=""
-            :fields="fieldsGioHang" :items="listGioHang" show-empty small select-mode="multi" selectable
-            selected-variant="success" responsive @row-selected="onRowSelectedGioHang">
+          <b-input placeholder="Gõ tìm sản phẩm..." v-model="filterGioHang" size="xl" style="
+              color: red;
+              font-size: xx-large;
+              text-align: center;
+              text-transform: uppercase;
+              font-weight: bold;
+            " autocomplete="off" class="px-3 mb-3"></b-input>
+          <b-table :filter="filterGioHang" bordered no-border-collapse class="default_tablegiohang text-center" hover
+            ref="default_tablegiohang" :fields="fieldsGioHang" :items="listGioHang" show-empty small select-mode="multi"
+            selectable selected-variant="success" responsive @row-selected="onRowSelectedGioHang">
             <template #cell(stt)="data">
               {{ data.index + 1 }}
             </template>
-            <template #cell(price)="data">
-              {{ data.item.price.sellingPrice }}
+
+            <template #cell(klt)="data">
+              <span>{{ $formatSoVang(data.item.klt).fullStr }}</span>
             </template>
-            <template #cell(product_wage)="data">
-              <strong>{{ data.item.product_wage }}</strong>
+            <template #cell(klh)="data">
+              <span>{{ $formatSoVang(data.item.klh).fullStr }}</span>
             </template>
 
             <template #cell(giahientai)="data">
-              <strong class="text-danger">{{
-        $formatN(data.item.giahientai)
-      }}</strong>
+              <span>{{ $formatN(data.item.giahientai) }}</span>
             </template>
-
-            <template #cell(product_total_weight)="data">
-              <span>{{
-        $formatSoVang(data.item.product_total_weight).fullStr
-      }}</span>
-            </template>
-
-            <template #cell(product_stone_weight)="data">
-              <span>{{
-        $formatSoVang(data.item.product_stone_weight).fullStr
-      }}</span>
-            </template>
-
-            <template #cell(product_gold_weight)="data">
+            <template #cell(klv)="data">
               <b class="text-primary">{{
-        $formatSoVang(data.item.product_gold_weight).fullStr
-      }}</b>
+                $formatSoVang(data.item.klv).fullStr
+              }}</b>
             </template>
-
-            <template #cell(product_barcode)="data">
+            <template #cell(maso)="data">
               <b class="myHoverProductBarcode" @click="showInfoSanPham(data.item)">
-                {{ data.item.product_barcode }}
-                <span>
-                  <b-badge variant="primary">{{ data.item.hoadon_id }}</b-badge>
+                {{ data.item.maso }}
+                <span v-if="data.item.hoadon_ban" style="font-size: 30px">
+                  <b-badge variant="warning">{{
+                    formatBillCode(data.item.hoadon_ban.bill_code)
+                  }}</b-badge>
                 </span>
               </b>
             </template>
-
-            <template #cell(propduct_type)="data">
-              <strong class="text-primary">{{ data.item.product_type }}</strong>
-            </template>
-
-            <template #cell(product_catalog)="data">
-              <strong class="text-primary">
-                {{
-        $store.state.config.sanpham_optionCatalog.find(
-          (i) => i.value === data.item.product_catalog
-        ).text
-      }}
-              </strong>
-            </template>
-
             <template #cell(remove)="data">
               <b-button variant="danger" @click="xoaSanPhamGioHang(data.item)">Xóa</b-button>
             </template>
 
-            <template #cell(product_image_url)="data">
-              <b-img lazy @click="showImage(data.item.product_image_url)" :src="data.item.product_image_url"
-                style="width: 25px; height: 25px" />
+            <template #cell(anhsanpham)="data">
+              <b-img @click="showImage(data.value)" :src="data.item.anhsanpham" style="width: 25px; height: 25px" />
             </template>
           </b-table>
         </div>
@@ -1134,7 +905,6 @@
               <strong class="mr-auto text-danger text-right">Sản phẩm đang chọn : {{ selectGioHang.length }}</strong>
             </b-col>
             <b-col cols="8" class="text-right">
-              <b-button variant="success" v-b-modal.default_modal_SanPham>Tạo nhanh sản phẩm</b-button>
               <strong v-if="listGioHang.length > 0" class="mr-auto text-danger text-right">Tổng giá trị trong giỏ :
                 {{ $formatSoTien(getTongGiaTriGioHang()) }}</strong>
               <strong v-else>Giỏ hàng trống</strong>
@@ -1150,28 +920,34 @@
           <b-form>
             <b-row>
               <b-col cols="6">
-                <b-form-group :description="$formatSoTien(bill.bill_realmoney_get) != ''
-        ? $formatSoTien(bill.bill_realmoney_get)
-        : '.'
-        " label="Tiền thực nhận:">
-                  <b-form-input autocomplete="off" v-model="bill.bill_realmoney_get" type="text"></b-form-input>
+                <b-form-group :description="$formatSoTien(bill.thucnhan) != ''
+                  ? $formatSoTien(bill.thucnhan)
+                  : '.'
+                  " label="Tiền thực nhận:">
+                  <b-form-input autocomplete="off" v-model="bill.thucnhan" type="text"></b-form-input>
                 </b-form-group>
-                <b-form-group label="Ghi chú hóa đơn" description=".">
-                  <b-form-input autocomplete="off" v-model="bill.bill_comment" type="text"></b-form-input>
+                <b-form-group label="Ghi chú hóa đơn">
+                  <b-form-input autocomplete="off" v-model="bill.ghichu" type="text"></b-form-input>
+                </b-form-group>
+                <b-form-group label="Số điện thoại khách:">
+                  <b-form-input autocomplete="off" v-model="bill.sodienthoai" type="text"></b-form-input>
                 </b-form-group>
               </b-col>
               <b-col cols="6">
-                <b-form-group label="Mã bill:" description=".">
-                  <b-form-input autocomplete="off" v-model="bill.bill_code" type="text" disabled></b-form-input>
+                <b-form-group label="Địa chỉ:" description=".">
+                  <b-form-input autocomplete="off" v-model="bill.diachi" type="text"></b-form-input>
                 </b-form-group>
-                <b-form-group label="Tên khách:" description=".">
-                  <b-form-input autocomplete="off" v-model="bill.customer_name" type="text"></b-form-input>
+                <b-form-group label="Tên khách:">
+                  <b-form-input autocomplete="off" v-model="bill.tenkhach" type="text"></b-form-input>
+                </b-form-group>
+                <b-form-group label="Số món">
+                  <b-form-input autocomplete="off" v-model="selectGioHang.length" disabled type="text"></b-form-input>
                 </b-form-group>
               </b-col>
 
               <b-col cols="12">
                 <b-form-group label="Chi tiết hóa đơn:">
-                  <b-form-textarea autocomplete="off" v-model="bill.bill_detail" rows="5">
+                  <b-form-textarea autocomplete="off" v-model="bill.chitiet" rows="5">
                   </b-form-textarea>
                 </b-form-group>
               </b-col>
@@ -1198,35 +974,32 @@
                 </td>
                 <td>
                   <b @click="showInfoSanPham(item)" class="myHoverProductBarcode">
-                    {{
-        $store.state.config.sanpham_optionCatalog.find(
-          (i) => i.value === item.product_catalog
-        ).text
-      }}</b>
+                    {{ item.kieusanpham.short }}
+                  </b>
                 </td>
 
                 <td>
-                  <b class="text-danger">{{ item.price.sellingPrice }}</b>
-                </td>
-
-                <td>
-                  <b class="text-danger">{{
-        $formatSoVang(item.product_gold_weight).fullStr
-      }}</b>
-                </td>
-
-                <td>
-                  <b>{{ item.product_type }}</b>
-                </td>
-
-                <td>
-                  <b>{{ item.product_wage }}</b>
+                  <b class="text-danger">{{ item.banggia.code }}</b>
                 </td>
 
                 <td>
                   <b class="text-danger">{{
-        $formatSoTien(item.giahientai)
-      }}</b>
+                    $formatSoVang(item.klv).fullStr
+                  }}</b>
+                </td>
+
+                <td>
+                  <b>{{ item.banggia.code }}</b>
+                </td>
+
+                <td>
+                  <b>{{ item.cong }}</b>
+                </td>
+
+                <td>
+                  <b class="text-danger">{{
+                    $formatSoTien(item.giahientai)
+                  }}</b>
                 </td>
               </tr>
             </tbody>
@@ -1234,35 +1007,35 @@
               <tr>
                 <td colspan="5" class="text-center">
                   <span>{{
-        docsotien(
-          selectGioHang.reduce(
-            (sum, item) => sum + (item.giahientai || 0),
-            0
-          )
-        )
-      }}</span>
+                    docsotien(
+                      selectGioHang.reduce(
+                        (sum, item) => sum + (item.giahientai || 0),
+                        0
+                      )
+                    )
+                  }}</span>
                 </td>
 
                 <td>
                   <b class="text-primary text-right">
                     {{
-          $formatSoTien(
-            selectGioHang.reduce(
-              (sum, item) => sum + (item.product_wage || 0),
-              0
-            )
-          )
-        }}</b>
+                      $formatSoTien(
+                        selectGioHang.reduce(
+                          (sum, item) => sum + (item.cong || 0),
+                          0
+                        )
+                      )
+                    }}</b>
                 </td>
                 <td>
                   <b class="text-primary text-right">
                     {{
-          $formatSoTien(
-            selectGioHang.reduce(
-              (sum, item) => sum + (item.giahientai || 0),
-                    0
-                    )
-                    )
+                      $formatSoTien(
+                        selectGioHang.reduce(
+                          (sum, item) => sum + (item.giahientai || 0),
+                          0
+                        )
+                      )
                     }}</b>
                 </td>
               </tr>
@@ -1270,15 +1043,8 @@
           </table>
         </b-col>
         <b-col cols="12" v-for="(item, index) in selectGioHang" :key="index">
-          <b-card :title="'#' +
-        (index + 1) +
-        '_' +
-        $store.state.config.sanpham_optionCatalog.find(
-          (i) => i.value === item.product_catalog
-        ).text +
-        '-' +
-        item.product_barcode
-        " :img-src="item.product_image_url" :img-alt="item.product_barcode" img-top class="mb-2">
+          <b-card :title="'#' + (index + 1) + '_' + item.kieusanpham.short + '-' + item.maso
+            " :img-src="item.anhsanpham" img-top class="mb-2">
             <b-card-text>
               <b-row>
                 <b-col cols="6">
@@ -1287,24 +1053,24 @@
                       <td>Trọng lượng Tổng</td>
                       <td>
                         <b class="text-danger">{{
-                          $formatSoVang(item.product_total_weight).fullStr
-                          }}</b>
+                          $formatSoVang(item.klt).fullStr
+                        }}</b>
                       </td>
                     </tr>
                     <tr>
                       <td>Trọng lượng hột</td>
                       <td>
                         <b class="text-danger">{{
-                          $formatSoVang(item.product_stone_weight).fullStr
-                          }}</b>
+                          $formatSoVang(item.klh).fullStr
+                        }}</b>
                       </td>
                     </tr>
                     <tr>
                       <td>Trọng lượng đá</td>
                       <td>
                         <b class="text-danger">{{
-                          $formatSoVang(item.product_gold_weight).fullStr
-                          }}</b>
+                          $formatSoVang(item.klv).fullStr
+                        }}</b>
                       </td>
                     </tr>
                   </table>
@@ -1314,19 +1080,19 @@
                     <tr>
                       <td>Loại vàng</td>
                       <td>
-                        <b>{{ item.product_type }}</b>
+                        <b>{{ item.banggia.code }}</b>
                       </td>
                     </tr>
                     <tr>
                       <td>Giá vàng</td>
                       <td>
-                        <b>{{ item.price.sellingPrice }}</b>
+                        <b>{{ item.banggia.sellingPrice }}</b>
                       </td>
                     </tr>
                     <tr>
                       <td>Tiền công</td>
                       <td>
-                        <b>{{ item.product_wage }}</b>
+                        <b>{{ item.cong }}</b>
                       </td>
                     </tr>
                   </table>
@@ -1335,8 +1101,8 @@
                   <div class="text-center text-primary">
                     Tính :
                     {{
-                    `${$formatSoVang(item.product_gold_weight).fullStr}x${item.price.sellingPrice
-                    }+${item.product_wage}=${$formatSoTien(item.giahientai)}`
+                      `${$formatSoVang(item.klv).fullStr}x${item.banggia.sellingPrice
+                      }+${item.cong}=${$formatSoTien(item.giahientai)}`
                     }}
                   </div>
                 </b-col>
@@ -1347,26 +1113,23 @@
       </b-row>
       <template #footer>
         <div class="d-flextext-light bg-warning align-items-center px-3 py-2 text-left">
-          <b-button variant="danger" @click="inhoadon()">In Giấy</b-button>
+          <b-button variant="primary" @click="inhoadon()">Tạo hóa đơn và In Giấy</b-button>
           Giá :
           <strong class="mr-auto text-danger">
             {{
-            $formatSoTien(
-            selectGioHang.reduce(
-            (sum, item) => sum + (item.giahientai || 0),
-            0
-            )
-            )
+              $formatSoTien(
+                selectGioHang.reduce(
+                  (sum, item) => sum + (item.giahientai || 0),
+                  0
+                )
+              )
             }}</strong>
           Công :
           <strong class="mr-auto text-danger">
             {{
-            $formatSoTien(
-            selectGioHang.reduce(
-            (sum, item) => sum + (item.product_wage || 0),
-            0
-            )
-            )
+              $formatSoTien(
+                selectGioHang.reduce((sum, item) => sum + (item.cong || 0), 0)
+              )
             }}</strong>
         </div>
       </template>
@@ -1386,7 +1149,7 @@
               <b-dropdown-item href="/camdo/them">Thêm hóa đơn thế</b-dropdown-item>
 
               <b-dropdown-item href="/camdo/intem">In tem bọc cầm đồ</b-dropdown-item>
-              <b-dropdown-item href="/camdo/chuocdo">Đánh dấu chuộc</b-dropdown-item>
+              <b-dropdown-item href="/camdo/matgiay">Mất giấy</b-dropdown-item>
               <b-dropdown-item href="/camdo/thanhly"> Thanh lý</b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>
@@ -1400,6 +1163,7 @@
               <b-dropdown-item href="/sanpham/intem">In tem sản phẩm</b-dropdown-item>
             </b-dropdown-group>
             <b-dropdown-group id="dropdown-group-2" header="Bảng giá">
+              <b-dropdown-item href="/sanpham/hoadonnhap">Hóa đơn nhập</b-dropdown-item>
               <b-dropdown-item href="/">Bảng Giá</b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>
@@ -1412,12 +1176,17 @@
               </b-dropdown-item>
               <b-dropdown-item href="/hoadon/">Hóa đơn</b-dropdown-item>
             </b-dropdown-group>
+            <b-dropdown-group id="dropdown-group-1" header="Hóa đơn nhập">
+              <b-dropdown-item href="/hoadon/themhoadonnhap">Thêm Hóa đơn Nhập Hàng</b-dropdown-item>
+            </b-dropdown-group>
           </b-nav-item-dropdown>
         </b-navbar-nav>
 
         <b-navbar-nav>
           <b-nav-item-dropdown text="Công cụ">
             <b-dropdown-group id="dropdown-group-1" header="Sản phẩm" style="width: 300px">
+              <b-dropdown-item href="/tool/kiemcan">Kiểm cân</b-dropdown-item>
+              <b-dropdown-item href="/tool/nhacungcap">Nhà cung cấp</b-dropdown-item>
               <b-dropdown-item href="/tv">Bảng giá</b-dropdown-item>
               <b-dropdown-item href="/tool/cannuoc">Cân Nước</b-dropdown-item>
               <b-dropdown-item-button>Đặt đồ</b-dropdown-item-button>
@@ -1432,9 +1201,9 @@
 
         <b-navbar-nav>
           <b-nav-item-dropdown text="Thống kê">
-            <b-dropdown-group id="dropdown-group-1" header="Sản phẩm" style="width: 300px">
+            <b-dropdown-group id="dropdown-group-1" header="Các mục" style="width: 300px">
               <b-dropdown-item href="/thongke/ngay">Theo ngày</b-dropdown-item>
-              <b-dropdown-item-button>Sản phẩm</b-dropdown-item-button>
+              <b-dropdown-item href="/thongke/sanpham">Sản phẩm</b-dropdown-item>
               <b-dropdown-item href="/thongke/camdo">Cầm đồ</b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>
@@ -1444,6 +1213,14 @@
         </b-navbar-nav>
         <b-navbar-nav>
           <b-nav-item v-b-toggle.sidebargiohang>Giỏ hàng</b-nav-item>
+        </b-navbar-nav>
+        <b-navbar-nav class="ml-auto">
+          <b-nav-form @submit.prevent="findItem">
+            <b-overlay :show="overlay_search">
+              <b-input style="text-transform: uppercase" autocomplete="off" v-model="searchInput" size="sm"
+                placeholder="Tìm kiếm..." class="mr-sm-2"></b-input>
+            </b-overlay>
+          </b-nav-form>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -1585,18 +1362,24 @@ DocTienBangChu.prototype.doc = function (SoTien) {
 export default {
   data() {
     return {
+      filterGioHang: null,
+      searchInput: null,
+      id_giohang: null,
       default_overlaySanPham: false,
       formDefault_sanpham_gia: null,
 
       bill: {
-        bill_totalmoney: 0,
-        bill_realmoney_get: 0,
-        customer_name: "không",
-        bill_detail: "không",
-        bill_comment: "không",
-        bill_print: false,
-        giohang_id: null,
+        tongtien: 0,
+        thucnhan: 0,
+        tenkhach: "khong",
+        diachi: "khong",
+        chitiet: "khong",
+        ghichu: "khong",
+        sodienthoai: "khong",
+        id_giohang: null,
+        isPrint: false,
         bill_code: null,
+        listsanpham: [],
       },
 
       product_barcode: null,
@@ -1620,18 +1403,43 @@ export default {
       overlayGioHang: false,
       fieldsGioHang: [
         { key: "stt", label: "#" },
-        { key: "product_image_url", label: "Ảnh" },
-        { key: "product_barcode", label: "Mã" },
-        { key: "product_type", label: "Loại" },
-
-        { key: "price", label: "GiáV" },
-        { key: "product_catalog", label: "Kiểu" },
-        { key: "product_total_weight", label: "Tổng" },
-        { key: "product_stone_weight", label: "Hột" },
-        { key: "product_gold_weight", label: "Vàng" },
-        { key: "product_wage", label: "Công" },
-        { key: "giahientai", label: "Giá" },
+        {
+          key: "anhsanpham",
+          label: "Ảnh",
+          formatter: (val) => {
+            return val;
+          },
+        },
+        { key: "maso", label: "Mã", sortable: true },
+        { key: "banggia.code", label: "Loại", sortable: true },
+        { key: "banggia.sellingPrice", label: "GiáV", sortable: true },
+        { key: "kieusanpham.short", label: "Kiểu", sortable: true },
+        { key: "nhacungcap.short", label: "Chành", sortable: true },
+        { key: "klt", label: "Tổng", sortable: true },
+        { key: "klh", label: "Hột", sortable: true },
+        { key: "klv", label: "Vàng", sortable: true },
+        { key: "cong", label: "Công", sortable: true },
+        { key: "giahientai", label: "Giá", sortable: true },
         { key: "remove", label: "Giá" },
+      ],
+      fieldSanphamhoadon: [
+        { key: "stt", label: "#" },
+        {
+          key: "anhsanpham",
+          label: "Ảnh",
+          formatter: (val) => {
+            return val;
+          },
+        },
+        { key: "maso", label: "Mã", sortable: true },
+        { key: "banggia.code", label: "Loại", sortable: true },
+        { key: "banggia.sellingPrice", label: "GiáV", sortable: true },
+        { key: "kieusanpham.short", label: "Kiểu", sortable: true },
+        { key: "nhacungcap.short", label: "Chành", sortable: true },
+        { key: "klt", label: "Tổng", sortable: true },
+        { key: "klh", label: "Hột", sortable: true },
+        { key: "klv", label: "Vàng", sortable: true },
+        { key: "cong", label: "Công", sortable: true }
       ],
       overlaySanPham: false,
       question: "",
@@ -1659,7 +1467,8 @@ export default {
       camdo_kiemtra_bocdo_invoice_number: null,
       camdo_kiemtra_giaythe: null,
       camdo_kiemtra_bocdo: null,
-      camdo_kiemtra_giaythe_danhan: false
+      camdo_kiemtra_giaythe_danhan: false,
+      overlay_search: false,
     };
   },
   watch: {
@@ -1670,7 +1479,7 @@ export default {
       this.check_camdo_kiemtra_trungnhau();
     },
     selectGioHang(newVal, oldVal) {
-      this.getBarcode();
+      // this.getBarcode();
       if (newVal.length >= 1) {
         this.showTinhToan = true;
       } else {
@@ -1775,38 +1584,65 @@ export default {
   components: {},
   computed: {},
   methods: {
+    formatBillCode(item) {
+      //6-25042024
+      let billNumber = String(item).split("-")[0];
+      return billNumber;
+    },
+    findItem() {
+      this.overlay_search = true;
+      if (this.searchInput && this.searchInput != "") {
+        //SN1150 sp
+        let input = String(this.searchInput).toUpperCase();
+        const productRegex = /^[S][A-Z][0-9]+$/;
+        //12321321 dothe
+        const itemRegex = /^[0-9]+$/;
+        //4-15042024 hóa đơn
+        const billRegex = /^\d+-\d+$/;
+        if (productRegex.test(input)) {
+          this.checkSanPham_search(input);
+        }
+        if (itemRegex.test(input)) {
+          this.checkDoThe_search(input);
+        }
+        if (billRegex.test(input)) {
+          this.checkHoaDon(input)
+        }
+        this.searchInput = null;
+      }
+    },
     reset_camdo_kiemtra() {
       if (!this.camdo_kiemtra_giaythe_danhan) {
         this.camdo_kiemtra_bocdo = null;
-        this.camdo_kiemtra_giaythe = null
+        this.camdo_kiemtra_giaythe = null;
         this.camdo_kiemtra_bocdo_invoice_number = null;
         this.camdo_kiemtra_giaythe_invoice_number = null;
         this.camdo_kiemtra_status = true;
-        this.camdo_kiemtra_giaythe_danhan = false
+        this.camdo_kiemtra_giaythe_danhan = false;
       }
     },
     check_camdo_kiemtra_buoc2(id) {
-      console.log(id)
-      let invoice_number = parseInt(id)
+      console.log(id);
+      let invoice_number = parseInt(id);
       this.$supabase
         .from("invoice")
         .select()
-        .eq("invoice_number", invoice_number).then(async (data) => {
+        .eq("invoice_number", invoice_number)
+        .then(async (data) => {
           if (data.data[0]) {
-            this.camdo_kiemtra_bocdo = data.data[0]
-            this.camdo_kiemtra_bocdo_invoice_number = data.data[0].invoice_number
+            this.camdo_kiemtra_bocdo = data.data[0];
+            this.camdo_kiemtra_bocdo_invoice_number =
+              data.data[0].invoice_number;
             this.check_camdo_kiemtra_trungnhau();
             if (this.camdo_kiemtra_status) {
               //chuoc
-              this.tempCheckDothe = this.camdo_kiemtra_bocdo
-              this.check_invoice_auto()
+              this.tempCheckDothe = this.camdo_kiemtra_bocdo;
+              this.check_invoice_auto();
             }
-            this.camdo_kiemtra_giaythe_danhan = false
+            this.camdo_kiemtra_giaythe_danhan = false;
             this.$bvModal.show("modal_camdo_kiemtra");
-
           }
-
-        })
+        });
     },
     check_camdo_kiemtra_trungnhau() {
       if (
@@ -1820,23 +1656,22 @@ export default {
     },
     check_camdo_kiemtra(id) {
       //id = -----0
-      let invoice_number = parseInt(String(id).split('-')[1])
+      let invoice_number = parseInt(String(id).split("-")[1]);
 
       this.$supabase
         .from("invoice")
         .select()
-        .eq("invoice_number", invoice_number).then(async (data) => {
-
+        .eq("invoice_number", invoice_number)
+        .then(async (data) => {
           if (data.data[0]) {
-            console.log(data.data[0])
-            this.camdo_kiemtra_giaythe = data.data[0]
-            this.camdo_kiemtra_giaythe_invoice_number = data.data[0].invoice_number
+            console.log(data.data[0]);
+            this.camdo_kiemtra_giaythe = data.data[0];
+            this.camdo_kiemtra_giaythe_invoice_number =
+              data.data[0].invoice_number;
             this.camdo_kiemtra_giaythe_danhan = true;
             this.$bvModal.show("modal_camdo_kiemtra");
-
           }
-
-        })
+        });
     },
     getBarcode() {
       this.$getBill_code().then((data) => {
@@ -1845,62 +1680,145 @@ export default {
       });
     },
 
-    inhoadon() {
+    async inhoadon() {
       //tạo hóa đơn
       //gửi link ve client in
       //client
-      let billObject = {
-        bill_totalmoney: this.selectGioHang.reduce(
+      //
+      let giohangtemp = await this.$supabase
+        .from("giohangsanpham")
+        .select()
+        .eq("id", this.id_giohang);
+      let count_hoadon = giohangtemp.data[0].count_hoadon;
+      console.log(count_hoadon);
+      let bill_code = `${count_hoadon + 1}-${this.$moment().format(
+        "DDMMYYYY"
+      )}`;
+      let spLength = this.selectGioHang.length;
+      let listName = this.selectGioHang.map(
+        (item) =>
+          `${item.name}-${this.$formatSoVang(item.klv).fullStr}-${item.cong
+          }-${this.$formatN(item.giahientai)}`
+      );
+      let tongtien = parseInt(
+        this.selectGioHang.reduce(
           (sum, item) => sum + (item.giahientai || 0),
           0
-        ),
-        bill_listsanpham: this.selectGioHang,
-        bill_realmoney_get: parseFloat(this.bill.bill_realmoney_get),
-        customer_name: this.bill.customer_name,
-        billDetail: this.bill.bill_detail,
-        bill_code: this.bill.bill_code,
-        bill_comment: this.bill.bill_comment,
-        bill_print: false,
-        giohang_id: this.rawGioHang.id,
+        )
+      );
+      let thucnhan = this.$formatN(this.bill.thucnhan || 0);
+      console.log(listName);
+      let billObject = {
+        tongtien,
+        thucnhan: parseInt(this.bill.thucnhan),
+        tenkhach: this.bill.tenkhach,
+        diachi: this.bill.diachi,
+        sodienthoai: this.bill.sodienthoai,
+        bill_code,
+        isPrint: false,
+        id_giohang: this.id_giohang,
+        chitiet: this.bill.chitiet,
+        ghichu: this.bill.ghichu,
+        somon: this.selectGioHang.length,
       };
-      this.$insertBill(billObject).then((data) => {
-        //update sanpham
 
-        let hoadon = data;
-        //hide sidebar,clear select
-        this.$refs.default_tablegiohang.clearSelected();
-        this.selectGioHang = [];
-
-        this.$root.$emit("bv::toggle::collapse", "sidebargiohang");
-        this.showTinhToan = false;
-
-        this.$bvToast.toast(
-          `Tạo hóa đơn ${hoadon.bill_code} ${this.selectGioHang.length
-          } sản phẩm. Tổng tiền hàng ${this.$formatSoTien(
-            billObject.bill_totalmoney
-          )}. Tổng thực nhận ${this.$formatSoTien(
-            billObject.bill_realmoney_get
-          )}`,
-          {
-            title: "Thông báo",
-            autoHideDelay: 3000,
-            appendToast: true,
-            variant: "primary",
-          }
-        );
-        this.$pnPublish(
-          {
-            channel: "printserver",
-            message: { type: "inhoadon", list: hoadon },
-          },
-          (status, response) => {
-            if (status.error) {
-              console.log(status);
-            } else {
-            }
-          }
-        );
+      //tao hoa don
+      let hoadon_ban = await this.$insertBill(billObject);
+      //cap nhap count gio hang
+      await this.$supabase
+        .from("giohangsanpham")
+        .update({ count_hoadon: count_hoadon + 1 })
+        .eq("id", this.id_giohang);
+      let _listsp = this.selectGioHang.map((i) => {
+        return {
+          name: i.name,
+          maso: i.maso,
+          klt: i.klt,
+          klv: i.klv,
+          klh: i.klh,
+          cong: i.cong,
+          gia: i.banggia.sellingPrice,
+          giatrixuat: i.giahientai,
+          code: i.banggia.code,
+        };
       });
+
+      billObject.listsp = _listsp;
+      //update vao sanpham
+      this.$bvToast.toast(
+        `Tạo hóa đơn ${hoadon_ban.bill_code} ${this.selectGioHang.length
+        } sản phẩm. Tổng tiền hàng ${this.$formatSoTien(
+          billObject.tongtien
+        )}. Tổng thực nhận ${this.$formatSoTien(thucnhan)}`,
+        {
+          title: "Thông báo",
+          autoHideDelay: 3000,
+          appendToast: true,
+          variant: "primary",
+        }
+      );
+      for (let listsp = 0; listsp < this.selectGioHang.length; listsp++) {
+        let idSp = this.selectGioHang[listsp].id;
+        let giatrixuat = this.selectGioHang[listsp].giahientai;
+        let objectUpdate = {
+          id_hoadonban: hoadon_ban.id,
+          daban: true,
+          ngayxuat: new Date(),
+          giavangxuat: this.selectGioHang[listsp].banggia.sellingPrice,
+          giatrixuat,
+        };
+        let spUpdate = await this.$supabase
+          .from("sanpham")
+          .update(objectUpdate)
+          .eq("id", idSp);
+      }
+      //update gio hang
+      this.getGioHang();
+      //tắt sidebar
+      this.showTinhToan = false;
+      //hienthngbao
+
+      this.$refs.default_tablegiohang.clearSelected();
+
+      this.$root.$emit("bv::toggle::collapse", "sidebargiohang");
+      this.bill = {
+        tongtien: 0,
+        thucnhan: 0,
+        tenkhach: "khong",
+        diachi: "khong",
+        chitiet: "khong",
+        ghichu: "khong",
+        sodienthoai: "khong",
+        id_giohang: null,
+        isPrint: false,
+        bill_code: null,
+        listsanpham: [],
+      };
+      let bodyStr = `${this.$moment().format(
+        "DD/MM/YYYY hh:mm"
+      )}*HóaĐơnMới:[${bill_code}]*SốMón:${spLength} *Sp:[${listName}] *Tổng Tiền:${tongtien} *Thực Nhận:${thucnhan}`;
+      // await fetch("https://ntfy.sh/tiemvangbaophuong2025", {
+      //   method: "POST",
+      //   headers: {
+      //     Click: "https://simplegold.vercel.app/hoadon/" + hoadon_ban.id,
+      //     Tags: ["tada"],
+      //   },
+      //   body: bodyStr,
+      // });
+
+      this.$pnPublish(
+        {
+          channel: "printserver",
+          message: { type: "inhoadon", list: billObject },
+        },
+        (status, response) => {
+          if (status.error) {
+            console.log(status);
+            this.selectGioHang = [];
+          } else {
+          }
+        }
+      );
     },
     getGiaHienTai() {
       let product_price_import = parseFloat(this.product_price_import);
@@ -1997,7 +1915,6 @@ export default {
           centered: true,
         })
         .then((value) => {
-          console.log("aaaaa");
           let ngaythanhli = document.getElementById("modal_thanhly_date").value;
           let isValid = this.checkRegexDate(ngaythanhli);
           if (isValid === false) {
@@ -2113,7 +2030,7 @@ export default {
       return regex.test(str);
     },
     closeModalSanPham() {
-      zoomLens.style.visibility = "hidden";
+      //  zoomLens.style.visibility = "hidden";
     },
     getTienLai(x) {
       let tienlai =
@@ -2124,14 +2041,15 @@ export default {
 
       return this.$roundToThousand(tienlai, x.invoice_money);
     },
-    xoaSanPhamGioHang(item) {
+    async xoaSanPhamGioHang(item) {
       this.overlayGioHang = true;
       this.listGioHang = this.listGioHang.filter((x) => x !== item);
+      //xoa reference trong sanpham
 
       this.$supabase
-        .from("giohang")
-        .update({ listsanpham: this.listGioHang })
-        .eq("created_at", this.$moment().format("YYYY-MM-DD"))
+        .from("sanpham")
+        .update({ id_giohang: null })
+        .eq("id", item.id)
         .then((data) => {
           this.getGioHang().then((data) => {
             this.overlayGioHang = false;
@@ -2144,7 +2062,6 @@ export default {
     },
     getTongGiaTriGioHang() {
       let count = 0;
-
       this.listGioHang.forEach((item) => {
         count += item.giahientai;
       });
@@ -2282,13 +2199,24 @@ export default {
     checkDoThe(id) {
       this.$supabase
         .from("invoice")
-        .select()
+        .select("*")
         .eq("invoice_number", id)
         .then(async (data) => {
           this.tempCheckDothe = data.data[0];
           this.$bvModal.show("modal_camdo");
           //unset
           this.check_invoice_auto();
+        });
+    },
+    checkDoThe_search(id) {
+      this.$supabase
+        .from("invoice")
+        .select("*")
+        .eq("invoice_number", id)
+        .then(async (data) => {
+          this.tempCheckDothe = data.data[0];
+          this.$bvModal.show("modal_camdo");
+          //unset
         });
     },
     async capnhatgiohang() {
@@ -2298,66 +2226,61 @@ export default {
       });
     },
     checkHoaDon(id) {
-      console.log(id);
       this.$supabase
-        .from("hoadon")
-        .select()
+        .from("hoadon_ban")
+        .select("*,sanpham(*,banggia(*),nhacungcap(*),kieusanpham(*))")
         .eq("bill_code", String(id))
         .then((data) => {
           this.raw_hoadon = data.data[0];
+          console.log(data.data[0])
           this.$bvModal.show("modalHoaDon");
         });
     },
     async getGioHang() {
+      let idGioHang = this.id_giohang;
       this.$supabase
-        .from("giohang")
-        .select("*")
-        .eq("created_at", this.$moment().format("YYYY-MM-DD"))
+        .from("sanpham")
+        .select(
+          "*,kieusanpham(*),banggia(*),nhacungcap(*),kihieu(*),giohangsanpham(*),hoadon_ban(*)"
+        )
+        .eq("id_giohang", idGioHang)
         .then((data) => {
-          this.rawGioHang = data.data[0];
-          let d = data.data[0].listsanpham;
+          //   console.log(data);
+          this.rawGioHang = data.data;
+          let d = data.data;
 
-          //cập nhật giahientai theo bảng giá hiện tại, tránh trường hợp nhầm
           d = d.map((item) => {
-            let price = this.$store.state.config.banggia_vang.find(
-              (i) => String(i.code) == String(item.product_type)
-            );
+            //lấy ra giá hiện tại
+            let giahientai =
+              parseInt(
+                (parseInt(item.klv) * parseInt(item.banggia.sellingPrice) +
+                  parseInt(item.cong) * 1000) /
+                1000
+              ) * 1000;
+
             return {
               ...item,
-              giahientai:
-                price.sellingPrice * item.product_gold_weight +
-                item.product_wage * 1000,
-              price,
+              giahientai,
             };
           });
           this.listGioHang = d;
         });
     },
     async insertGioHang(item) {
+      // console.log(item);
       let currentDay = this.$moment().format("YYYY-MM-DD");
-      console.log("tìm kiếm giỏ hàng");
-      let dataGioHangHienTai = await this.$supabase
-        .from("giohang")
-        .select()
-        .gte("created_at", currentDay);
 
-      if (dataGioHangHienTai.data.length > 0) {
-        let dataGioHang = (dataGioHangHienTai.data[0].listsanpham);
-        let idGioHang = dataGioHangHienTai.data[0].id;
-
-        let isItemExist = dataGioHang.find((i) => i.id === item.id);
-        if (!isItemExist) {
-          //đã tồn tại
-          dataGioHang.push(item);
-
-          await this.$supabase
-            .from("giohang")
-            .update({ listsanpham: dataGioHang })
-            .eq("id", idGioHang);
-          //edit sản phẩm
-
+      if (this.id_giohang != null) {
+        //kiểm tra coi sản phẩm này có tồn tại trong giỏ hàng không
+        const sanphamhientai = await this.$supabase
+          .from("sanpham")
+          .select("*", { count: "exact" })
+          .eq("maso", item.maso)
+          .eq("id_giohang", this.id_giohang);
+        let count = sanphamhientai.count;
+        if (count > 0) {
           this.$bvToast.toast(
-            `Thêm sản phẩm ${item.product_barcode} vào giỏ hàng ngày ${currentDay} `,
+            `Mã sản phẩm ${item.maso} đã tồn tại trong giỏ hàng`,
             {
               title: "Thông báo",
               autoHideDelay: 1000,
@@ -2366,8 +2289,14 @@ export default {
             }
           );
         } else {
+          await this.$supabase
+            .from("sanpham")
+            .update({ id_giohang: this.id_giohang })
+            .eq("id", item.id);
+          //edit sản phẩm
+
           this.$bvToast.toast(
-            `Mã sản phẩm ${item.product_barcode} đã tồn tại trong giỏ hàng`,
+            `Thêm sản phẩm ${item.maso} vào giỏ hàng ngày ${currentDay} `,
             {
               title: "Thông báo",
               autoHideDelay: 1000,
@@ -2378,34 +2307,101 @@ export default {
         }
       } else {
         //tạo mới giỏ hàng cho ngày nay
-        let { data, error } = await this.$supabase.from("giohang").insert({
-          listsanpham: []
-        });
+        let { data, error } = await this.$supabase
+          .from("giohangsanpham")
+          .insert({});
         this.insertGioHang(item);
       }
-
-
     },
     checkSanPham(id) {
       //DL2083
-      id = String(id).toLowerCase();
+      id = String(id).toUpperCase();
       //insert to gioHang
+
       this.$supabase
-        .from("product")
-        .select()
-        .eq("product_barcode", id)
+        .from("sanpham")
+        .select(
+          "*,kieusanpham(*),banggia(*),nhacungcap(*),kihieu(*),hoadon_ban(*),giohangsanpham(*),sotheodoimuahang(*),hoadonnhap(*)"
+        )
+        .eq("maso", id)
         .then(async (data) => {
           let d = data.data[0];
-          let a = await this.$sp_laygiatri(d);
-          let item = { ...d, ...a };
-          this.insertGioHang(item);
-          if (d) {
-            this.itemFromScanner = { ...d, ...a };
-            //  console.log(this.itemFromScanner);
-            this.$bvModal.show("modal_sanpham");
-          } else {
-            alert("Mã sản phẩm không tồn tại");
+          console.log(d);
+          //them cac truong
+          //giahientai
+          d.giahientai = d.klv * d.banggia.sellingPrice + d.cong * 1000;
+          //gialech
+          if (!d.daban) {
+            d.chenhlech = d.giahientai - d.giatrinhap;
           }
+          if (d.sotheodoimuahang) {
+            d._sotheodoi = d.sotheodoimuahang[0];
+          } else {
+            d._sotheodoi = null;
+          }
+          this.itemFromScanner = d;
+
+          this.insertGioHang(d);
+          this.$bvModal.show("modal_sanpham");
+          // if (d) {
+          //   this.itemFromScanner = { ...d, ...a };
+          //   //  console.log(this.itemFromScanner);
+          //   this.$bvModal.show("modal_sanpham");
+          // } else {
+          //   alert("Mã sản phẩm không tồn tại");
+          // }
+        });
+    },
+    checkSanPham_search(id) {
+      //DL2083
+      id = String(id).toUpperCase();
+      //insert to gioHang
+      console.log(id);
+      this.$supabase
+        .from("sanpham")
+        .select(
+          "*,kieusanpham(*),banggia(*),nhacungcap(*),kihieu(*),hoadon_ban(*),giohangsanpham(*),sotheodoimuahang(*),hoadonnhap(*,nhacungcap(*))"
+        )
+        .eq("maso", id)
+        .then(async (data) => {
+          let d = data.data[0];
+          if (d == undefined) {
+            this.$bvToast.toast(
+              "Có lỗi với Database, dường như dữ liệu cho sản phẩm này bị lỗi",
+              {
+                title: "Thông báo",
+                autoHideDelay: 3000,
+                appendToast: true,
+                variant: "danger",
+              }
+            );
+            this.overlay_search = false;
+            return;
+          }
+          console.log(d);
+          //them cac truong
+          //giahientai
+          d.giahientai = d.klv * d.banggia.sellingPrice + d.cong * 1000;
+          //gialech
+          if (!d.daban) {
+            d.chenhlech = d.giahientai - d.giatrinhap;
+          }
+          if (d.sotheodoimuahang) {
+            d._sotheodoi = d.sotheodoimuahang[0];
+          } else {
+            d._sotheodoi = null;
+          }
+          this.itemFromScanner = d;
+          this.overlay_search = false;
+          //   this.insertGioHang(d);
+          this.$bvModal.show("modal_sanpham");
+          // if (d) {
+          //   this.itemFromScanner = { ...d, ...a };
+          //   //  console.log(this.itemFromScanner);
+          //   this.$bvModal.show("modal_sanpham");
+          // } else {
+          //   alert("Mã sản phẩm không tồn tại");
+          // }
         });
     },
     isBarcodeScan(input, duration) {
@@ -2418,9 +2414,11 @@ export default {
     },
     getCamDo() { },
     subGioHang() {
-      console.log('sub giohang')
-      this.$supabase.from('giohang').on("UPDATE", (payload) => {
-          console.log('payload',payload)
+      console.log("sub giohang");
+      this.$supabase
+        .from("giohang")
+        .on("UPDATE", (payload) => {
+          console.log("payload", payload);
         })
         .subscribe();
     },
@@ -2431,34 +2429,41 @@ export default {
         .select("*")
         .then((data) => {
           //có bảng giá
-        
           this.$store.commit("config/setBanggia", data.data);
         });
-      this.$supabase
-        .from("banggia")
-        .on("UPDATE", (payload) => {
-          console.log('co bang gia')
-          this.$supabase
-            .from("banggia")
-            .select("*")
-            .then((data) => {
-              //có bảng giá
-              console.log("có bảng giá mới");
-              this.$store.commit("config/setBanggia", data.data);
-            });
-        })
-        .subscribe();
+
+    },
+    async checkGioHangHomNay() {
+      let currentDay = this.$moment().format("YYYY-MM-DD");
+      // console.log("tìm kiếm giỏ hàng");
+      let dataGioHangHienTai = await this.$supabase
+        .from("giohangsanpham")
+        .select("*")
+        .gte("created_at", currentDay);
+
+      if (dataGioHangHienTai.data && dataGioHangHienTai.data.length > 0) {
+        console.log("Đã có giỏ hàng");
+        this.id_giohang = dataGioHangHienTai.data[0].id;
+      } else {
+        console.log("tạo mới giỏ hàng");
+        let { data, error } = await this.$supabase
+          .from("giohangsanpham")
+          .insert({})
+          .select();
+        this.id_giohang = data[0].id;
+      }
     },
   },
-  mounted() {
+  async mounted() {
+    await this.checkGioHangHomNay();
     this.subBanggia();
-this.subGioHang();
+    // this.subGioHang();
+
     let listDisableRouter = ["/camdo/chuocdo", "/chat"];
     var isDisable = listDisableRouter.includes(this.$nuxt.$route.fullPath);
     if (isDisable) {
       return;
     } else {
-      //  this.checkDoThe(70850);
       window.addEventListener("keyup", (event) => {
         var specialKeys = [
           "Control",
@@ -2520,13 +2525,13 @@ this.subGioHang();
 
         // Kiểm tra khi phím Enter được nhấn
         if (event.key === "Enter") {
-          let regexSp = /^[a-z]{2}\d+$/;
+          let regexSp = /^[a-zA-Z]{2}\d+$/;
           let regexDoThe = /^=\-?\d+$/;
           let regexHoadon = /^(\d+)-(\d{8})$/;
-          let regexGiayCamDo = /^-{1}\d{6}$/
+          let regexGiayCamDo = /^-{1}\d{6}$/;
           let scannerInput = this.barcodeInput.replace(/[\s\n]+/g, "");
+          scannerInput = removeSpecialKeysFromString(scannerInput);
 
-          console.log(scannerInput);
           if (
             this.isBarcodeScan(this.barcodeInput, duration) &&
             scannerInput != ""
@@ -2545,9 +2550,8 @@ this.subGioHang();
             }
 
             if (regexGiayCamDo.test(scannerInput)) {
-              action = "giaycamdo"
+              action = "giaycamdo";
             }
-            scannerInput = removeSpecialKeysFromString(scannerInput);
             console.log("Barcode detected:", scannerInput, action);
             this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
             switch (action) {
@@ -2560,7 +2564,7 @@ this.subGioHang();
                     this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
                   } else {
                     //binh thuong
-                    this.camdo_kiemtra_giaythe_danhan = false
+                    this.camdo_kiemtra_giaythe_danhan = false;
                     this.checkDoThe(scannerInput);
                     this.barcodeInput = ""; // Xóa chuỗi sau khi xử lý
                   }

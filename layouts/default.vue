@@ -148,27 +148,35 @@
 
             <b-tr>
               <b-td colspan="6" style="color:yellow !important;font-weight:bold">
+                <b-row style="width:95%">
+                  <b-col cols="6">
+                    <b-button-group>
+                      <b-button variant="success" @click="intemSingle(tempCheckDothe)">In Mã</b-button>
+                      <b-button variant="warning" :href="'/camdo/chitietcamdo?id=' + tempCheckDothe.id">Chỉnh
+                        sửa</b-button>
+                    </b-button-group>
+                  </b-col>
+                  <b-col cols="3">
+                    <b-form-group label="Tình trạng IN">
+                      <b-form-checkbox v-model="tempCheckDothe.invoice_label"
+                        @change="switch_in_camdo_onchange(tempCheckDothe)" switch>
+                        {{ tempCheckDothe.invoice_label ? "ĐÃ IN" : "CHƯA IN" }}
+                      </b-form-checkbox>
+                    </b-form-group>
 
-                <b-form inline style="width:100%">
+                  </b-col>
+                  <b-col cols="3">
 
-                  <b-form-group label="Tình trạng IN" style="width:45%;float:left">
-                    <b-form-checkbox v-model="tempCheckDothe.invoice_label"
-                      @change="switch_in_camdo_onchange(tempCheckDothe)" size="lg" switch>
-                      {{ tempCheckDothe.invoice_label ? "ĐÃ IN" : "CHƯA IN" }}
-                    </b-form-checkbox>
-                  </b-form-group>
-
-
-                  <b-form-group label="Tình trạng CHUỘC" style="width:45%;float:left">
-                    <b-form-checkbox size="lg" v-model="tempCheckDothe.invoice_status"
-                      @change="switch_chuoc_camdo_onchange(tempCheckDothe)" switch>
-                      {{ tempCheckDothe.invoice_status ? "ĐÃ CHUỘC" : "CHƯA CHUỘC" }}
-                    </b-form-checkbox>
-                  </b-form-group>
+                    <b-form-group label="Tình trạng CHUỘC">
+                      <b-form-checkbox v-model="tempCheckDothe.invoice_status"
+                        @change="switch_chuoc_camdo_onchange(tempCheckDothe)" switch>
+                        {{ tempCheckDothe.invoice_status ? "ĐÃCHUỘC" : "CHƯACHUỘC" }}
+                      </b-form-checkbox>
+                    </b-form-group>
+                  </b-col>
+                </b-row>
 
 
-
-                </b-form>
 
               </b-td>
             </b-tr>
@@ -1612,6 +1620,31 @@ export default {
   components: {},
   computed: {},
   methods: {
+    intemSingle(item) {
+      let list = [
+        {
+          maso: item.invoice_number,
+          tien: item.invoice_money,
+          ten: item.customer_name,
+          ngay: item.invoice_date_create,
+          id: item.id,
+        }
+      ]
+      this.$pnPublish(
+        {
+          channel: "printserver",
+          message: { type: "ingiaythe", list },
+        },
+        (status, response) => {
+          if (status.error) {
+            console.log(status);
+          } else {
+            alert("Chờ máy in ra tem ra rồi hẵn bấm OK");
+            console.log("Message Published", response);
+          }
+        }
+      );
+    },
     formatBillCode(item) {
       //6-25042024
       let billNumber = String(item).split("-")[0];

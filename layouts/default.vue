@@ -24,7 +24,10 @@
               <b-th colspan="4">
                 <div>
                   <h3 style="float: right; color: #dc3545 !important">
-                    {{ tempCheckDothe.invoice_number }}
+                    <a style="color:red !important;" :href="'/camdo/chitietcamdo?id=' + tempCheckDothe.id"
+                      target="_blank"> {{
+                        tempCheckDothe.invoice_number }}</a>
+
                     <span v-if="tempCheckDothe.invoice_status">
                       <!-- da chuoc -->
                       <b-badge variant="primary">Đã chuộc</b-badge>
@@ -144,9 +147,29 @@
             </b-tr>
 
             <b-tr>
-              <b-td colspan="6">
-                <b-button variant="success" @click="check_invoice()">
-                  Chuộc Đồ</b-button>
+              <b-td colspan="6" style="color:yellow !important;font-weight:bold">
+
+                <b-form inline style="width:100%">
+
+                  <b-form-group label="Tình trạng IN" style="width:45%;float:left">
+                    <b-form-checkbox v-model="tempCheckDothe.invoice_label"
+                      @change="switch_in_camdo_onchange(tempCheckDothe)" size="lg" switch>
+                      {{ tempCheckDothe.invoice_label ? "ĐÃ IN" : "CHƯA IN" }}
+                    </b-form-checkbox>
+                  </b-form-group>
+
+
+                  <b-form-group label="Tình trạng CHUỘC" style="width:45%;float:left">
+                    <b-form-checkbox size="lg" v-model="tempCheckDothe.invoice_status"
+                      @change="switch_chuoc_camdo_onchange(tempCheckDothe)" switch>
+                      {{ tempCheckDothe.invoice_status ? "ĐÃ CHUỘC" : "CHƯA CHUỘC" }}
+                    </b-form-checkbox>
+                  </b-form-group>
+
+
+
+                </b-form>
+
               </b-td>
             </b-tr>
           </b-tbody>
@@ -1646,6 +1669,7 @@ export default {
               this.check_invoice_auto();
             }
             this.camdo_kiemtra_giaythe_danhan = false;
+            console.log()
             this.$bvModal.show("modal_camdo_kiemtra");
           }
         });
@@ -1872,6 +1896,38 @@ export default {
           product_gold_weight * product_price_import + product_wage_in * 100;
         this.giatrinhap = Math.round(result / 1000) * 1000;
       }
+    },
+    async switch_in_camdo_onchange(item) {
+      this.overlayCamDo = true
+      await this.$supabase.from("invoice").update({
+        invoice_label: item.invoice_label
+      }).eq('id', item.id)
+      this.$bvToast.toast(
+        `Thay đổi tình trạng IN của gói cầm đồ [${item.invoice_number}].Từ [${!item.invoice_label ? "ĐÃ IN" : "CHƯA IN"}] thành [${item.invoice_label ? "ĐÃ IN" : "CHƯA IN"}] thành công`,
+        {
+          title: "Thông báo",
+          autoHideDelay: 3000,
+          appendToast: true,
+          variant: "primary",
+        }
+      );
+      this.overlayCamDo = false
+    },
+    async switch_chuoc_camdo_onchange(item) {
+      this.overlayCamDo = true
+      await this.$supabase.from("invoice").update({
+        invoice_status: item.invoice_status
+      }).eq('id', item.id)
+      this.$bvToast.toast(
+        `Thay đổi tình trạng CHUỘC của gói cầm đồ [${item.invoice_number}].Từ [${!item.invoice_status ? "ĐÃ CHUỘC" : "CHƯA CHUỘC"}] thành [${item.invoice_status ? "ĐÃ CHUỘC" : "CHƯA CHUỘC"}] thành công`,
+        {
+          title: "Thông báo",
+          autoHideDelay: 3000,
+          appendToast: true,
+          variant: "primary",
+        }
+      );
+      this.overlayCamDo = false
     },
 
     default_insertSanPham(action) {
@@ -2209,6 +2265,7 @@ export default {
         .eq("invoice_number", id)
         .then(async (data) => {
           this.tempCheckDothe = data.data[0];
+
           this.$bvModal.show("modal_camdo");
           //unset
           this.check_invoice_auto();
@@ -2222,8 +2279,9 @@ export default {
         .then(async (data) => {
           if (data.data.length > 0) {
             this.tempCheckDothe = data.data[0];
+            console.log(data.data[0])
             this.$bvModal.show("modal_camdo");
-          }else{
+          } else {
             alert('Không tìm thấy Đồ Thế')
           }
 

@@ -1262,7 +1262,23 @@
             </b-dropdown-group>
           </b-nav-item-dropdown>
         </b-navbar-nav>
+        <b-navbar-nav>
+          <b-nav-item-dropdown text="Tạo nhanh">
+            <b-dropdown-group header="Số lượng sẵn 9950">
+              <b-dropdown-item href="#">Tạo Nhẫn 5p</b-dropdown-item>
+              <b-dropdown-item href="#">Tạo Nhẫn 1C</b-dropdown-item>
+              <b-dropdown-item href="#">Tạo Nhẫn 2C</b-dropdown-item>
+              <b-dropdown-item href="#">Tạo Nhẫn 5C</b-dropdown-item>
+            </b-dropdown-group>
+            <b-dropdown-group header="Số lượng theo yêu cầu">
+              <b-dropdown-item href="#">
+                Tự chọn
+              </b-dropdown-item>
+            </b-dropdown-group>
+          </b-nav-item-dropdown>
+        </b-navbar-nav>
 
+        <!-- 
         <b-navbar-nav>
           <b-nav-item-dropdown text="Thống kê">
             <b-dropdown-group id="dropdown-group-1" header="Các mục" style="width: 300px">
@@ -1271,10 +1287,10 @@
               <b-dropdown-item href="/thongke/camdo">Cầm đồ</b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>
-        </b-navbar-nav>
-        <b-navbar-nav>
+        </b-navbar-nav> -->
+        <!-- <b-navbar-nav>
           <b-nav-item href="/chat/">Chat</b-nav-item>
-        </b-navbar-nav>
+        </b-navbar-nav> -->
         <b-navbar-nav>
           <b-nav-item v-b-toggle.sidebargiohang>Giỏ hàng</b-nav-item>
         </b-navbar-nav>

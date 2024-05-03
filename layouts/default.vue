@@ -402,8 +402,8 @@
                     <span class="title">NGUỒN GỐC NHẬP</span>
                   </b-td>
                   <b-td>
-                    <b>  NHẬP TỪ KHÁCH LẺ</b>
-                 
+                    <b> NHẬP TỪ KHÁCH LẺ</b>
+
                   </b-td>
                 </b-tr>
                 <b-tr>
@@ -458,7 +458,7 @@
                   </b-td>
                   <b-td>
                     <div class="value text-success bd-highlight">
-                      {{ itemFromScanner._sotheodoi.klt }}
+                      {{ itemFromScanner._sotheodoi.klt / 1000 }} <b>Chỉ</b>
                     </div>
                   </b-td>
                 </b-tr>
@@ -468,7 +468,7 @@
                   </b-td>
                   <b-td>
                     <div class="value text-success bd-highlight">
-                      {{ itemFromScanner._sotheodoi.klh }}
+                      {{ itemFromScanner._sotheodoi.klh / 1000 }} <b>Chỉ</b>
                     </div>
                   </b-td>
                 </b-tr>
@@ -478,7 +478,7 @@
                   </b-td>
                   <b-td>
                     <div class="value text-success bd-highlight">
-                      {{ itemFromScanner._sotheodoi.klv }}
+                      {{ itemFromScanner._sotheodoi.klv / 1000 }} <b>Chỉ</b>
                     </div>
                   </b-td>
                 </b-tr>
@@ -504,7 +504,7 @@
                     <span class="title">NGUỒN GỐC NHẬP</span>
                   </b-td>
                   <b-td>
-                  <b> NHẬP TỪ CHÀNH SỈ</b>
+                    <b> NHẬP TỪ CHÀNH SỈ</b>
                   </b-td>
                 </b-tr>
                 <b-tr>
@@ -581,6 +581,17 @@
                   <b-td>
                     <div class="value text-success bd-highlight">
                       {{ itemFromScanner.hoadonnhap.nhacungcap.ghichu }}
+                    </div>
+                  </b-td>
+                </b-tr>
+
+                <b-tr>
+                  <b-td>
+                    <span class="title">Thông tin đồ nhập</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      ←← Như bên phải
                     </div>
                   </b-td>
                 </b-tr>

@@ -399,6 +399,15 @@
               <b-tbody>
                 <b-tr>
                   <b-td>
+                    <span class="title">NGUỒN GỐC NHẬP</span>
+                  </b-td>
+                  <b-td>
+                    <b>  NHẬP TỪ KHÁCH LẺ</b>
+                 
+                  </b-td>
+                </b-tr>
+                <b-tr>
+                  <b-td>
                     <span class="title">Mã Hóa đơn Nhập</span>
                   </b-td>
                   <b-td>
@@ -487,9 +496,17 @@
             </b-table-simple>
           </b-col>
           <b-col v-else-if="itemFromScanner.hoadonnhap" cols="4">
-            <h4 class="text-center">HÓA ĐƠN NHẬP CHÀNH</h4>
+            <h4 class="text-center">HÓA ĐƠN NHẬP</h4>
             <b-table-simple small hover bordered responsive fixed>
               <b-tbody>
+                <b-tr>
+                  <b-td>
+                    <span class="title">NGUỒN GỐC NHẬP</span>
+                  </b-td>
+                  <b-td>
+                  <b> NHẬP TỪ CHÀNH SỈ</b>
+                  </b-td>
+                </b-tr>
                 <b-tr>
                   <b-td>
                     <span class="title">Mã Hóa đơn Nhập</span>
@@ -2423,7 +2440,7 @@ export default {
       this.$supabase
         .from("sanpham")
         .select(
-          "*,kieusanpham(*),banggia(*),nhacungcap(*),kihieu(*),hoadon_ban(*),giohangsanpham(*),sotheodoimuahang(*),hoadonnhap(*)"
+          "*,kieusanpham(*),banggia(*),nhacungcap(*),kihieu(*),hoadon_ban(*),giohangsanpham(*),sotheodoimuahang(*),hoadonnhap(*,nhacungcap(*))"
         )
         .eq("maso", id)
         .then(async (data) => {

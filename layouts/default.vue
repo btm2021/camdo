@@ -608,6 +608,62 @@
     <b-modal no-stacking id="modalImage" hide-footer hide-header>
       <b-img lazy :src="imgUrl" style="width: 100%; height: 500px"> </b-img>
     </b-modal>
+    <b-modal size="lg" no-stacking id="modal_taonhanh" hide-footer hide-header>
+      <div>
+        <b-form>
+          <b-row>
+            <b-col cols="12" class="text-center font-weight-bold">
+              <h4>TẠO HÓA ĐƠN NHANH</h4>
+            </b-col>
+            <b-col cols="6">
+              <b-form-group label="Tên khách :" description="Tên khách mua">
+                <b-form-input v-model="formHoaDonNhanh.tenkhach" placeholder="Nhập tên khách" required></b-form-input>
+              </b-form-group>
+              <b-form-group label="Căn Cước Công Dân Khách :" description="CCCD của khách">
+                <b-form-input v-model="formHoaDonNhanh.cccd" required></b-form-input>
+              </b-form-group>
+              <b-form-group label="Tổng tiền :" description="Tổng số tiền VND">
+                <b-form-input v-model="formHoaDonNhanh.tongtien" required></b-form-input>
+              </b-form-group>
+              <b-form-group label="Thực nhận :" description="Số tiền Thực nhận VND">
+                <b-form-input v-model="formHoaDonNhanh.thucnhan" required></b-form-input>
+              </b-form-group>
+              <b-form-group label="Địa chỉ :" description="Địa chỉ khách">
+                <b-form-input v-model="formHoaDonNhanh.diachi" required></b-form-input>
+              </b-form-group>
+              <b-form-group label="Số điện thoại :" description="Số điện thoại khách">
+                <b-form-input v-model="formHoaDonNhanh.sodienthoai" required></b-form-input>
+              </b-form-group>
+
+
+            </b-col>
+            <b-col cols="6">
+              <b-form-group label="Trọng Lượng Vàng :"
+                :description="$formatSoVang(parseFloat(formHoaDonNhanh.klv) * 1000).fullStr">
+                <b-form-input type="range" step="0.5" min="0.5" max="50" autocomplete="off"
+                  v-model="formHoaDonNhanh.klv" required></b-form-input>
+              </b-form-group>
+              <b-form-group label="Loại Vàng :" description="Loại vàng : [9999]">
+                <b-form-input disabled v-model="formHoaDonNhanh.id_banggia" required></b-form-input>
+              </b-form-group>
+              <b-form-group label="Kiểu Sản Phẩm :" description="Kiểu sản phẩm : NHẪN ">
+                <b-form-input disabled v-model="formHoaDonNhanh.id_kieusanpham" required></b-form-input>
+              </b-form-group>
+              <b-form-group label="Nhà cung cấp :" description="Kiểu sản phẩm : NHẪN ">
+                <b-form-input disabled v-model="formHoaDonNhanh.id_kieusanpham" required></b-form-input>
+              </b-form-group>
+              <b-form-group label="Ghi chú hóa đơn :" description="Ghi chú">
+                <b-form-textarea v-model="formHoaDonNhanh.ghichu" required></b-form-textarea>
+              </b-form-group>
+              <b-button type="submit" variant="primary">Submit</b-button>
+              <b-button type="reset" variant="danger">Reset</b-button>
+            </b-col>
+          </b-row>
+
+        </b-form>
+
+      </div>
+    </b-modal>
     <b-modal scrollable no-stacking :title="raw_hoadon ? 'Hóa đơn #' + raw_hoadon.bill_code : ''" size="lg"
       id="modalHoaDon" hide-footer>
       <b-row v-if="raw_hoadon">
@@ -1226,6 +1282,10 @@
               <b-dropdown-item href="/sanpham/them">Thêm sản phẩm</b-dropdown-item>
               <b-dropdown-item href="/sanpham/intem">In tem sản phẩm</b-dropdown-item>
             </b-dropdown-group>
+            <b-dropdown-group  header="Tiền công">
+              <b-dropdown-item href="/sanpham/thaydoicong">Đổi tiền công</b-dropdown-item>
+             
+            </b-dropdown-group>
             <b-dropdown-group id="dropdown-group-2" header="Bảng giá">
               <b-dropdown-item href="/sanpham/hoadonnhap">Hóa đơn nhập</b-dropdown-item>
               <b-dropdown-item href="/">Bảng Giá</b-dropdown-item>
@@ -1265,13 +1325,13 @@
         <b-navbar-nav>
           <b-nav-item-dropdown text="Tạo nhanh">
             <b-dropdown-group header="Số lượng sẵn 9950">
-              <b-dropdown-item href="#">Tạo Nhẫn 5p</b-dropdown-item>
-              <b-dropdown-item href="#">Tạo Nhẫn 1C</b-dropdown-item>
-              <b-dropdown-item href="#">Tạo Nhẫn 2C</b-dropdown-item>
-              <b-dropdown-item href="#">Tạo Nhẫn 5C</b-dropdown-item>
+              <b-dropdown-item href="#" @click="showModalTaoNhanhHoadon(0.5)">Tạo Nhẫn 5p</b-dropdown-item>
+              <b-dropdown-item href="#" @click="showModalTaoNhanhHoadon(1)">Tạo Nhẫn 1C</b-dropdown-item>
+              <b-dropdown-item href="#" @click="showModalTaoNhanhHoadon(2)">Tạo Nhẫn 2C</b-dropdown-item>
+              <b-dropdown-item href="#" @click="showModalTaoNhanhHoadon(5)">Tạo Nhẫn 5C</b-dropdown-item>
             </b-dropdown-group>
             <b-dropdown-group header="Số lượng theo yêu cầu">
-              <b-dropdown-item href="#">
+              <b-dropdown-item href="#" @click="showModalTaoNhanhHoadon(null)">
                 Tự chọn
               </b-dropdown-item>
             </b-dropdown-group>
@@ -1549,6 +1609,26 @@ export default {
       camdo_kiemtra_bocdo: null,
       camdo_kiemtra_giaythe_danhan: false,
       overlay_search: false,
+      //hoadonnhanh
+      formHoaDonNhanh: {
+        tenkhach: null,
+        thucnhan: null,
+        tongtien: null,
+        diachi: null,
+        klv: 0,
+        id_nhacungcap: 0,
+        id_banggia: 0,
+        id_kieusanpham: 0,
+        sodienthoai: null,
+        bill_code: null,
+        isPrint: false,
+        id_giohang: null,
+        ghichu: null,
+        chitiet: null,
+        somon: null,
+        cccd: null,
+        created_at: null
+      }
     };
   },
   watch: {
@@ -1973,6 +2053,10 @@ export default {
           product_gold_weight * product_price_import + product_wage_in * 100;
         this.giatrinhap = Math.round(result / 1000) * 1000;
       }
+    },
+    showModalTaoNhanhHoadon(weight) {
+      this.formHoaDonNhanh.klv = weight
+      this.$bvModal.show("modal_taonhanh");
     },
     async switch_in_camdo_onchange(item) {
       this.overlayCamDo = true

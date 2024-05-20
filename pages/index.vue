@@ -7,7 +7,14 @@
           <div class="text-right text-danger">
             cập nhật lúc {{ dateTimeEdit }}
           </div>
-          <b-table-simple hover responsive striped bordered class="text-center" style="font-size: 16px">
+          <b-table-simple
+            hover
+            responsive
+            striped
+            bordered
+            class="text-center"
+            style="font-size: 16px"
+          >
             <b-thead>
               <b-tr>
                 <b-th>Tên</b-th>
@@ -17,19 +24,26 @@
             </b-thead>
             <b-tbody>
               <b-tr v-for="(item, index) in giavang" :key="index">
-                <b-td><b>{{ item.code }}</b>
+                <b-td
+                  ><b>{{ item.code }}</b>
                 </b-td>
-                <b-td>{{ formatN(item.buyingPrice / 1000) }}
+                <b-td
+                  >{{ formatN(item.buyingPrice / 1000) }}
                   <span v-if="item.buyChange > 0" class="text-success">
                     ▲ <sub>{{ Math.abs(item.buyChange) / 1000 }}</sub>
                   </span>
-                  <span v-else class="text-danger">▼ <sub>{{ Math.abs(item.buyChange) / 1000 }}</sub></span>
+                  <span v-else class="text-danger"
+                    >▼ <sub>{{ Math.abs(item.buyChange) / 1000 }}</sub></span
+                  >
                 </b-td>
-                <b-td>{{ formatN(item.sellingPrice / 1000) }}
+                <b-td
+                  >{{ formatN(item.sellingPrice / 1000) }}
                   <span v-if="item.sellChange > 0" class="text-success">
                     ▲ <sub>{{ Math.abs(item.sellChange) / 1000 }}</sub>
                   </span>
-                  <span v-else class="text-danger">▼ <sub>{{ Math.abs(item.sellChange) / 1000 }}</sub></span>
+                  <span v-else class="text-danger"
+                    >▼ <sub>{{ Math.abs(item.sellChange) / 1000 }}</sub></span
+                  >
                 </b-td>
               </b-tr>
             </b-tbody>
@@ -49,8 +63,14 @@
         <div v-if="giavangnha" class="mt-3">
           <h3 class="text-center">Bảng Giá Nhà</h3>
           <div>&nbsp;</div>
-          <b-table-simple hover responsive striped bordered class="text-center"
-            style="font-size: 16px; padding: 0px; margin: 0px">
+          <b-table-simple
+            hover
+            responsive
+            striped
+            bordered
+            class="text-center"
+            style="font-size: 16px; padding: 0px; margin: 0px"
+          >
             <b-thead>
               <b-tr>
                 <b-th>Tên</b-th>
@@ -60,8 +80,11 @@
             </b-thead>
             <b-tbody>
               <b-tr v-for="(item, index) in giavangnha" :key="index">
-                <b-td><b>{{ item.code }}</b></b-td>
-                <b-td @dblclick="changePrice('buyingPrice', item)">{{ formatN(item.buyingPrice) }}
+                <b-td
+                  ><b>{{ item.code }}</b></b-td
+                >
+                <b-td @dblclick="changePrice('buyingPrice', item)"
+                  >{{ formatN(item.buyingPrice) }}
                 </b-td>
                 <b-td @dblclick="changePrice('sellingPrice', item)">{{
                   formatN(item.sellingPrice)
@@ -85,11 +108,23 @@
               </b-tr>
               <b-tr>
                 <b-td colspan="3">
-                  <div id="ww_f408917858fa3" v='1.3' loc='id'
-                    a='{"t":"horizontal","lang":"vi","sl_lpl":1,"ids":["wl5533"],"font":"Arial","sl_ics":"one_a","sl_sot":"celsius","cl_bkg":"image","cl_font":"#FFFFFF","cl_cloud":"#FFFFFF","cl_persp":"#81D4FA","cl_sun":"#FFC107","cl_moon":"#FFC107","cl_thund":"#FF5722"}'>
-                    <a href="https://weatherwidget.org/" id="ww_f408917858fa3_u" target="_blank">Widget weather</a>
+                  <div
+                    id="ww_f408917858fa3"
+                    v="1.3"
+                    loc="id"
+                    a='{"t":"horizontal","lang":"vi","sl_lpl":1,"ids":["wl5533"],"font":"Arial","sl_ics":"one_a","sl_sot":"celsius","cl_bkg":"image","cl_font":"#FFFFFF","cl_cloud":"#FFFFFF","cl_persp":"#81D4FA","cl_sun":"#FFC107","cl_moon":"#FFC107","cl_thund":"#FF5722"}'
+                  >
+                    <a
+                      href="https://weatherwidget.org/"
+                      id="ww_f408917858fa3_u"
+                      target="_blank"
+                      >Widget weather</a
+                    >
                   </div>
-                  <script async src="https://app2.weatherwidget.org/js/?id=ww_f408917858fa3"></script>
+                  <script
+                    async
+                    src="https://app2.weatherwidget.org/js/?id=ww_f408917858fa3"
+                  ></script>
                 </b-td>
               </b-tr>
             </b-tfoot>
@@ -139,14 +174,13 @@ export default {
   },
   computed: {
     isBanggiachange() {
-      return this.$store.state.config.banggia_vang
-    }
+      return this.$store.state.config.banggia_vang;
+    },
   },
   watch: {
     isBanggiachange(newVal, oldVal) {
-     
       this.getBangGia();
-    }
+    },
   },
   components: {
     VueTradingView,
@@ -168,9 +202,13 @@ export default {
           props: {
             type: "number",
             value:
-              type === "sellingPrice" ? String(item.sellingPrice) : String(item.buyingPrice),
+              type === "sellingPrice"
+                ? String(item.sellingPrice)
+                : String(item.buyingPrice),
             placeholder:
-              type === "sellingPrice" ? String(item.sellingPrice) : String(item.buyingPrice),
+              type === "sellingPrice"
+                ? String(item.sellingPrice)
+                : String(item.buyingPrice),
           },
         }),
       ]);
@@ -206,11 +244,13 @@ export default {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
     getGia() {
-      console.log("get gia mi hong", new Date())
+      console.log("get gia mi hong", new Date());
       let urlMH =
         "https://api.allorigins.win/raw?url=https://www.mihong.vn/api/v1/gold/prices/current";
       let urlDo =
         "https://api.allorigins.win/raw?url=http://taiem.com.vn/site/convertgoldw.html";
+      urlDo =
+        "https://api.allorigins.win/raw?url=https://www.mihong.vn/api/v1/currency/current";
       this.$axios(urlMH).then((data) => {
         this.giavang = data.data.data;
 
@@ -228,12 +268,14 @@ export default {
         });
       });
       this.$axios(urlDo).then((data) => {
-        let htmlString = data.data;
-        var parser = new DOMParser();
-        var doc = parser.parseFromString(htmlString, "text/html");
+        // let htmlString = data.data;
+        // var parser = new DOMParser();
+        // var doc = parser.parseFromString(htmlString, "text/html");
 
-        // Lấy giá trị của input có id 'vnd_usd'
-        var vndUsdValue = doc.getElementById("vnd_usd").value;
+        // // Lấy giá trị của input có id 'vnd_usd'
+        // var vndUsdValue = doc.getElementById("vnd_usd").value;
+       // console.log(data);
+        let vndUsdValue = data.data.data[0].mihong.buyingPrice;
         this.giado = parseFloat(vndUsdValue);
       });
     },
@@ -259,14 +301,12 @@ export default {
             //có bảng giá
             console.log("có bảng giá mới asdasdasdasdsa");
             this.getBangGia();
-            this.$bvToast.toast(`CÓ BẢNG GIÁ MỚI`,
-              {
-                title: "Thông báo",
-                autoHideDelay: 3000,
-                appendToast: true,
-                variant: "danger",
-              }
-            );
+            this.$bvToast.toast(`CÓ BẢNG GIÁ MỚI`, {
+              title: "Thông báo",
+              autoHideDelay: 3000,
+              appendToast: true,
+              variant: "danger",
+            });
           });
       })
       .subscribe();
@@ -278,7 +318,6 @@ export default {
     setInterval(() => {
       this.getGia();
     }, 1000 * 60 * 10);
-
   },
 };
 </script>

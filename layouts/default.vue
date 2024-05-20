@@ -1326,7 +1326,7 @@
       </template>
     </b-sidebar>
     <b-sidebar
-      width="500px"
+      width="700px"
       id="sidebar-right"
       v-model="showTinhToan"
       :title="selectGioHang.length + ' sản phẩm'"
@@ -1437,9 +1437,18 @@
                 </td>
 
                 <td>
-                  <b class="text-danger">{{
-                    $formatSoVang(item.klv).fullStr
-                  }}</b>
+                  <b-input
+                    size="sm"
+                    style="
+                      color: red;
+                      font-size: 15px;
+                      font-weight: bold;
+                      border: 0px;
+                      background-color: rgba(255, 0, 0, 0);
+                    "
+                    v-model="item.klv"
+                  ></b-input>
+                  {{ $formatSoVang(item.klv).fullStr }}
                 </td>
 
                 <td>
@@ -1892,7 +1901,7 @@ export default {
       tempbanggia: null,
       filterGioHang: null,
       //   searchInput: null,
-      searchInput:null,
+      searchInput: null,
       id_giohang: null,
       default_overlaySanPham: false,
       formDefault_sanpham_gia: null,
@@ -3079,7 +3088,6 @@ export default {
 
           this.insertGioHang(d);
           this.$bvModal.show("modal_sanpham");
-          
         });
     },
     checkSanPham_search(id) {
@@ -3135,11 +3143,10 @@ Tính, trong trường hợp sản phẩm không có hóa đơn nhập và _soth
               (i) => i === randomNgay.format("YYYY-MM-DD")
             );
             let code = d.banggia.code;
-            if(d.banggia.code==="9999"){
-              code = 999
+            if (d.banggia.code === "9999") {
+              code = 999;
             }
-            let gia =
-              (parseInt(db.data.sell[index]) * parseInt(code)) / 1000;
+            let gia = (parseInt(db.data.sell[index]) * parseInt(code)) / 1000;
             gia = Math.round(gia / 10000) * 10;
             //  console.log(db.data.sell[index], gia);
             //https://api.allorigins.win/raw?url=https://www.mihong.vn/api/v1/gold/prices?gold_code=610&date_type=1
@@ -3193,8 +3200,6 @@ Tính, trong trường hợp sản phẩm không có hóa đơn nhập và _soth
             //   this.insertGioHang(d);
             this.$bvModal.show("modal_sanpham");
           }
-
-          
         });
     },
     isBarcodeScan(input, duration) {

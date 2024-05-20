@@ -2143,19 +2143,19 @@ export default {
       };
       console.log(billObject);
 
-      // this.$pnPublish(
-      //   {
-      //     channel: "printserver",
-      //     message: { type: "inhoadon", list: billObject },
-      //   },
-      //   (status, response) => {
-      //     if (status.error) {
-      //       console.log(status);
-      //       this.selectGioHang = [];
-      //     } else {
-      //     }
-      //   }
-      // );
+      this.$pnPublish(
+        {
+          channel: "printserver",
+          message: { type: "inhoadon", list: billObject },
+        },
+        (status, response) => {
+          if (status.error) {
+            console.log(status);
+            this.selectGioHang = [];
+          } else {
+          }
+        }
+      );
     },
     //end
     intemSingle(item) {

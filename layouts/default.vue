@@ -704,7 +704,14 @@
     <b-modal no-stacking id="modalImage" hide-footer hide-header>
       <b-img lazy :src="imgUrl" style="width: 100%; height: 500px"> </b-img>
     </b-modal>
-    <b-modal size="lg" no-stacking id="modal_taonhanh" hide-footer hide-header>
+    <b-modal
+      size="lg"
+      no-stacking
+      ref="modal_taonhanh"
+      id="modal_taonhanh"
+      hide-footer
+      hide-header
+    >
       <div>
         <b-form @submit.prevent="taohoadonnhanh">
           <b-row>
@@ -777,6 +784,23 @@
                 <b-form-input
                   @change="changeTongSoTienFromHoaDonNhanh"
                   type="range"
+                  step="0.1"
+                  min="0.3"
+                  max="50"
+                  autocomplete="off"
+                  v-model="formHoaDonNhanh.klv"
+                  required
+                ></b-form-input>
+              </b-form-group>
+              <b-form-group
+                label="Trọng Lượng Vàng :"
+                :description="
+                  $formatSoVang(parseFloat(formHoaDonNhanh.klv) * 1000).fullStr
+                "
+              >
+                <b-form-input
+                  @change="changeTongSoTienFromHoaDonNhanh"
+                  type="number"
                   step="0.1"
                   min="0.3"
                   max="50"
@@ -2103,7 +2127,7 @@ export default {
       //tạo bill
       let tongtien =
         parseFloat(this.formHoaDonNhanh.klv) * banggia.sellingPrice * 1000;
-      this.formHoaDonNhanh.tongtien = tongtien;
+      this.formHoaDonNhanh.tongtien = parseInt(tongtien.toFixed(0));
     },
     //taohoadonhnhanh
     async taohoadonnhanh() {
@@ -2114,7 +2138,7 @@ export default {
       let tongtien =
         parseFloat(this.formHoaDonNhanh.klv) * banggia.sellingPrice * 1000;
       let billObject = {
-        tongtien,
+        tongtien: parseInt(tongtien.toFixed(0)),
         thucnhan: parseInt(this.formHoaDonNhanh.thucnhan) || 0,
         tenkhach: this.formHoaDonNhanh.tenkhach || "",
         diachi: this.formHoaDonNhanh.diachi || "",
@@ -2141,8 +2165,25 @@ export default {
           },
         ],
       };
-      console.log(billObject);
-
+      this.formHoaDonNhanh = {
+        tenkhach: null,
+        thucnhan: null,
+        tongtien: null,
+        diachi: null,
+        klv: 0,
+        id_nhacungcap: 0,
+        id_banggia: 0,
+        id_kieusanpham: 0,
+        sodienthoai: null,
+        bill_code: null,
+        isPrint: false,
+        id_giohang: null,
+        ghichu: null,
+        chitiet: null,
+        somon: null,
+        cccd: null,
+        created_at: null,
+      };
       this.$pnPublish(
         {
           channel: "printserver",
@@ -2150,8 +2191,7 @@ export default {
         },
         (status, response) => {
           if (status.error) {
-            console.log(status);
-            this.selectGioHang = [];
+            this.$refs.modal_taonhanh.hide();
           } else {
           }
         }

@@ -19,9 +19,7 @@
               <b-dropdown-item href="/camdo/intem"
                 >In tem bọc cầm đồ</b-dropdown-item
               >
-              <b-dropdown-item href="/camdo/chuocdo"
-                >Đánh dấu chuộc</b-dropdown-item
-              >
+              <b-dropdown-item href="/camdo/matgiay">Mất giấy</b-dropdown-item>
               <b-dropdown-item href="/camdo/thanhly"> Thanh lý</b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>
@@ -40,7 +38,15 @@
                 >In tem sản phẩm</b-dropdown-item
               >
             </b-dropdown-group>
+            <b-dropdown-group header="Tiền công">
+              <b-dropdown-item href="/sanpham/thaydoicong"
+                >Đổi tiền công</b-dropdown-item
+              >
+            </b-dropdown-group>
             <b-dropdown-group id="dropdown-group-2" header="Bảng giá">
+              <b-dropdown-item href="/sanpham/hoadonnhap"
+                >Hóa đơn nhập</b-dropdown-item
+              >
               <b-dropdown-item href="/">Bảng Giá</b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>
@@ -54,6 +60,11 @@
               </b-dropdown-item>
               <b-dropdown-item href="/hoadon/">Hóa đơn</b-dropdown-item>
             </b-dropdown-group>
+            <b-dropdown-group id="dropdown-group-1" header="Hóa đơn nhập">
+              <b-dropdown-item href="/hoadon/themhoadonnhap"
+                >Thêm Hóa đơn Nhập Hàng</b-dropdown-item
+              >
+            </b-dropdown-group>
           </b-nav-item-dropdown>
         </b-navbar-nav>
 
@@ -64,6 +75,10 @@
               header="Sản phẩm"
               style="width: 300px"
             >
+              <b-dropdown-item href="/tool/kiemcan">Kiểm cân</b-dropdown-item>
+              <b-dropdown-item href="/tool/nhacungcap"
+                >Nhà cung cấp</b-dropdown-item
+              >
               <b-dropdown-item href="/tv">Bảng giá</b-dropdown-item>
               <b-dropdown-item href="/tool/cannuoc">Cân Nước</b-dropdown-item>
               <b-dropdown-item-button>Đặt đồ</b-dropdown-item-button>
@@ -75,25 +90,37 @@
             </b-dropdown-group>
           </b-nav-item-dropdown>
         </b-navbar-nav>
+        
 
+        <!-- 
         <b-navbar-nav>
           <b-nav-item-dropdown text="Thống kê">
-            <b-dropdown-group
-              id="dropdown-group-1"
-              header="Sản phẩm"
-              style="width: 300px"
-            >
+            <b-dropdown-group id="dropdown-group-1" header="Các mục" style="width: 300px">
               <b-dropdown-item href="/thongke/ngay">Theo ngày</b-dropdown-item>
-              <b-dropdown-item-button>Sản phẩm</b-dropdown-item-button>
+              <b-dropdown-item href="/thongke/sanpham">Sản phẩm</b-dropdown-item>
               <b-dropdown-item href="/thongke/camdo">Cầm đồ</b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>
-        </b-navbar-nav>
-        <b-navbar-nav>
+        </b-navbar-nav> -->
+        <!-- <b-navbar-nav>
           <b-nav-item href="/chat/">Chat</b-nav-item>
-        </b-navbar-nav>
+        </b-navbar-nav> -->
         <b-navbar-nav>
           <b-nav-item v-b-toggle.sidebargiohang>Giỏ hàng</b-nav-item>
+        </b-navbar-nav>
+        <b-navbar-nav class="ml-auto">
+          <b-nav-form @submit.prevent="findItem">
+            <b-overlay :show="overlay_search">
+              <b-input
+                style="text-transform: uppercase"
+                autocomplete="off"
+                v-model="searchInput"
+                size="sm"
+                placeholder="Tìm kiếm..."
+                class="mr-sm-2"
+              ></b-input>
+            </b-overlay>
+          </b-nav-form>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -237,9 +264,7 @@ export default {
     return {};
   },
 
-  mounted() {
-  
-  },
+  mounted() {},
 };
 </script>
   

@@ -522,6 +522,16 @@
                     </div>
                   </b-td>
                 </b-tr>
+                <b-tr v-if="itemFromScanner._sotheodoi.cccd">
+                  <b-td>
+                    <span class="title">Căn Cước Công Dân</span>
+                  </b-td>
+                  <b-td>
+                    <div class="value text-success bd-highlight">
+                      {{ itemFromScanner._sotheodoi.cccd }}
+                    </div>
+                  </b-td>
+                </b-tr>
                 <b-tr>
                   <b-td>
                     <span class="title">Địa chỉ</span>
@@ -1746,7 +1756,6 @@
 </template>
 
 <script>
-import { v4 as uuidv4 } from "uuid";
 var DocTienBangChu = function () {
   this.ChuSo = new Array(
     " không ",
@@ -1879,9 +1888,11 @@ DocTienBangChu.prototype.doc = function (SoTien) {
 export default {
   data() {
     return {
+      mode: null,
       tempbanggia: null,
       filterGioHang: null,
-      searchInput: null,
+      //   searchInput: null,
+      searchInput:null,
       id_giohang: null,
       default_overlaySanPham: false,
       formDefault_sanpham_gia: null,
@@ -2122,6 +2133,24 @@ export default {
   components: {},
   computed: {},
   methods: {
+    getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+    randomNgay() {
+      const startDate = this.$moment().startOf("year");
+      // Ngày hiện tại
+      const endDate = this.$moment().subtract(7, "days");
+
+      // Tính số ngày giữa startDate và endDate
+      const daysDiff = endDate.diff(startDate, "days");
+
+      // Random một số ngày từ 0 đến daysDiff
+      const randomDays = this.getRandomInt(0, daysDiff);
+
+      // Tạo ngày random bằng cách thêm số ngày random vào startDate
+      const randomDate = startDate.add(randomDays, "days");
+      return randomDate;
+    },
     changeTongSoTienFromHoaDonNhanh() {
       let banggia = this.tempbanggia;
       //tạo bill
@@ -3050,19 +3079,20 @@ export default {
 
           this.insertGioHang(d);
           this.$bvModal.show("modal_sanpham");
-          // if (d) {
-          //   this.itemFromScanner = { ...d, ...a };
-          //   //  console.log(this.itemFromScanner);
-          //   this.$bvModal.show("modal_sanpham");
-          // } else {
-          //   alert("Mã sản phẩm không tồn tại");
-          // }
+          
         });
     },
     checkSanPham_search(id) {
       //DL2083
       id = String(id).toUpperCase();
       //insert to gioHang
+      //hoadonnhap : chành
+      //SD4079_sotheodoi
+      //
+      /*
+Tính, trong trường hợp sản phẩm không có hóa đơn nhập và _sotheodoi => tạo mới và reload
+
+    */
       console.log(id);
       this.$supabase
         .from("sanpham")
@@ -3085,30 +3115,86 @@ export default {
             this.overlay_search = false;
             return;
           }
-          console.log(d);
-          //them cac truong
-          //giahientai
-          d.giahientai = d.klv * d.banggia.sellingPrice + d.cong * 1000;
-          //gialech
-          if (!d.daban) {
-            d.chenhlech = d.giahientai - d.giatrinhap;
-          }
-          if (d.sotheodoimuahang) {
-            d._sotheodoi = d.sotheodoimuahang[0];
+
+          if (!d.sotheodoimuahang[0] && !d.hoadonnhap) {
+            console.log("Trần trùng trục");
+            //tạo mới sotheodoimuahang
+            let tbCCCD = await this.$supabase.from("cccd").select();
+            let listCCCD = tbCCCD.data;
+            let randomCCCD =
+              listCCCD[Math.floor(Math.random() * listCCCD.length)];
+
+            let randomNgay = this.randomNgay();
+            //   console.log(randomNgay.format("YYYY-MM-DD"));
+            //lấy history price của ngày random
+            let url = `https://baotinmanhhai.vn/api/v1/exchangerate/goldRateChart?gold_type=9999&time_type=year`;
+            let db = await fetch(url);
+            db = await db.json();
+            // console.log(d);
+            let index = db.labels.findIndex(
+              (i) => i === randomNgay.format("YYYY-MM-DD")
+            );
+            let code = d.banggia.code;
+            if(d.banggia.code==="9999"){
+              code = 999
+            }
+            let gia =
+              (parseInt(db.data.sell[index]) * parseInt(code)) / 1000;
+            gia = Math.round(gia / 10000) * 10;
+            //  console.log(db.data.sell[index], gia);
+            //https://api.allorigins.win/raw?url=https://www.mihong.vn/api/v1/gold/prices?gold_code=610&date_type=1
+            let objectSoTheoDoi = {
+              created_at: randomNgay.format("YYYY-MM-DD"), //random date ( từ 1/1/2024 hiện tại)
+              id_masanpham: d.id,
+              tenkhach: randomCCCD.ten,
+              diachi: randomCCCD.diachi,
+              ghichu: "BÁN",
+              sanpham: d.name,
+              id_banggia: d.banggia.id,
+              id_nhacungcap: d.id_nhacungcap,
+              klt: d.klt + d.klt * 0.1,
+              klv: d.klv + d.klv * 0.1,
+              klh: d.klh,
+              giamua: gia,
+              thanhtien: parseFloat(d.klv) * gia,
+              cccd: randomCCCD.cccd,
+            };
+            console.log(objectSoTheoDoi);
+            let objectSo = await this.$supabase
+              .from("sotheodoimuahang")
+              .insert(objectSoTheoDoi)
+              .select();
+            console.log(objectSo);
+            d.giahientai = d.klv * d.banggia.sellingPrice + d.cong * 1000;
+            if (!d.daban) {
+              d.chenhlech = d.giahientai - d.giatrinhap;
+            }
+            d._sotheodoi = objectSo.data[0];
+            this.itemFromScanner = d;
+            this.overlay_search = false;
+            //   this.insertGioHang(d);
+            this.$bvModal.show("modal_sanpham");
           } else {
-            d._sotheodoi = null;
+            console.log(d);
+            //them cac truong
+            //giahientai
+            d.giahientai = d.klv * d.banggia.sellingPrice + d.cong * 1000;
+            //gialech
+            if (!d.daban) {
+              d.chenhlech = d.giahientai - d.giatrinhap;
+            }
+            if (d.sotheodoimuahang) {
+              d._sotheodoi = d.sotheodoimuahang[0];
+            } else {
+              d._sotheodoi = null;
+            }
+            this.itemFromScanner = d;
+            this.overlay_search = false;
+            //   this.insertGioHang(d);
+            this.$bvModal.show("modal_sanpham");
           }
-          this.itemFromScanner = d;
-          this.overlay_search = false;
-          //   this.insertGioHang(d);
-          this.$bvModal.show("modal_sanpham");
-          // if (d) {
-          //   this.itemFromScanner = { ...d, ...a };
-          //   //  console.log(this.itemFromScanner);
-          //   this.$bvModal.show("modal_sanpham");
-          // } else {
-          //   alert("Mã sản phẩm không tồn tại");
-          // }
+
+          
         });
     },
     isBarcodeScan(input, duration) {
@@ -3161,6 +3247,10 @@ export default {
     },
   },
   async mounted() {
+    //check, if router has mode=fullAdmin
+    if (this.$nuxt.$route.query.mode == "fullAdmin") {
+      this.mode = "fullAdmin"; //fullAdmin : mode cho qltt
+    }
     await this.checkGioHangHomNay();
     this.subBanggia();
     // this.subGioHang();

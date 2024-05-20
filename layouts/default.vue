@@ -728,7 +728,10 @@
                   v-model="formHoaDonNhanh.cccd"
                 ></b-form-input>
               </b-form-group>
-              <b-form-group label="Tổng tiền :" description="Tổng số tiền VND">
+              <b-form-group
+                label="Tổng tiền :"
+                :description="$formatN(formHoaDonNhanh.tongtien)"
+              >
                 <b-form-input
                   autocomplete="off"
                   v-model="formHoaDonNhanh.tongtien"
@@ -743,6 +746,7 @@
                 "
               >
                 <b-form-input
+                  type="number"
                   autocomplete="off"
                   v-model="formHoaDonNhanh.thucnhan"
                 ></b-form-input>
@@ -771,6 +775,7 @@
                 "
               >
                 <b-form-input
+                  @change="changeTongSoTienFromHoaDonNhanh"
                   type="range"
                   step="0.1"
                   min="0.3"
@@ -1657,6 +1662,9 @@
         <b-navbar-nav>
           <b-nav-item-dropdown text="Tạo nhanh">
             <b-dropdown-group header="Số lượng sẵn vàng 9950">
+              <b-dropdown-item href="#" @click="showModalTaoNhanhHoadon(0.3)"
+                >Tạo Nhẫn 3p</b-dropdown-item
+              >
               <b-dropdown-item href="#" @click="showModalTaoNhanhHoadon(0.5)"
                 >Tạo Nhẫn 5p</b-dropdown-item
               >
@@ -1671,11 +1679,6 @@
               >
               <b-dropdown-item href="#" @click="showModalTaoNhanhHoadon(null)">
                 Tự chọn trọng lượng Y
-              </b-dropdown-item>
-            </b-dropdown-group>
-            <b-dropdown-group header="Hàng 18k">
-              <b-dropdown-item href="#" @click="showModalTaoNhanhHoadon(null)">
-                Tự chọn trọng lượng 18k
               </b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>
@@ -1852,6 +1855,7 @@ DocTienBangChu.prototype.doc = function (SoTien) {
 export default {
   data() {
     return {
+      tempbanggia: null,
       filterGioHang: null,
       searchInput: null,
       id_giohang: null,
@@ -2094,11 +2098,18 @@ export default {
   components: {},
   computed: {},
   methods: {
+    changeTongSoTienFromHoaDonNhanh() {
+      let banggia = this.tempbanggia;
+      //tạo bill
+      let tongtien =
+        parseFloat(this.formHoaDonNhanh.klv) * banggia.sellingPrice * 1000;
+      this.formHoaDonNhanh.tongtien = tongtien;
+    },
     //taohoadonhnhanh
     async taohoadonnhanh() {
       //lấy banggia
-      let bg = await this.$supabase.from("banggia").select("").eq("id", 1);
-      let banggia = bg.data[0];
+      //  let bg = await this.$supabase.from("banggia").select("").eq("id", 1);
+      let banggia = this.tempbanggia;
       //tạo bill
       let tongtien =
         parseFloat(this.formHoaDonNhanh.klv) * banggia.sellingPrice * 1000;
@@ -2132,19 +2143,19 @@ export default {
       };
       console.log(billObject);
 
-      this.$pnPublish(
-        {
-          channel: "printserver",
-          message: { type: "inhoadon", list: billObject },
-        },
-        (status, response) => {
-          if (status.error) {
-            console.log(status);
-            this.selectGioHang = [];
-          } else {
-          }
-        }
-      );
+      // this.$pnPublish(
+      //   {
+      //     channel: "printserver",
+      //     message: { type: "inhoadon", list: billObject },
+      //   },
+      //   (status, response) => {
+      //     if (status.error) {
+      //       console.log(status);
+      //       this.selectGioHang = [];
+      //     } else {
+      //     }
+      //   }
+      // );
     },
     //end
     intemSingle(item) {
@@ -2459,8 +2470,15 @@ export default {
         this.giatrinhap = Math.round(result / 1000) * 1000;
       }
     },
-    showModalTaoNhanhHoadon(weight) {
+    async showModalTaoNhanhHoadon(weight) {
       this.formHoaDonNhanh.klv = weight;
+      let bp = await this.$supabase.from("banggia").select("*").eq("id", 1);
+      this.tempbanggia = bp.data[0];
+      //set tongsotien
+      this.formHoaDonNhanh.tongtien =
+        parseFloat(this.formHoaDonNhanh.klv) *
+        this.tempbanggia.sellingPrice *
+        1000;
       this.$bvModal.show("modal_taonhanh");
     },
     async switch_in_camdo_onchange(item) {

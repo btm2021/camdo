@@ -294,7 +294,7 @@
                   </b-td>
                   <b-td>
                     <div class="value text-danger font-weight-bold" style="font-size:30px !important">
-                     {{ $formatSoVang(itemFromScanner.klv).fullStr }} 
+                      {{ $formatSoVang(itemFromScanner.klv).fullStr }}
                     </div>
                   </b-td>
                 </b-tr>
@@ -963,7 +963,7 @@
               font-weight: bold;
             " autocomplete="off" class="px-3 mb-3"></b-input>
           <b-table :filter="filterGioHang" bordered no-border-collapse class="default_tablegiohang text-center" hover
-            ref="default_tablegiohang" :fields="fieldsGioHang" :items="listGioHang" show-empty small select-mode="multi"
+            ref="default_tablegiohang" sort-by="hoadon_ban" :fields="fieldsGioHang" :items="listGioHang" show-empty small select-mode="multi"
             selectable selected-variant="success" responsive @row-selected="onRowSelectedGioHang">
             <template #cell(stt)="data">
               {{ data.index + 1 }}
@@ -1020,7 +1020,7 @@
         </div>
       </template>
     </b-sidebar>
-    <b-sidebar width="700px" id="sidebar-right" v-model="showTinhToan" :title="selectGioHang.length + ' sản phẩm'" right
+    <b-sidebar width="900px" id="sidebar-right" v-model="showTinhToan" :title="selectGioHang.length + ' sản phẩm'" right
       shadow>
       <b-row v-if="selectGioHang.length > 0">
         <b-col cols="12" class="mx-2">
@@ -1090,7 +1090,7 @@
                 </td>
 
                 <td>
-                  <b-input size="sm" style="
+                  <b-input size="sm" @change="changeKLVHoaDon(item)" style="
                       color: red;
                       font-size: 15px;
                       font-weight: bold;
@@ -1535,7 +1535,7 @@ export default {
       itemEdit: null,
       overlayGioHang: false,
       fieldsGioHang: [
-        { key: "stt", label: "#" },
+        { key: "stt", label: "#",sortable:true },
         {
           key: "anhsanpham",
           label: "Ảnh",
@@ -2599,6 +2599,13 @@ export default {
           });
           this.listGioHang = d;
         });
+    },
+    changeKLVHoaDon(item) {
+      //thay đổi trong listsangpham va gia tri
+   
+      let giahientai = parseFloat(item.klv) * parseFloat(item.banggia.sellingPrice) + item.cong * 1000
+      giahientai = Math.round(giahientai / 1000) * 1000;
+      item.giahientai = giahientai
     },
     async insertGioHang(item) {
       // console.log(item);

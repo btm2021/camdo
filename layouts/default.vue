@@ -195,22 +195,7 @@
             <b-img lazy :src="itemFromScanner.anhsanpham" center fluid />
             <b-table-simple small hover bordered responsive fixed class="default_table">
               <b-tbody>
-                <b-tr>
-                  <b-td>
-                    <span class="title">Tổng giá nhập</span>
-                  </b-td>
-                  <b-td>
-                    <div class="value">
-                      {{
-                        $formatN(
-                          itemFromScanner._sotheodoi
-                            ? itemFromScanner._sotheodoi.thanhtien
-                            : 0
-                        )
-                      }}
-                    </div>
-                  </b-td>
-                </b-tr>
+
                 <b-tr>
                   <b-td>
                     <span class="title">Giá hiện tại</span>
@@ -220,16 +205,6 @@
                       <h3>
                         {{ $formatN(itemFromScanner.giahientai || 0) }}
                       </h3>
-                    </div>
-                  </b-td>
-                </b-tr>
-                <b-tr>
-                  <b-td>
-                    <span class="title">Giá Xuất</span>
-                  </b-td>
-                  <b-td>
-                    <div class="value">
-                      {{ $formatN(itemFromScanner.giatrixuat || 0) }}
                     </div>
                   </b-td>
                 </b-tr>
@@ -318,8 +293,8 @@
                     <span class="title">Trọng Lượng Vàng</span>
                   </b-td>
                   <b-td>
-                    <div class="value text-warning">
-                      {{ $formatSoVang(itemFromScanner.klv).fullStr }}
+                    <div class="value text-danger font-weight-bold" style="font-size:30px !important">
+                     {{ $formatSoVang(itemFromScanner.klv).fullStr }} 
                     </div>
                   </b-td>
                 </b-tr>
@@ -638,8 +613,8 @@
                 <b-form-input autocomplete="off" v-model="formHoaDonNhanh.tongtien"></b-form-input>
               </b-form-group>
               <b-form-group label="Thực nhận :" :description="formHoaDonNhanh.thucnhan
-                  ? $formatN(formHoaDonNhanh.thucnhan)
-                  : '0'
+                ? $formatN(formHoaDonNhanh.thucnhan)
+                : '0'
                 ">
                 <b-form-input type="number" autocomplete="off" v-model="formHoaDonNhanh.thucnhan"></b-form-input>
               </b-form-group>
@@ -1053,8 +1028,8 @@
             <b-row>
               <b-col cols="6">
                 <b-form-group :description="$formatSoTien(bill.thucnhan) != ''
-                    ? $formatSoTien(bill.thucnhan)
-                    : '.'
+                  ? $formatSoTien(bill.thucnhan)
+                  : '.'
                   " label="Tiền thực nhận:">
                   <b-form-input autocomplete="off" v-model="bill.thucnhan" type="text"></b-form-input>
                 </b-form-group>
@@ -2797,6 +2772,8 @@ Tính, trong trường hợp sản phẩm không có hóa đơn nhập và _soth
             this.$bvModal.show("modal_sanpham");
           } else {
             console.log(d);
+            //kiểm tra, nếu 1 sản phẩm vừa có hoadonhap vừa có sotheodoimuahang thì chọn hóa đơn nhập
+
             //them cac truong
             //giahientai
             d.giahientai = d.klv * d.banggia.sellingPrice + d.cong * 1000;
@@ -2804,11 +2781,19 @@ Tính, trong trường hợp sản phẩm không có hóa đơn nhập và _soth
             if (!d.daban) {
               d.chenhlech = d.giahientai - d.giatrinhap;
             }
-            if (d.sotheodoimuahang) {
-              d._sotheodoi = d.sotheodoimuahang[0];
+            if (d.sotheodoimuahang && d.sotheodoimuahang[0] && d.hoadonnhap) {
+              //xóa sotheodoimuahang
+              console.log('*hoadonnhap')
+              await this.$supabase.from('sotheodoimuahang').delete().eq('id', d.sotheodoimuahang[0].id)
+
             } else {
-              d._sotheodoi = null;
+              if (d.sotheodoimuahang) {
+                d._sotheodoi = d.sotheodoimuahang[0];
+              } else {
+                d._sotheodoi = null;
+              }
             }
+
             this.itemFromScanner = d;
             this.overlay_search = false;
             //   this.insertGioHang(d);

@@ -311,7 +311,7 @@ export default {
           let isExits = await this.$supabase.from('sanpham').select('*', { count: 'exact', head: true }).eq('maso', maso)
           let isExitsTemp = await this.$supabase.from('temp_maso').select('*', { count: 'exact', head: true }).eq('maso', maso)
           //kiểm tra, nếu cả 2 đều không trùng mới gọi là đúng
-          console.log(isExits.count,isExitsTemp.count,maso)
+          console.log(isExits.count, isExitsTemp.count, maso)
           if (isExits.count == 0 && isExitsTemp.count == 0) {
 
             console.log('không trùng')
@@ -719,12 +719,51 @@ export default {
             .select("*,kieusanpham(*),banggia(*),nhacungcap(*),kihieu(*)");
           this.productList.push(product.data[0]);
           //xóa temp_maso
-          await this.$supabase.from('temp_maso').delete().eq('id',this.temp_maso.id)
+          await this.$supabase.from('temp_maso').delete().eq('id', this.temp_maso.id)
+          //tạo 1 hóa đơn nhập
+
           console.log('xoa temp maso')
+
           this.resetForm();
           this.dataReady = true;
+          this.makeHoadonnhap(product.data[0]).then(data => {
+            console.log('Tạo 1 hóa đơn nhập tương ứng cho ' + product.data[0].id)
+            console.log(data)
+          })
         }
       });
+    },
+    async makeHoadonnhap(d) {
+      return new Promise(async (resolve, reject) => {
+        console.log('bat dau tao hoadonnhap')
+        let tbCCCD = await this.$supabase.from("cccd").select();
+        let listCCCD = tbCCCD.data;
+        let randomCCCD =
+          listCCCD[Math.floor(Math.random() * listCCCD.length)];
+        let thanhtien = (d.klv + d.klv * 0.1) * (d.banggia.sellingPrice - 100);
+        thanhtien = Math.round(thanhtien / 10000) * 10;
+        let objectSoTheoDoi = {
+          created_at: d.created_at, //random date ( từ 1/1/2024 hiện tại)
+          id_masanpham: d.id,
+          tenkhach: randomCCCD.ten,
+          diachi: randomCCCD.diachi,
+          ghichu: "BÁN",
+          sanpham: d.name,
+          id_banggia: d.banggia.id,
+          id_nhacungcap: d.id_nhacungcap,
+          klt: d.klt + d.klt * 0.1,
+          klv: d.klv + d.klv * 0.1,
+          klh: d.klh,
+          giamua: d.banggia.sellingPrice - 100,
+          thanhtien,
+          cccd: randomCCCD.cccd,
+        };
+        let objectSo = await this.$supabase
+          .from("sotheodoimuahang")
+          .insert(objectSoTheoDoi)
+          .select();
+        resolve(objectSo.data[0])
+      })
     },
     updateGoldWeight() {
       let klt = parseFloat(this.formSanPham.klt || 0);

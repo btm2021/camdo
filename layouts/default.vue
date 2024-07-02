@@ -1,5 +1,176 @@
 <template>
   <div>
+    <b-modal hide-footer size="xl" @hide="onhide_modal_taohoadonnhanh" @show="onshow_modal_taohoadonnhanh" no-stacking
+      id="model_taohoadon_nhanh" ref="model_taohoadon_nhanh" title="Tạo Hóa Đơn Nhanh">
+    <b-overlay :show="ov_model_taohoadon_nhanh">
+
+      <template #overlay>
+        <div class="text-center">
+          <b-icon icon="stopwatch" font-scale="3" animation="cylon"></b-icon>
+          <p id="cancel-label">Chờ xíu...</p>
+        </div>
+      </template>
+      <b-row>
+        <b-col cols="12">
+          <b-form>
+            <b-row>
+              <b-col cols="3">
+                <b-form-group :description="$formatSoTien(parseInt(formTaoNhanh.thucnhan || 0))" label="Thực nhận:">
+                  <b-form-input type="search" v-model="formTaoNhanh.thucnhan" autocomplete="off"
+                    required></b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-col cols="3">
+                <b-form-group label="Tên khách Hàng:" :description="formTaoNhanh.tenkhach">
+                  <b-form-input type="search" v-model="formTaoNhanh.tenkhach" required></b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-col cols="3">
+                <b-form-group label="Địa chỉ khách Hàng:" :description="formTaoNhanh.diachi">
+                  <b-form-input type="search" v-model="formTaoNhanh.diachi" required></b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-col cols="3">
+                <b-form-group label="CCCD khách Hàng:" :description="formTaoNhanh.cccd">
+                  <b-form-input type="search" v-model="formTaoNhanh.cccd" required></b-form-input>
+                </b-form-group>
+              </b-col>
+
+            </b-row>
+          </b-form>
+        </b-col>
+
+        <b-col cols="12">
+          <ValidationObserver ref="veeForm" v-slot="{ invalid }">
+
+
+            <b-form>
+              <b-row>
+                <b-col cols="3">
+                  <ValidationProvider rules="required" v-slot="{ errors, valid, failedRules }">
+                    <b-form-group label="Kiểu Sản Phẩm:">
+                      <b-form-select :state="valid" :options="option_kieuvang" v-model="formTaoNhanh.kieuvang"
+                        required></b-form-select>
+                      <b-form-invalid-feedback>
+                        Chọn loại sản phẩm
+                      </b-form-invalid-feedback>
+                    </b-form-group>
+                  </ValidationProvider>
+
+                </b-col>
+                <b-col cols="3">
+                  <ValidationProvider rules="required" v-slot="{ errors, valid, failedRules }">
+                    <b-form-group label="Chất Lượng:">
+                      <b-form-select :state="valid" :options="option_banggia" v-model="formTaoNhanh.chatluong"
+                        required></b-form-select>
+                      <b-form-invalid-feedback>
+                        Chọn chất lượng vàng
+                      </b-form-invalid-feedback>
+                    </b-form-group>
+                  </ValidationProvider>
+
+                </b-col>
+                <b-col cols="3">
+                  <ValidationProvider rules="required" v-slot="{ errors, valid, failedRules }">
+
+
+                    <b-form-group label="Trọng lượng vàng:">
+                      <b-form-input type="search" :state="valid" v-model="formTaoNhanh.trongluongvang"
+                        autocomplete="off" required></b-form-input>
+                      <b-form-invalid-feedback>
+                        Nhập trọng lượng
+                      </b-form-invalid-feedback>
+                      <b-form-valid-feedback>
+                        {{ $formatSoVang(formTaoNhanh.trongluongvang || 0).fullStr }}
+                      </b-form-valid-feedback>
+                    </b-form-group>
+                  </ValidationProvider>
+                </b-col>
+                <b-col cols="2">
+                  <ValidationProvider rules="required" v-slot="{ errors, valid, failedRules }">
+
+                    <b-form-group label="Tiền công:">
+                      <b-form-input type="search" :state="valid" v-model="formTaoNhanh.tiencong" autocomplete="off"
+                        required></b-form-input>
+                      <b-form-invalid-feedback>
+                        Nhập trọng lượng
+                      </b-form-invalid-feedback>
+                      <b-form-valid-feedback>
+                        {{ formTaoNhanh.tiencong ? $formatSoTien(parseInt(formTaoNhanh.tiencong) * 1000) : 0 }}
+                      </b-form-valid-feedback>
+                    </b-form-group>
+                  </ValidationProvider>
+                </b-col>
+
+                <b-col cols="1">
+                  <b-form-group label="#">
+                    <b-button variant="success" @click="addItemHoadonnhanh">
+                      <b-icon icon="plus-circle-fill"></b-icon>
+
+                    </b-button>
+                  </b-form-group>
+                </b-col>
+
+              </b-row>
+
+            </b-form>
+          </ValidationObserver>
+        </b-col>
+
+        <b-col cols="12">
+          <b-table :fields="fieldsanphamhoadonnhanh" :items="listsanphamhoadonnhanh" responsive bordered
+            style="text-align:center;font-size:20px;border-color:black solid 2px;" small show-empty>
+            <template #cell(stt)="data">
+              {{ data.index + 1 }}
+            </template>
+
+            <template #cell(kieuvang)="data">
+              <span>{{ data.value }}</span>
+            </template>
+            <template #cell(trongluong)="data">
+
+              <span>{{ $formatSoVang(parseFloat(data.value)).fullStr }}</span>
+            </template>
+            <template #cell(giavang)="data">
+              <span>{{ data.value }}</span>
+            </template>
+
+            <template #cell(tiencong)="data">
+              <span>{{ $formatSoTien(data.value) }}</span>
+            </template>
+            <template #cell(thanhtien)="data">
+              <span>{{ $formatSoTien(data.value) }}</span>
+            </template>
+
+            <template #cell(tool)="data">
+              <span>
+                <b-button variant="danger">
+                  <b-icon icon="trash" @click="removeSanphamhoadonnhanh(data.value)"></b-icon>
+                </b-button>
+              </span>
+            </template>
+
+          </b-table>
+          <b-row class="text-center" style="font-size:15px">
+            <b-col cols="4">
+              Tổng tiền trong giỏ : <code>{{ $formatSoTien(thongtinformTongHoaDon.tongtien) }}</code>
+            </b-col>
+            <b-col cols="4">
+              Tổng tiền công : <code>{{ $formatSoTien(thongtinformTongHoaDon.tiencong) }}</code>
+            </b-col>
+
+            <b-col cols="4">
+              <b-button variant="warning">
+                <b-icon size="sm" icon="printer-fill" @click="inHoadonnhanh"></b-icon>
+              </b-button>
+            </b-col>
+
+          </b-row>
+
+        </b-col>
+      </b-row>
+    </b-overlay>
+    </b-modal>
     <b-modal no-stacking ref="modal_camdo" id="modal_camdo" class="default_modal_camdo" title="Cầm đồ - Hóa đơn "
       hide-footer size="lg" hide-header>
       <b-overlay :show="overlayCamDo">
@@ -211,9 +382,9 @@
 
                 <b-tr>
                   <b-td colspan="2">
-                    <b-button-group>
-                      <!--    <b-button variant="primary">Tạo hóa đơn và in tem</b-button>-->
-                    </b-button-group>
+                    <!-- <b-button-group>
+                        <b-button variant="primary">Tạo hóa đơn và in</b-button>
+                    </b-button-group> -->
                   </b-td>
                 </b-tr>
               </b-tbody>
@@ -963,8 +1134,9 @@
               font-weight: bold;
             " autocomplete="off" class="px-3 mb-3"></b-input>
           <b-table :filter="filterGioHang" bordered no-border-collapse class="default_tablegiohang text-center" hover
-            ref="default_tablegiohang" sort-by="hoadon_ban" :fields="fieldsGioHang" :items="listGioHang" show-empty small select-mode="multi"
-            selectable selected-variant="success" responsive @row-selected="onRowSelectedGioHang">
+            ref="default_tablegiohang" sort-by="hoadon_ban" :fields="fieldsGioHang" :items="listGioHang" show-empty
+            small select-mode="multi" selectable selected-variant="success" responsive
+            @row-selected="onRowSelectedGioHang">
             <template #cell(stt)="data">
               {{ data.index + 1 }}
             </template>
@@ -1325,10 +1497,14 @@
                 Tự chọn trọng lượng Y
               </b-dropdown-item>
             </b-dropdown-group>
+            <b-dropdown-group header="Tạo hóa đơn bán không quẹt tem">
+              <b-dropdown-item href="#" @click="onshow_modal_taohoadonnhanh">Tạo Hóa Đơn</b-dropdown-item>
+
+            </b-dropdown-group>
           </b-nav-item-dropdown>
         </b-navbar-nav>
 
-        <!-- 
+
         <b-navbar-nav>
           <b-nav-item-dropdown text="Thống kê">
             <b-dropdown-group id="dropdown-group-1" header="Các mục" style="width: 300px">
@@ -1337,7 +1513,7 @@
               <b-dropdown-item href="/thongke/camdo">Cầm đồ</b-dropdown-item>
             </b-dropdown-group>
           </b-nav-item-dropdown>
-        </b-navbar-nav> -->
+        </b-navbar-nav>
         <!-- <b-navbar-nav>
           <b-nav-item href="/chat/">Chat</b-nav-item>
         </b-navbar-nav> -->
@@ -1488,10 +1664,25 @@ DocTienBangChu.prototype.doc = function (SoTien) {
     return KetQua + " đồng"; //.substring(0, 1);//.toUpperCase();// + KetQua.substring(1);
   }
 };
+import { ValidationObserver, ValidationProvider } from "vee-validate";
+import { extend, configure } from "vee-validate";
+
+import * as rules from "vee-validate/dist/rules";
+Object.keys(rules).forEach((rule) => {
+  //console.log(rule);
+  extend(rule, rules[rule]);
+});
 
 export default {
+  components: {
+    ValidationProvider,
+    ValidationObserver,
+  },
   data() {
     return {
+      formTaoNhanh: {
+
+      },
       mode: null,
       tempbanggia: null,
       filterGioHang: null,
@@ -1535,7 +1726,7 @@ export default {
       itemEdit: null,
       overlayGioHang: false,
       fieldsGioHang: [
-        { key: "stt", label: "#",sortable:true },
+        { key: "stt", label: "#", sortable: true },
         {
           key: "anhsanpham",
           label: "Ảnh",
@@ -1603,6 +1794,33 @@ export default {
       camdo_kiemtra_giaythe_danhan: false,
       overlay_search: false,
       //hoadonnhanh
+
+      option_kieuvang: [],
+      option_banggia: [],
+      ov_model_taohoadon_nhanh:false,
+      listsanphamhoadonnhanh: [],
+      fieldsanphamhoadonnhanh: [
+        { key: "stt", label: "STT" },
+        { key: "kieuvang", label: "Món" },
+        { key: "trongluong", label: "Trọng Lượng" },
+        { key: "chatluong", label: "Kiểu Vàng" },
+        { key: "giavang", label: "Giá Vàng" },
+        { key: "tiencong", label: "Tiền công" },
+        { key: "thanhtien", label: "Thành tiền" },
+        { key: "tool", label: "#" },
+      ],
+      formTaoNhanh: {
+        diachi: '',
+        tenkhach: "",
+        kieuvang: null,
+        chatluong: null,
+        trongluongvang: null,
+        tiencong: null,
+        thucnhan: 0,
+        mahoadon: null,
+        cccd: "",
+        sodienthoai: ""
+      },
       formHoaDonNhanh: {
         tenkhach: null,
         thucnhan: null,
@@ -1734,9 +1952,180 @@ export default {
       },
     },
   },
-  components: {},
-  computed: {},
+  computed: {
+    thongtinformTongHoaDon() {
+      if (this.listsanphamhoadonnhanh.length > 0) {
+        let tongtien = 0
+        let tiencong = 0;
+        this.listsanphamhoadonnhanh.map(i => {
+          tongtien += i.thanhtien
+        })
+        this.listsanphamhoadonnhanh.map(i => {
+          tiencong += i.tiencong
+        })
+
+        return {
+          tongtien,
+          tiencong
+        }
+      } else {
+        return {
+          tongtien: 0,
+          tiencong: 0,
+          thucnhan: 0,
+        }
+      }
+
+    }
+  },
   methods: {
+    onhide_modal_taohoadonnhanh() {
+      this.formTaoNhanh = {
+        diachi: 'không',
+        tenkhach: "không",
+        kieuvang: null,
+        chatluong: null,
+        trongluongvang: null,
+        tiencong: null,
+        thucnhan: 0,
+        mahoadon: null,
+        cccd: "không",
+        sodienthoai: "không"
+      }
+      this.listsanphamhoadonnhanh = []
+    },
+    randomUUID() {
+      return new Date().getTime()
+    },
+    inHoadonnhanh() {
+      if (this.listsanphamhoadonnhanh.length > 0) {
+        this.ov_model_taohoadon_nhanh=true;
+        let tongtien = 0
+        let tiencong = 0;
+        this.listsanphamhoadonnhanh.map(i => {
+          tongtien += i.thanhtien
+        })
+        this.listsanphamhoadonnhanh.map(i => {
+          tiencong += i.tiencong
+        })
+        let listsp = []
+        this.listsanphamhoadonnhanh.map(i => {
+          let objSP = {
+            name: i.kieuvang,
+            maso: `${i.chatluong}`,
+            klt: parseFloat(i.trongluong),
+            klv: parseFloat(i.trongluong),
+            klh: 0,
+            cong: parseFloat(i.tiencong),
+            gia: i.giavang,
+            giatrixuat: i.thanhtien,
+            code: i.chatluong,
+          }
+          listsp.push(objSP)
+        })
+        let billObject = {
+          tongtien: tongtien,
+          thucnhan: parseInt(this.formTaoNhanh.thucnhan) || 0,
+          tenkhach: this.formTaoNhanh.tenkhach || "",
+          diachi: this.formTaoNhanh.diachi || "",
+          cccd: this.formTaoNhanh.cccd || "",
+          sodienthoai: this.formTaoNhanh.sodienthoai || "",
+          bill_code: `HN-${this.$moment().format("DD/MM/YYYY")}`,
+          isPrint: false,
+          id_giohang: 0,
+          chitiet: "",
+          ghichu: "",
+          somon: this.listsanphamhoadonnhanh.length,
+          created_at: new Date(),
+          listsp
+        };
+        console.log(billObject)
+        this.$pnPublish(
+          {
+            channel: "printserver",
+            message: { type: "inhoadon", list: billObject },
+          },
+          (status, response) => {
+            console.log(status,response)
+            if (!status.error) {
+              this.ov_model_taohoadon_nhanh=false;
+              this.$bvModal.hide("model_taohoadon_nhanh");
+              this.$bvToast.toast(
+                `Tạo hóa đơn thành công`,
+                {
+                  title: "Thông báo",
+                  autoHideDelay: 3000,
+                  appendToast: true,
+                  variant: "primary",
+                }
+              );
+            } else {
+
+            }
+          }
+        );
+
+
+
+      }
+
+    },
+    addItemHoadonnhanh() {
+      this.$refs.veeForm.validate().then(async (success) => {
+        if (success) {
+          let giavang = this.option_banggia.find(i => i.value == this.formTaoNhanh.chatluong)
+          let kieuvang = this.option_kieuvang.find(i => i.value == this.formTaoNhanh.kieuvang)
+          let thanhtien = parseFloat(this.formTaoNhanh.trongluongvang) * giavang.objectVal.sellingPrice + this.formTaoNhanh.tiencong * 1000;
+          let objectTaonhanh = {
+            trongluong: parseFloat(this.formTaoNhanh.trongluongvang),
+            tiencong: parseFloat(this.formTaoNhanh.tiencong),
+            thanhtien: thanhtien,
+            kieuvang: kieuvang.objectVal.short,
+            chatluong: giavang.objectVal.hienthi,
+            giavang: giavang.objectVal.sellingPrice,
+            uuid: this.randomUUID()
+          }
+          this.listsanphamhoadonnhanh.push(objectTaonhanh)
+
+          this.formTaoNhanh.kieuvang = null
+          this.formTaoNhanh.chatluong = null
+          this.formTaoNhanh.trongluongvang = null
+          this.formTaoNhanh.tiencong = null
+          this.formTaoNhanh.mahoadon = null
+        }
+
+      })
+
+
+    },
+    removeSanphamhoadonnhanh(id) {
+      this.listsanphamhoadonnhanh = this.listsanphamhoadonnhanh.filter(i => i != id)
+    },
+    async onshow_modal_taohoadonnhanh() {
+
+      //lấy catalog
+      let listOption_kieuvang = await this.$supabase.from('kieusanpham').select()
+
+      //lấy giá mới
+      let listOption_banggia = await this.$supabase.from("banggia").select()
+
+      this.option_kieuvang = listOption_kieuvang.data.map(i => {
+        return {
+          text: i.short,
+          value: i.id,
+          objectVal: i
+        }
+      })
+      this.option_banggia = listOption_banggia.data.map(i => {
+        return {
+          text: i.hienthi,
+          value: i.id,
+          objectVal: i
+        }
+      })
+      this.$bvModal.show('model_taohoadon_nhanh')
+      console.log(this.option_kieuvang, this.option_banggia)
+    },
     getRandomInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     },
@@ -2602,7 +2991,7 @@ export default {
     },
     changeKLVHoaDon(item) {
       //thay đổi trong listsangpham va gia tri
-   
+
       let giahientai = parseFloat(item.klv) * parseFloat(item.banggia.sellingPrice) + item.cong * 1000
       giahientai = Math.round(giahientai / 1000) * 1000;
       item.giahientai = giahientai
@@ -2694,8 +3083,8 @@ export default {
       //SD4079_sotheodoi
       //
       /*
-Tính, trong trường hợp sản phẩm không có hóa đơn nhập và _sotheodoi => tạo mới và reload
-
+  Tính, trong trường hợp sản phẩm không có hóa đơn nhập và _sotheodoi => tạo mới và reload
+  
     */
       console.log(id);
       this.$supabase
